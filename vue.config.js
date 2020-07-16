@@ -47,13 +47,14 @@ module.exports = {
     }, // 错误、警告在页面弹出
     proxy: {
       "/api": {
-        target: "http://www.baidu.com/api",
+        target: "http://192.168.101.23:8022/",
+        ws: true,
         changeOrigin: true, // 允许websockets跨域
         // secure: false, // 接受运行在 HTTPS 上，且使用了无效证书的后端服务器
         pathRewrite: {
           "^/api": "" // 重写请求路径
         }
       }
-    } // 代理转发配置，用于调试环境
+    }, // 代理转发配置，用于调试环境
   }
 };

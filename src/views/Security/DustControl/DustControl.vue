@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-card class="pdge_header" shadow="never" :body-style="{ paddingBottom: 0 }">
+    <el-card class="page_header" shadow="never" :body-style="{ paddingBottom: 0 }">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>

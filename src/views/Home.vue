@@ -33,7 +33,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-.el-container ::v-deep{
+.el-container ::v-deep {
   height: 100%;
   .el-header,
   .el-footer {

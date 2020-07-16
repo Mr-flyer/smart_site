@@ -1,7 +1,7 @@
 <template>
   <!-- 车辆道闸 -->
   <div class="container">
-    <el-card class="pdge_header" shadow="never" :body-style="{ paddingBottom: 0 }">
+    <el-card class="page_header" shadow="never" :body-style="{ paddingBottom: 0 }">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item><a href="/">车辆道闸</a></el-breadcrumb-item>
@@ -16,7 +16,7 @@
       <!-- 实时监测 -->
       <div v-show="active == 0">
         <!-- 今日统计 -->
-        <el-card shadow="never" style="display: none">
+        <el-card class="today-wrap" shadow="never">
           <div slot="header">今日统计</div>
           <el-row>
             <el-col class="todayItem" :span="6">
@@ -49,66 +49,72 @@
             </el-col>
           </el-row>
         </el-card>
-        <!-- 道闸事件 -->
-        <el-card>
-          <div slot="header">
-            道闸事件
-            <el-form :inline="true" :model="formInline" class="demo-form-inline">
-              <el-form-item label="道闸选择">
-                <el-select v-model="select" placeholder="活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
-              </el-form-item>
-            </el-form>
-          </div>
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column type="index" label="序号" width="80"></el-table-column>
-            <el-table-column prop="name" label="车辆类型" width="180"></el-table-column>
-            <el-table-column prop="name" label="车牌" width="180"></el-table-column>
-            <el-table-column prop="date" label="发生时间" width="180"></el-table-column>
-            <el-table-column prop="address" label="门禁点"></el-table-column>
-            <el-table-column prop="address" label="出入类型"></el-table-column>
-          </el-table>
-        </el-card>
-        <!-- 车辆信息 -->
-        <el-card>
-          <div slot="header">车辆信息</div>
-          <el-row>
-            <el-col :span="16">
-              <div class="carInfoItem">
-                <span>道闸点：</span>信息
+        <el-row :gutter="20">
+          <el-col :span="16">
+            <!-- 道闸事件 -->
+            <el-card shadow="never">
+              <div slot="header">
+                <!-- 道闸事件 -->
+                <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                  <el-form-item label="道闸选择">
+                    <el-select v-model="select" placeholder="活动区域">
+                      <el-option label="区域一" value="shanghai"></el-option>
+                      <el-option label="区域二" value="beijing"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="onSubmit">查询</el-button>
+                  </el-form-item>
+                </el-form>
               </div>
-              <div class="carInfoItem">
-                <span>人员姓名：</span>信息
-              </div>
-              <div class="carInfoItem">
-                <span>人员ID：</span>信息
-              </div>
-              <div class="carInfoItem">
-                <span>车牌号：</span>信息
-              </div>
-              <div class="carInfoItem">
-                <span>人员身份：</span>信息
-              </div>
-              <div class="carInfoItem">
-                <span>单位类型：</span>信息
-              </div>
-              <div class="carInfoItem">
-                <span>单位名称：</span>信息
-              </div>
-              <div class="carInfoItem">
-                <span>有效期：</span>信息
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <img class="car_pic" />
-            </el-col>
-          </el-row>
-        </el-card>
+              <el-table :data="tableData" style="width: 100%">
+                <el-table-column type="index" label="序号" width="80"></el-table-column>
+                <el-table-column prop="name" label="车辆类型" width="180"></el-table-column>
+                <el-table-column prop="name" label="车牌" width="180"></el-table-column>
+                <el-table-column prop="date" label="发生时间" width="180"></el-table-column>
+                <el-table-column prop="address" label="门禁点"></el-table-column>
+                <el-table-column prop="address" label="出入类型"></el-table-column>
+              </el-table>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <!-- 车辆信息 -->
+            <el-card shadow="never">
+              <div slot="header">车辆信息</div>
+              <el-row>
+                <el-col :span="16">
+                  <div class="carInfoItem">
+                    <span>道闸点：</span>信息
+                  </div>
+                  <div class="carInfoItem">
+                    <span>人员姓名：</span>信息
+                  </div>
+                  <div class="carInfoItem">
+                    <span>人员ID：</span>信息
+                  </div>
+                  <div class="carInfoItem">
+                    <span>车牌号：</span>信息
+                  </div>
+                  <div class="carInfoItem">
+                    <span>人员身份：</span>信息
+                  </div>
+                  <div class="carInfoItem">
+                    <span>单位类型：</span>信息
+                  </div>
+                  <div class="carInfoItem">
+                    <span>单位名称：</span>信息
+                  </div>
+                  <div class="carInfoItem">
+                    <span>有效期：</span>信息
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <img class="car_pic" />
+                </el-col>
+              </el-row>
+            </el-card>
+          </el-col>
+        </el-row>
       </div>
       <!-- 历史数据 -->
       <el-card shadow="never" v-show="active == 1">
@@ -284,27 +290,24 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  .pdge_header {
-    margin: -20px -20px 0;
-    border: none;
-    border-top: 1px solid #ebeef5;
-  }
+
   .el-tabs__header {
     margin-bottom: 0 !important;
-  }
-  .page_cont {
-    padding-top: 20px;
   }
   .car_pic {
     width: 100px;
     height: 100px;
     background-color: aqua;
   }
+  .today-wrap {
+    margin-bottom: 20px;
+  }
 }
 // 实时监测
 .todayItem {
   display: flex;
   align-items: center;
+  justify-content: center;
   i {
     font-size: 20px;
   }

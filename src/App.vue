@@ -70,6 +70,14 @@ p {
     line-height: 16px;
   }
 }
+/* 主内容样式 */
+.main-content {
+  width: 100%;
+  background-color: #fff;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
 /* 自定义时间 */
 .modal-time-con {
   width: 444px;
@@ -122,7 +130,7 @@ p {
 
 // 自定义样式
 .container {
-  .pdge_header {
+  .page_header {
     margin: -20px -20px 0;
     border: none;
     border-top: 1px solid #ebeef5;
@@ -132,6 +140,9 @@ p {
   }
   .page_cont {
     padding-top: 20px;
+  }
+  .mb-20 {
+    margin-bottom: 20px;
   }
 }
 </style>

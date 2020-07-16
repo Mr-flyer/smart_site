@@ -10,8 +10,10 @@ import HomeSet from "../views/System/HomeSet.vue";
 import RoleSet from "../views/System/RoleSet.vue";
 // 安全设置
 import Security from "../views/Security/index.vue";
-import DustControl from "../views/Security/DustControl.vue";
-import PersonnelManagement from "../views/Security/PersonnelManagement.vue";
+import DustControl from "../views/Security/DustControl/DustControl.vue";
+import DustControlHistoryList from "../views/Security/DustControl/HistoryList.vue";
+import PersonnelManagement from "../views/Security/PersonnelManage/PersonnelManagement.vue";
+import HistoryList from "../views/Security/PersonnelManage/HistoryList.vue";
 import VehicleBarrier from "../views/Security/VehicleBarrier.vue";
 import VideoMonitoring from "../views/Security/VideoMonitoring.vue";
 // 三维物联
@@ -73,9 +75,19 @@ const routes = [
             component: PersonnelManagement,
           },
           {
+            path: "/Security/HistoryList",
+            name: "PersonnelManagement",
+            component: HistoryList,
+          },
+          {
             path: "/Security/DustControl",
             name: "DustControl",
             component: DustControl,
+          },
+          {
+            path: "/Security/DustControlHistoryList",
+            name: "DustControl",
+            component: DustControlHistoryList,
           },
           {
             path: "/Security/VehicleBarrier",
