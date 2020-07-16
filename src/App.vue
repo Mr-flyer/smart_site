@@ -119,4 +119,19 @@ p {
 .el-popover {
   max-width: 200px;
 }
+
+// 自定义样式
+.container {
+  .pdge_header {
+    margin: -20px -20px 0;
+    border: none;
+    border-top: 1px solid #ebeef5;
+  }
+  .el-tabs__header {
+    margin-bottom: 0 !important;
+  }
+  .page_cont {
+    padding-top: 20px;
+  }
+}
 </style>
