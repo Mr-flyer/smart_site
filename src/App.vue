@@ -70,6 +70,14 @@ p {
     line-height: 16px;
   }
 }
+/* 主内容样式 */
+.main-content {
+  width: 100%;
+  background-color: #fff;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
 /* 自定义时间 */
 .modal-time-con {
   width: 444px;

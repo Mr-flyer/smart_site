@@ -11,7 +11,8 @@ import RoleSet from "../views/System/RoleSet.vue";
 // 安全设置
 import Security from "../views/Security/index.vue";
 import DustControl from "../views/Security/DustControl.vue";
-import PersonnelManagement from "../views/Security/PersonnelManagement.vue";
+import PersonnelManagement from "../views/Security/PersonnelManage/PersonnelManagement.vue";
+import HistoryList from "../views/Security/PersonnelManage/HistoryList.vue";
 import VehicleBarrier from "../views/Security/VehicleBarrier.vue";
 import VideoMonitoring from "../views/Security/VideoMonitoring.vue";
 // 三维物联
@@ -71,6 +72,11 @@ const routes = [
             path: "/Security/PersonnelManagement",
             name: "PersonnelManagement",
             component: PersonnelManagement,
+          },
+          {
+            path: "/Security/HistoryList",
+            name: "PersonnelManagement",
+            component: HistoryList,
           },
           {
             path: "/Security/DustControl",

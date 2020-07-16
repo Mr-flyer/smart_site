@@ -167,14 +167,14 @@ export default {
         icon: "el-icon-view",
         menuItemList: [
           {
-            name: "管理员设置",
-            routerName: "AdminList",
-            path: "/System/AdminList"
-          },
-          {
             name: "首页设置",
             routerName: "HomeSet",
             path: "/System/HomeSet"
+          },
+          {
+            name: "管理员设置",
+            routerName: "AdminList",
+            path: "/System/AdminList"
           },
           {
             name: "角色管理",
@@ -247,16 +247,6 @@ export default {
         container.scrollTop = 0;
       });
     }
-  },
-  created() {
-    if (sessionStorage.getItem("user_info"))
-      this.userInfo = JSON.parse(sessionStorage.getItem("user_info"));
-    this.$http
-      .get("/api/v1/index/message")
-      .then(res => {
-        this.notificationCount = res.data.count;
-      })
-      .catch(() => {});
   },
   methods: {
     personalCenter(command) {
@@ -342,15 +332,7 @@ export default {
     top: 50%;
     transform: translate(0, -50%);
     cursor: pointer;
-    animation: openMenu 0.5s 1;
-  }
-  @keyframes openMenu {
-    from {
-      left: 242px;
-    }
-    to {
-      left: 0px;
-    }
+    transtion: left .1s;
   }
   .menu-close-icon {
     width: 18px;
@@ -359,21 +341,13 @@ export default {
     top: 50%;
     transform: translate(0, -50%);
     cursor: pointer;
-    animation: hideMenu 0.5s 1;
-  }
-  @keyframes hideMenu {
-    from {
-      left: 0px;
-    }
-    to {
-      left: 242px;
-    }
+    transition: left .1s;
   }
   .main-aside,
   .hide-main-aside {
     width: 260px !important;
     background: #081725;
-    animation: mymove 0.5s 1;
+    transition: width .1s;
     .main-logo {
       width: 100%;
       display: flex;
@@ -384,26 +358,10 @@ export default {
         width: 224px;
       }
     }
-    @keyframes mymove {
-      from {
-        width: 0px;
-      }
-      to {
-        width: 260px;
-      }
-    }
   }
   .hide-main-aside {
     width: 0px !important;
-    animation: hidemove 0.5s 1;
-  }
-  @keyframes hidemove {
-    from {
-      width: 260px;
-    }
-    to {
-      width: 0px;
-    }
+    transition: width .1s;
   }
   ::v-deep .el-menu {
     border: none !important;
