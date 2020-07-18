@@ -218,7 +218,7 @@
         },
         data() {
             return {
-                countSelect: 1,
+                countSelect: 0,
                 countPicSelect: 0,
                 countList: {
                     '现场人数': {

@@ -7,7 +7,7 @@
       <el-menu
         background-color="#05101b"
         text-color="#C8CFDB"
-        active-text-color="#FFFFFF"
+        active-text-color="#FFF"
         router
         :default-active="$route.name"
       >
@@ -42,19 +42,20 @@
     </el-aside>
     <el-container>
       <el-header>
-        <span class="head-menu-user">
-          <el-dropdown @command="personalCenter">
-            <span class="head-menu">
-              <img class="head-sculpture" :src="userInfo.head_img" />
-              {{userInfo.username}}
-              <i class="el-icon-caret-bottom"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="1">修改密码</el-dropdown-item>
-              <el-dropdown-item command="2">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </span>
+          <span class="head-menu-user">
+            <el-dropdown @command="personalCenter">
+              <span class="head-menu">
+                <img class="head-sculpture" :src="userInfo.head_img" />
+                {{userInfo.username}}
+                <i class="el-icon-caret-bottom"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="1">修改密码</el-dropdown-item>
+                <el-dropdown-item command="2">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+        </div>
       </el-header>
       <el-main id="main">
         <keep-alive>
@@ -67,6 +68,7 @@
         </el-backtop>
       </el-main>
     </el-container>
+
     <el-dialog title="修改密码" :visible.sync="dialogVisible" width="600px" @close="closeCallback">
       <el-form
         :model="ruleForm"
@@ -339,63 +341,80 @@ export default {
     width: 0px !important;
     transition: width .1s;
   }
-  ::v-deep .el-menu {
-    border: none !important;
-  }
-  /* ::v-deep .is-opened .el-menu--inline .el-menu-item{
-            background-color: #05101b !important;
-        } */
-  ::v-deep .el-submenu__title {
-    background-color: #081725 !important;
-    display: flex;
-    align-items: center;
-  }
-  ::v-deep .el-submenu__title:hover {
-    background-color: #0868ac !important;
-  }
-  ::v-deep .el-menu-item:focus,
-  .el-menu-item:hover {
-    background-color: #0868ac !important;
-  }
-  ::v-deep .is-opened .el-submenu__title {
-    color: #fff !important;
-  }
-  ::v-deep .is-opened .el-submenu__title i {
-    color: #fff !important;
-  }
-  ::v-deep .no-item {
-    background-color: #081725 !important;
-  }
-  ::v-deep .el-header {
-    background-color: #fff !important;
-    height: 80px !important;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-  ::v-deep .el-menu .is-active {
-    color: #fff !important;
-  }
-  ::v-deep .el-menu-item {
-    display: flex;
-    align-items: center;
-    .icon-circle {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      border: 2px solid #c8cfdb;
-      display: inline-block;
-      margin-right: 10px;
+  ::v-deep {
+    .el-menu {
+      border: none !important;
     }
-  }
-  ::v-deep .el-menu .is-active {
-    color: #fff !important;
-    background-color: #0868ac !important;
-  }
-  ::v-deep .is-opened .is-active {
-    color: #fff !important;
-    .icon-circle {
-      border: 2px solid #fff !important;
+    .el-submenu__title {
+      // background-color: #081725 !important;
+      height: 48px !important;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      &:hover {
+        background-color: #0868ac !important;
+      }
+    }
+    .el-menu-item:focus,
+    .el-menu-item:hover {
+      background-color: #0868ac !important;
+    }
+    .is-opened .el-submenu__title {
+      color: #fff !important;
+    }
+
+    /** ==============
+          自定义 --- mg
+     ============== */
+    .no-item {
+      height: 48px !important;
+      background-color: #081725 !important;
+    }
+    .tools {
+      display: flex;
+      align-items: center;
+      flex: none;
+    }
+    .theme {
+      color: #fff;
+    }
+    .el-header {
+      background-color: #fff !important;
+      // height: 80px !important;
+      height: 48px !important;
+      display: flex;
+      // justify-content: space-between;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .menu_horizontal {
+      overflow-x: auto;
+      display: flex;
+    }
+    .el-menu .is-active {
+      color: #fff !important;
+    }
+    .el-menu-item {
+      display: flex;
+      align-items: center;
+      .icon-circle {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        border: 2px solid #c8cfdb;
+        display: inline-block;
+        margin-right: 10px;
+      }
+    }
+    .el-menu .is-active {
+      color: #fff !important;
+      background-color: #0868ac !important;
+    }
+    .is-opened .is-active {
+      color: #fff !important;
+      .icon-circle {
+        border: 2px solid #fff !important;
+      }
     }
   }
   .head-menu-item {
@@ -423,6 +442,11 @@ export default {
     .el-icon-caret-bottom {
       margin-left: 16px;
     }
+  }
+  ::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 0px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 0px;
   }
 }
 </style>

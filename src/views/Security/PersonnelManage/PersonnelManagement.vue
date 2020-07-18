@@ -1,7 +1,7 @@
 <template>
     <div class="home-set main-content">
         <el-tabs v-model="activeName">
-            <el-tab-pane label="实名管理"" name="first">
+            <el-tab-pane label="实名管理" name="first">
                 <v-realName></v-realName>
             </el-tab-pane>
             <el-tab-pane label="门禁管理" name="second">
