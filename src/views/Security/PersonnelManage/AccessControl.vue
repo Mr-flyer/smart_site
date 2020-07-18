@@ -28,12 +28,34 @@
             </el-col>
             <el-col :span="8">
                 <el-card class="box-card" shadow="never">
-                    <div slot="header" class="clearfix">
+                    <div slot="header" class="clearfix access-control-head">
                         <span>门禁地图</span>
-                        <el-button style="float: right; padding: 3px 0" type="text">上传地图</el-button>
+                        <!-- <el-upload
+                            class="upload-demo"
+                            action="#"
+                            :on-preview="handlePreview"
+                            :on-remove="handleRemove"
+                            :before-remove="beforeRemove">
+                            <el-button size="small" type="primary">点击上传</el-button>
+                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                        </el-upload> -->
+                        <el-upload
+                            class="avatar-uploader"
+                            action="#"
+                            :show-file-list="false"
+                            :on-change="changeFile"
+                            :before-upload="beforeAvatarUpload"
+                            accept="image/png,image/gif,image/jpg,image/jpeg">
+                            <el-button style="float: right; padding: 3px 0" type="text">上传地图</el-button>
+                            <!-- <img v-if="form.projectImg" :src="form.projectImg" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
+                        </el-upload>
                     </div>
-                    <div class="text item">
-                        <img class="access-control-pic" src="../../../assets/head_img.jpg"/>
+                    <div class="text item access-control-pics">
+                        <el-image
+                        class="access-control-pic"
+                        :src="accessControlPic"
+                        fit="cover"></el-image>
                     </div>
                 </el-card>
             </el-col>
@@ -100,7 +122,10 @@
                                 <div><span class="info-name">有效期：</span>2020-07-11-2020-09-11</div>
                             </el-col>
                             <el-col :span="8">
-                                <img class="current-info-pic" src="../../../assets/head_img.jpg"/>
+                                <el-image
+                                class="current-info-pic"
+                                :src="accessControlPic"
+                                fit="cover"></el-image>
                             </el-col>
                         </el-row>
                     </div>
@@ -127,7 +152,8 @@
                         address: '1号门',
                         type: '出'
                     }
-                ]
+                ],
+                accessControlPic: require('../../../assets/head_img.jpg')
             }
         },
         methods: {
@@ -139,6 +165,21 @@
             // 查看历史记录
             historyListBtn() {
                 this.$router.push({path: '/Security/HistoryList'})
+            },
+            changeFile(res) {
+                let _that = this;
+                var reader = new FileReader();    
+                reader.readAsDataURL(res.raw);
+                reader.onloadend = function(e) {
+                    _that.accessControlPic = e.target.result;
+                }
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 10;
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 10MB!');
+                }
+                return false;
             }
         }
     }
@@ -207,6 +248,10 @@
                 box-shadow: 0 2px 20px 0 rgba(0,0,0,.1);
             }
         }
+    }
+    .access-control-pics {
+        display: flex;
+        justify-content: center;
     }
     .access-control-pic {
         /* width: 100%;

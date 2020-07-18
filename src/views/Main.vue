@@ -42,30 +42,6 @@
     </el-aside>
     <el-container>
       <el-header>
-        <span class="head-menu-item">
-          <el-dropdown>
-            <span class="head-menu">
-              <i class="el-icon-s-operation"></i>南京
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>南京</el-dropdown-item>
-              <el-dropdown-item>无锡</el-dropdown-item>
-              <el-dropdown-item>苏州</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </span>
-        <span class="head-menu-item">
-          <span class="head-menu">
-            <i class="el-icon-question"></i>帮助
-          </span>
-        </span>
-        <span class="head-menu-item">
-          <span class="head-menu" @click="notificationBtn">
-            <el-badge :value="notificationCount" class="item">
-              <i class="el-icon-bell"></i>消息
-            </el-badge>
-          </span>
-        </span>
         <span class="head-menu-user">
           <el-dropdown @command="personalCenter">
             <span class="head-menu">

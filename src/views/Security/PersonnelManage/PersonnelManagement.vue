@@ -8,6 +8,7 @@
                 <v-accessControl></v-accessControl>
             </el-tab-pane>
             <el-tab-pane label="在岗信息" name="three">
+                <v-jobInfo></v-jobInfo>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -16,14 +17,16 @@
 <script>
     import realName from './RealName';
     import accessControl from './AccessControl';
+    import jobInfo from './JobInfo';
     export default {
         components: {
             'v-realName': realName,
-            'v-accessControl': accessControl
+            'v-accessControl': accessControl,
+            'v-jobInfo': jobInfo
         },
         data() {
             return {
-                activeName: 'second'
+                activeName: 'three'
             }
         }
     }

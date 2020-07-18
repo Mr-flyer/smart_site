@@ -47,7 +47,7 @@ module.exports = {
     }, // 错误、警告在页面弹出
     proxy: {
       "/api": {
-        target: "https://192.168.101.23:8022/",
+        target: "http://192.168.101.23:8022/",
         ws: true,
         changeOrigin: true, // 允许websockets跨域
         // secure: false, // 接受运行在 HTTPS 上，且使用了无效证书的后端服务器
@@ -56,6 +56,5 @@ module.exports = {
         }
       }
     }, // 代理转发配置，用于调试环境
-    https: true
   }
 };

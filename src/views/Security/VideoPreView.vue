@@ -1,6 +1,25 @@
 <template>
-    <div>
-        <div id="playWnd" class="playWnd"></div>
+    <div class="video-preView">
+        <span class="video-tree">
+            <div class="video-tree-input">
+                <el-input placeholder="搜索监控通道"></el-input><el-button type="primary">搜索</el-button>
+            </div>
+            <div class="video-device">
+                <span class="video-sum-device">设备总数：13台</span
+                ><span class="video-device-list">
+                    <div style="color: #70B603">在线：10台</div>
+                    <div style="color: #D9001B">异常：2台</div>
+                    <div style="color: #999">离线：1台</div>
+                </span>
+            </div>
+            <el-tree 
+                :data="data"
+                @node-click="handleNodeClick"
+            ></el-tree>
+        </span
+        ><span class="video-play">
+            <div id="playWnd" class="playWnd"></div>
+        </span>
     </div>
 </template>
 
@@ -8,6 +27,30 @@
     export default {
         data() {
             return {
+                data: [
+                    {
+                        label: '区域1',
+                        children: [
+                            {
+                                label: '消防通道',
+                                children: [ {label: '监控1'}, { label: '监控2' }, { label: '监控3' } ]
+                            },
+                            {
+                                label: '停车场',
+                                children: [ { label: '监控1' }, { label: '监控2' } ]
+                            }
+                        ]
+                    },
+                    {
+                        label: '区域2',
+                        children: [
+                            {
+                                label: '出入口',
+                                children: [ { label: '监控1' }, { label: '监控2' } ]
+                            }
+                        ]
+                    }
+                ],
                 oWebControl: null,
                 initCount: 0,
                 pubKey: '',
@@ -16,7 +59,25 @@
         created() {
             this.initPlugin();
         },
+        mounted() {
+            let _that = this;
+            window.addEventListener("resize",function(){
+                if (_that.oWebControl != null) {
+                    _that.oWebControl.JS_Resize(800, 400);
+                    _that.setWndCover();
+                }
+            }),
+            window.addEventListener("scroll",function(){
+                if (_that.oWebControl != null) {
+                    _that.oWebControl.JS_Resize(800, 400);
+                    _that.setWndCover();
+                }
+            })
+        },
         methods: {
+            handleNodeClick() {
+
+            },
             initPlugin() {
                 let _that = this;
                 this.oWebControl = new WebControl({
@@ -35,16 +96,16 @@
                             // 设置消息回调
                             _that.oWebControl.JS_SetWindowControlCallback({ 
                                 cbIntegrationCallBack: function(oData) {
-                                    console.log(oData)
+                                    // console.log(oData)
                                 }
                             });
                             //JS_CreateWnd 创建视频播放窗口，宽高可设定
-                            _that.oWebControl.JS_CreateWnd("playWnd", 1000, 600).then(function () {
+                            _that.oWebControl.JS_CreateWnd("playWnd", 800, 400).then(function () {
                                 _that.init(); // 创建播放实例成功后初始化
-                                console.log("JS_CreateWnd success");
+                                // console.log("JS_CreateWnd success");
                             });
                         }, (err)=>{
-                            console.log(err)
+                            // console.log(err)
                             // 服务启动失败
                         })
                     },
@@ -91,6 +152,35 @@
                 encrypt.setPublicKey(this.pubKey);
                 return encrypt.encrypt(value);
             },
+            setWndCover() {
+                var iWidth = $(window).width();
+                var iHeight = $(window).height();
+                var oDivRect = $("#playWnd").get(0).getBoundingClientRect();
+
+                var iCoverLeft = (oDivRect.left < 0) ? Math.abs(oDivRect.left): 0;
+                var iCoverTop = (oDivRect.top < 0) ? Math.abs(oDivRect.top): 0;
+                var iCoverRight = (oDivRect.right - iWidth > 0) ? Math.round(oDivRect.right - iWidth) : 0;
+                var iCoverBottom = (oDivRect.bottom - iHeight > 0) ? Math.round(oDivRect.bottom - iHeight) : 0;
+
+                iCoverLeft = (iCoverLeft > 800) ? 800 : iCoverLeft;
+                iCoverTop = (iCoverTop > 400) ? 400 : iCoverTop;
+                iCoverRight = (iCoverRight > 800) ? 800 : iCoverRight;
+                iCoverBottom = (iCoverBottom > 400) ? 400 : iCoverBottom;
+
+                this.oWebControl.JS_RepairPartWindow(0, 0, 801, 400);  // 多1个像素点防止还原后边界缺失一个像素条
+                if (iCoverLeft != 0) {
+                    this.oWebControl.JS_CuttingPartWindow(0, 0, iCoverLeft, 400);
+                }
+                if (iCoverTop != 0) {
+                    this.oWebControl.JS_CuttingPartWindow(0, 0, 801, iCoverTop);  // 多剪掉一个像素条，防止出现剪掉一部分窗口后出现一个像素条
+                }
+                if (iCoverRight != 0) {
+                    this.oWebControl.JS_CuttingPartWindow(800 - iCoverRight, 0, iCoverRight, 400);
+                }
+                if (iCoverBottom != 0) {
+                    this.oWebControl.JS_CuttingPartWindow(0, 400 - iCoverBottom, 800, iCoverBottom);
+                }
+            },
             init() {
                 let _that = this;
                 // this.getPubKey(function() {
@@ -120,19 +210,67 @@
                                 gpuMode: 0 // 是否开启 GPU 硬解，不建议开启，0-不开启 1-开启
                             }
                         }).then(function (oData) {
-                            console.log(oData)
+                            // console.log(oData)
                             // showCBInfo(JSON.stringify(oData ? oData.responseMsg : ''));
                         });
                     })
                 // })
+            }
+        },
+        destroyed() {
+            if (this.oWebControl != null){
+                this.oWebControl.JS_HideWnd();  // 先让窗口隐藏，规避可能的插件窗口滞后于浏览器消失问题
+                this.oWebControl.JS_Disconnect().then(function(){}, function() {});
             }
         }
     }
 </script>
 
 <style lang="scss" scoped>
-    .playWnd {
-        width: 500px;
-        height: 500px;
+    .video-preView {
+        display: flex;
+        .video-tree {
+            width: 300px;
+            padding-right: 20px;
+            .video-tree-input {
+                display: flex;
+            }
+            .video-device {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                border: 1px solid #e5e5e5;
+                box-sizing: border-box;
+                .video-sum-device {
+                    padding: 0 12px;
+                    box-sizing: border-box;
+                }
+                .video-device-list {
+                    border-left: 1px solid #e5e5e5;
+                    box-sizing: border-box;
+                    padding: 6px 0 ;
+                    &>div {
+                        padding: 6px 12px;
+                        box-sizing: border-box;
+                    }
+                }
+            }
+            ::v-deep .el-tree-node {
+                .is-leaf + .el-checkbox .el-checkbox__inner {
+                    display: inline-block;
+                }
+                .el-checkbox .el-checkbox__inner {
+                    display: none;
+                }
+            }
+        }
+        .video-play {
+            width: calc(100% - 300px);
+            overflow: auto;
+            .playWnd {
+                width: 800px;
+                height: 400px;
+            }
+        }
     }
 </style>
