@@ -25,6 +25,11 @@
 
 <script>
     export default {
+        props: {
+            name: {
+                type: String
+            }
+        },
         data() {
             return {
                 data: [
@@ -54,6 +59,18 @@
                 oWebControl: null,
                 initCount: 0,
                 pubKey: '',
+            }
+        },
+        watch: {
+            'name': function() {
+                if(this.name === 'second') {
+                    if (this.oWebControl != null){
+                        this.oWebControl.JS_HideWnd();  // 先让窗口隐藏，规避可能的插件窗口滞后于浏览器消失问题
+                        this.oWebControl.JS_Disconnect().then(function(){}, function() {});
+                    }
+                }else {
+                    this.initPlugin();
+                }
             }
         },
         created() {
@@ -229,9 +246,15 @@
 <style lang="scss" scoped>
     .video-preView {
         display: flex;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
         .video-tree {
             width: 300px;
-            padding-right: 20px;
+            display: inline-block;
+            vertical-align: top;
+            height: 100%;
+            overflow: auto;
             .video-tree-input {
                 display: flex;
             }
@@ -267,6 +290,7 @@
         .video-play {
             width: calc(100% - 300px);
             overflow: auto;
+            padding-left: 20px;
             .playWnd {
                 width: 800px;
                 height: 400px;
