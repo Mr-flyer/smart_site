@@ -1,8 +1,15 @@
 <template>
-    <div class="project-info">
+    <div class="project-info" v-loading="isLoading">
         <el-form style="width: 590px;" ref="form" :model="form" label-width="140px">
             <el-form-item label="项目名称">
                 <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="项目开始时间">
+                <el-date-picker
+                    v-model="form.start_date"
+                    type="date"
+                    placeholder="选择日期">
+                </el-date-picker>
             </el-form-item>
             <!-- <el-form-item label="项目图片">
                 <el-upload
@@ -17,56 +24,60 @@
                 </el-upload>
             </el-form-item> -->
             <el-form-item label="项目地点">
-                <el-input v-model="form.address"></el-input>
+                <el-input v-model="form.addr"></el-input>
             </el-form-item>
             <el-form-item label="工程造价">
-                <el-input v-model="form.address">
+                <el-input @input="form.cost = form.cost.replace(/\D/g, '')" v-model="form.cost">
                     <template slot="append">元</template>
                 </el-input>
             </el-form-item>
             <el-form-item label="合同工期">
-                <el-input v-model="form.address">
+                <el-input @input="form.period = form.period.replace(/\D/g, '')" v-model="form.period">
                     <template slot="append">天</template>
                 </el-input>
             </el-form-item>
             <el-form-item label="建筑面积">
-                <el-input v-model="form.address">
+                <el-input v-model="form.area">
                     <template slot="append">平方米</template>
                 </el-input>
             </el-form-item>
             <el-form-item label="建设单位">
-                <div class="form-divs">
-                    <div class="form-div" v-for="(item, index) in form.constructing" :key="index">
-                        <el-input v-model="item.value"></el-input
-                        ><i v-if="form.constructing.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('constructing')"></i
-                        ><i v-if="index!==0" class="project-icon el-icon-delete" @click.prevent="remove('constructing', index)"></i>
+                <i v-if="form.build_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('build_company')"></i>
+                <div v-else class="form-divs">
+                    <div class="form-div" v-for="(item, index) in form.build_company" :key="index">
+                        <el-input v-model="form.build_company[index]"></el-input>
+                        <i v-if="form.build_company.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('build_company')"></i
+                        ><i class="project-icon el-icon-delete" @click.prevent="remove('build_company', index)"></i>
                     </div>
                 </div>
             </el-form-item>
             <el-form-item label="设计单位">
-                <div class="form-divs">
-                    <div class="form-div" v-for="(item, index) in form.design" :key="index">
-                        <el-input v-model="item.value"></el-input
-                        ><i v-if="form.design.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('design')"></i
-                        ><i v-if="index!==0" class="project-icon el-icon-delete" @click.prevent="remove('design', index)"></i>
+                <i v-if="form.design_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('design_company')"></i>
+                <div v-else class="form-divs">
+                    <div class="form-div" v-for="(item, index) in form.design_company" :key="index">
+                        <el-input v-model="form.design_company[index]"></el-input>
+                        <i v-if="form.design_company.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('design_company')"></i
+                        ><i class="project-icon el-icon-delete" @click.prevent="remove('design_company', index)"></i>
                     </div>
                 </div>
             </el-form-item>
             <el-form-item label="监理单位">
-                <div class="form-divs">
-                    <div class="form-div" v-for="(item, index) in form.control" :key="index">
-                        <el-input v-model="item.value"></el-input
-                        ><i v-if="form.control.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('control')"></i
-                        ><i v-if="index!==0" class="project-icon el-icon-delete" @click.prevent="remove('control', index)"></i>
+                <i v-if="form.supervisor_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('supervisor_company')"></i>
+                <div v-else class="form-divs">
+                    <div class="form-div" v-for="(item, index) in form.supervisor_company" :key="index">
+                        <el-input v-model="form.supervisor_company[index]"></el-input>
+                        <i v-if="form.supervisor_company.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('supervisor_company')"></i
+                        ><i class="project-icon el-icon-delete" @click.prevent="remove('supervisor_company', index)"></i>
                     </div>
                 </div>
             </el-form-item>
             <el-form-item label="施工单位">
-                <div class="form-divs">
-                    <div class="form-div" v-for="(item, index) in form.construction" :key="index">
-                        <el-input v-model="item.value"></el-input
-                        ><i v-if="form.construction.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('construction')"></i
-                        ><i v-if="index!==0" class="project-icon el-icon-delete" @click.prevent="remove('construction', index)"></i>
+                <i v-if="form.construction_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('construction_company')"></i>
+                <div v-else class="form-divs">
+                    <div class="form-div" v-for="(item, index) in form.construction_company" :key="index">
+                        <el-input v-model="form.construction_company[index]"></el-input>
+                        <i v-if="form.construction_company.length === index+1" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('construction_company')"></i
+                        ><i class="project-icon el-icon-delete" @click.prevent="remove('construction_company', index)"></i>
                     </div>
                 </div>
             </el-form-item>
@@ -80,21 +91,36 @@
     export default {
         data() {
             return {
+                isLoading: false,
+                isAdd: true,
                 form: {
                     name: '',
-                    address: '',
+                    start_date: '',
+                    addr: '',
                     // projectImg: '',
-                    constructing: [{value: ''}],
-                    design: [{value: ''}],
-                    control: [{value: ''}],
-                    construction: [{value: ''}]
+                    cost: '',
+                    period: '',
+                    area: '',
+                    build_company: [],
+                    design_company: [],
+                    construction_company: [],
+                    supervisor_company: []
                 }
             }
         },
+        created() {
+            this.isLoading = true;
+            this.$http.get('api/v1/system/project/')
+            .then((res)=>{
+                this.isLoading = false;
+                if(JSON.stringify(res.data) === '{}') { this.isAdd = true; }
+                else {this.form = res.data; this.isAdd = false;}
+            })
+            .catch(()=>{})
+        },
         methods: {
-            // 添加建设单位
             add(name) {
-                this.form[name].push({value: ''})
+                this.form[name].push('')
             },
             // 删除建设单位
             remove(name, index) {
@@ -118,6 +144,57 @@
             onSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        if(this.isAdd) {        //添加
+                            this.isLoading = true;
+                            this.$http.post('api/v1/system/project/', {
+                                name: this.form.name,
+                                start_date: this.form.start_date?this.$common.YMD(this.$common.DateParse(this.form.start_date)): null,
+                                addr: this.form.addr,
+                                cost: this.form.cost ? this.form.cost : null,
+                                period: this.form.period,
+                                area: this.form.area,
+                                build_company: this.form.build_company,
+                                design_company: this.form.design_company,
+                                construction_company: this.form.construction_company,
+                                supervisor_company: this.form.supervisor_company
+                            })
+                            .then((res)=>{
+                                this.isLoading = false;
+                                this.isAdd = false;
+                                this.$message({
+                                    type: 'success',
+                                    message: '设置成功'
+                                })
+                            })
+                            .catch(()=>{
+                                this.isLoading = false;
+                            })
+                        }else {         //修改
+                            this.isLoading = true;
+                            this.$http.put('api/v1/system/project/', {
+                                name: this.form.name,
+                                start_date: this.form.start_date ? this.common.YMD(this.form.start_date): null,
+                                addr: this.form.addr,
+                                cost: this.form.cost ? this.form.cost : null,
+                                period: this.form.period,
+                                area: this.form.area,
+                                build_company: this.form.build_company,
+                                design_company: this.form.design_company,
+                                construction_company: this.form.construction_company,
+                                supervisor_company: this.form.supervisor_company
+                            })
+                            .then((res)=>{
+                                this.isLoading = false;
+                                this.isAdd = false;
+                                this.$message({
+                                    type: 'success',
+                                    message: '设置成功'
+                                })
+                            })
+                            .catch(()=>{
+                                this.isLoading = false;
+                            })
+                        }
                     }
                 });
             }

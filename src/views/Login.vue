@@ -103,7 +103,6 @@ export default {
             let _that = this;
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    
                     this.loginLoading = true;
                     this.$http.post('api/v1/user/login', {
                         username: this.ruleForm.userName,
@@ -116,6 +115,7 @@ export default {
                         }
                         this.loginLoading = false;
                         localStorage.setItem('user_info', JSON.stringify(res.data));
+                        localStorage.setItem('token', res.token);
                         this.$store.state.userInfo = res.data;
                         this.$router.push({ path: '/System/HomeSet'});
                     })

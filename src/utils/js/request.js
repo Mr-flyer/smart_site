@@ -174,11 +174,11 @@ function sucErrFun(res) {
     }
 }
 function errorFun(err) {
-    // 没有登录或者cookie过期
+    // 没有登录或者token验证失败
     if(err.response) {
-        if(err.response.status == 403) {
-            localStorage.clear();
-            router.replace({path: '/'}).catch(data => {  });
+        if(err.response.status == 401) {
+            // localStorage.clear();
+            // router.replace({path: '/'}).catch(data => {  });
         }
     }
     // Message({

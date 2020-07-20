@@ -8,11 +8,13 @@ import ElementUI from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
 import {Message} from 'element-ui';
 import request from './utils/js/request';
+import common from './utils/js/common';
 
 Vue.use(ElementUI)
 Vue.prototype.$message = Message;
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = request;
+Vue.prototype.common = common;
 Vue.config.productionTip = false;
 
 /********
@@ -21,6 +23,9 @@ Vue.config.productionTip = false;
 axios.defaults.timeout = 8000; //设定超时时间
 axios.defaults.withCredentials = true;//让ajax携带cookie
 axios.interceptors.request.use(config => {
+  if(localStorage.getItem('token')) {
+    config.headers.common['Authorization'] = "jwt " + localStorage.getItem('token');
+  }
   return config
   }, error => {
     Message({
@@ -33,6 +38,7 @@ axios.interceptors.request.use(config => {
 *** axios配置：请求后响应的拦截
 *********/
 axios.defaults.baseURL = 'http://192.168.101.47:8000/';
+
 axios.interceptors.response.use(
   response => {
     return response;
@@ -44,7 +50,7 @@ axios.interceptors.response.use(
       return Promise.reject(error)
     };
     if(error.response){
-      if(error.response.status == 400 || error.response.status == 403 || error.response.status == 404){
+      if(error.response.status == 400 || error.response.status == 401 || error.response.status == 404){
         return Promise.reject(error);
       }
     }

@@ -192,11 +192,23 @@ export default {
         icon: "el-icon-tickets",
         menuItemList: [
           {
+            name: "三维实景物联",
+            routerName: "TDRealScene",
+            path: "/IOT/TDRealScene"
+          },
+          {
             name: "无人机巡航",
             routerName: "UAVCruise",
             path: "/IOT/UAVCruise"
           }
         ]
+      },
+      {
+        name: "三维文档",
+        icon: "el-icon-document",
+        routerName: "TDDocument",
+        path: "/TDDocument",
+        menuItemList: []
       }
     ];
     return {
