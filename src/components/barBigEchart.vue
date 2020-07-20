@@ -12,7 +12,19 @@ export default {
     return {
       lineChart: {},
       Yitems: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
-      Ycolors: ["#276fff", "#975fe5", "#58afff", "#fbd437", "#fba137", "#e864f8", "#36cbcb", "#83cb36", "#77ffcd", "#fff372", "#e4e7ea"]
+      Ycolors: [
+        "#276fff",
+        "#975fe5",
+        "#58afff",
+        "#fbd437",
+        "#fba137",
+        "#e864f8",
+        "#36cbcb",
+        "#83cb36",
+        "#77ffcd",
+        "#fff372",
+        "#e4e7ea"
+      ]
     };
   },
   watch: {
@@ -58,7 +70,7 @@ export default {
         title: [
           {
             text: "现场人员表",
-            left: "25%",
+            left: "20%",
             textAlign: "right",
             textStyle: {
               fontSize: 15,
@@ -189,29 +201,103 @@ export default {
             ].sort(function(a, b) {
               return a.value - b.value;
             }),
+            left: 10,
+            right: 10,
             // roseType: "radius",
             center: ["25%", "50%"],
             radius: ["30%", "60%"],
-            label: {
-              show: false,
-              // color: "rgba(255, 255, 255, 0.3)",
-              position: "center"
-            },
-            emphasis: {
+            markPoint: {
+              symbol: "rect",
+              symbolSize: [50, 2],
               label: {
-                show: true,
-                fontSize: "16",
-                fontWeight: "bold"
-              }
+                color: "#fff",
+                offset: [0, -12]
+              },
+              data: [
+                {
+                  name: "某个屏幕坐标",
+                  x: 50,
+                  y: 50,
+                  itemStyle: {
+                    color: "aqua"
+                  },
+                  value: "现场人数\n2172人"
+                },
+                {
+                  name: "某个屏幕坐标",
+                  x: 200,
+                  y: 60,
+                  value: "差额\n10人"
+                },
+                {
+                  name: "某个屏幕坐标",
+                  x: 120,
+                  y: 220,
+                  itemStyle: {
+                    color: "transparent"
+                  },
+                  value: "应到人数2182人"
+                },
+              ]
             },
+            label: {
+              show: false
+              // formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+              // backgroundColor: '#eee',
+              // borderColor: '#aaa',
+              // borderWidth: 1,
+              // borderRadius: 4,
+              // // shadowBlur:3,
+              // // shadowOffsetX: 2,
+              // // shadowOffsetY: 2,
+              // // shadowColor: '#999',
+              // // padding: [0, 7],
+              // rich: {
+              //     a: {
+              //         color: '#999',
+              //         lineHeight: 22,
+              //         align: 'center'
+              //     },
+              //     // abg: {
+              //     //     backgroundColor: '#333',
+              //     //     width: '100%',
+              //     //     align: 'right',
+              //     //     height: 22,
+              //     //     borderRadius: [4, 4, 0, 0]
+              //     // },
+              //     hr: {
+              //         borderColor: '#aaa',
+              //         width: '100%',
+              //         borderWidth: 0.5,
+              //         height: 0
+              //     },
+              //     b: {
+              //         fontSize: 16,
+              //         lineHeight: 33
+              //     },
+              //     per: {
+              //         color: '#eee',
+              //         backgroundColor: '#334455',
+              //         padding: [2, 4],
+              //         borderRadius: 2
+              //     }
+              // }
+            },
+            // emphasis: {
+            //   label: {
+            //     show: true,
+            //     fontSize: "16",
+            //     fontWeight: "bold"
+            //   }
+            // },
             labelLine: {
               show: false,
               lineStyle: {
                 color: "rgba(255, 255, 255, 0.3)"
               },
               smooth: 0.2,
-              length: 10,
-              length2: 20
+              length: 0,
+              length2: 0
             }
             // itemStyle: {
             //   show: false,
@@ -243,7 +329,7 @@ export default {
         };
       });
       console.log("obj", obj);
-      return obj
+      return obj;
     }
   }
 };

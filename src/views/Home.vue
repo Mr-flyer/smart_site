@@ -693,15 +693,19 @@ $txtColor2: #ffde7b;
     margin-top: 15px;
     width: 100%;
     border-collapse: collapse;
-    border: 0px solid #999;
+    border: 0px solid $cyan;
     font-size: 14px;
     font-weight: 700;
     color: #fff;
     background-color: rgba(#051e33, 1);
+    tr {
+      display: flex;
+    }
     td {
+      flex: 1;
       border-top: 0;
-      border-right: 1px solid #999;
-      border-bottom: 1px solid #999;
+      border-right: 1px solid $cyan;
+      border-bottom: 1px solid $cyan;
       border-left: 0;
       padding: 10px 15px;
     }
