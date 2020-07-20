@@ -1,5 +1,5 @@
 <template>
-    <div class="video-manage">
+    <div class="video-manage" v-loading="isLoading">
         <div class="add-video-btn">
             <el-button icon="el-icon-plus" type="primary" @click="dialogFormVisible = true">新增视频</el-button>
         </div>
@@ -50,55 +50,73 @@
         <el-pagination
             class="video-page"
             background
-            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[20, 30, 40, 50]"
             :page-size="20"
-            layout="sizes, prev, pager, next, jumper"
-            :total="100">
+            layout="prev, pager, next, jumper"
+            :total="count">
         </el-pagination>
         <el-dialog title="新增视频" :visible.sync="dialogFormVisible">
-            <el-form :model="form" label-width="140px">
-                <el-form-item label="视频区域名称">
+            <el-form :model="form" ref="from" label-width="140px">
+                <el-form-item 
+                    prop="areaName"
+                    label="视频区域名称"
+                    :rules="{ required: true, message: '视频区域名称不能为空', trigger: 'blur' }">
                     <el-select v-model="form.areaName" placeholder="请选择视频区域名称">
-                    <el-option label="项目模型" value="shanghai"></el-option>
-                    <el-option label="项目实景" value="beijing"></el-option>
+                        <el-option label="项目模型" :value="0"></el-option>
+                        <el-option label="项目实景" :value="1"></el-option>
+                        <el-option label="视频监控" :value="2"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="视频">
+                <el-form-item
+                    prop="video"
+                    label="视频"
+                    :rules="{ required: true, message: '视频不能为空', trigger: 'blur' }">
                     <el-upload
                         class="upload-demo"
                         action="#"
                         accept="video/*"
-                        :on-change="handleChange"
+                        :show-file-list="false"
+                        :on-change="changeFile"
                         :file-list="fileList">
                         <el-button size="small" type="primary">点击上传</el-button>
                         <div slot="tip" class="form-tips">只能上传MP4格式文件</div>
                     </el-upload>
                 </el-form-item>
-                <el-form-item label="排序">
+                <el-form-item
+                    prop="sort"
+                    label="排序"
+                    :rules="{ required: true, message: '视频不能为空', trigger: 'blur' }">
                     <el-select v-model="form.sort" placeholder="请选择视频排序">
                     <el-option v-for="item in 5" :key="item" :label="item" value="shanghai"></el-option>
                     </el-select>
                     <div class="form-tips">注：排序值越小，排序越靠前，如1、2、3，1排序最前面，如排序值相同，则先添加的靠前）</div>
                 </el-form-item>
-                <el-form-item label="状态">
+                <el-form-item 
+                    prop="status"
+                    label="状态"
+                    :rules="{ required: true, message: '请选择视频状态', trigger: 'blur' }">
                     <el-select v-model="form.status" placeholder="请选择视频状态">
-                    <el-option label="正常" value="shanghai"></el-option>
-                    <el-option label="下线" value="beijing"></el-option>
+                    <el-option label="正常" :value="true"></el-option>
+                    <el-option label="下线" :value="false"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="开始时间">
+                <el-form-item 
+                    prop="startTime"
+                    label="开始时间"
+                    :rules="{ required: true, message: '请选择开始时间', trigger: 'blur' }">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.startTime"></el-date-picker>
                     <div class="form-tips">若视频当前的状态为下线，等到开始时间则自动变为上线</div>
                 </el-form-item>
-                <el-form-item label="结束时间">
+                <el-form-item 
+                    prop="endTime"
+                    label="结束时间"
+                    :rules="{ required: true, message: '请选择结束时间', trigger: 'blur' }">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.endTime"></el-date-picker>
                 </el-form-item>
                 <el-form-item>
                     <el-button @click="dialogFormVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                    <el-button type="primary" @click="submit('from')">确 定</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -109,36 +127,31 @@
     export default {
         data() {
             return {
-                tableData: [
-                    {
-                        areaName: '项目模型',
-                        name: '项目模型1.mp4',
-                        sort: '1',
-                        status: '正常',
-                        startTime: '2016-05-02',
-                        endTime: '2016-06-02'
-                    },
-                    {
-                        areaName: '项目模型',
-                        name: '项目模型1.mp4',
-                        sort: '1',
-                        status: '正常',
-                        startTime: '2016-05-02',
-                        endTime: '2016-06-02'
-                    }
-                ],
+                isLoading: false,
+                tableData: [],
+                count: 0,
                 currentPage: 1,
                 dialogFormVisible: false,
                 form: {
                     areaName: '',
                     video: '',
                     sort: '',
-                    status: '',
+                    status: true,
                     startTime: '',
                     endTime: ''
                 },
                 fileList: []
             }
+        },
+        created() {
+            this.isLoading = true;
+            this.$http.get('api/v1/system/video/')
+            .then((res)=>{
+                this.isLoading = false;
+                this.count = res.count;
+                this.tableData = res.data;
+            })
+            .catch(()=>{})
         },
         methods: {
             handleSizeChange(val) {
@@ -147,8 +160,14 @@
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
             },
-            handleChange(file, fileList) {
-                this.fileList = fileList.slice(-3);
+            changeFile(file, fileList) {
+                console.log(file)
+                // let _that = this;
+                // var reader = new FileReader();    
+                // reader.readAsDataURL(file.raw);
+                // reader.onloadend = function(e) {
+                //     _that.form.video = e.target.result;
+                // }
             },
             // 下线视频
             offlineBtn() {
@@ -175,6 +194,11 @@
                         message: '删除成功!'
                     });
                 }).catch(() => {});
+            },
+            submit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {}
+                })
             }
         }
     }

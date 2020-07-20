@@ -1,19 +1,14 @@
 <template>
-  <el-card shadow="never">
-    <el-tabs v-model="active">
-      <el-tab-pane class="cruise_wrap" label="无人机巡航" name="first">
-        <el-card class="cruise_item" :body-style="cardBodyStyle" shadow="hover" v-for="(item, index) of 5" :key="index">
-          <img class="cruise_pic" />
-          <div class="cruise_cont">
-            <span class="cruise_title">标题</span>
-            <div>视屏大小：12M</div>
-            <div class="cruise_time">上传时间：2020-02-02</div>
-          </div>
-        </el-card>
-      </el-tab-pane>
-      <el-tab-pane label="三维实景物联" name="second">三维实景物联</el-tab-pane>
-    </el-tabs>
-  </el-card>
+  <div class="cruise_wrap">
+    <el-card class="cruise_item" :body-style="cardBodyStyle" shadow="hover" v-for="(item, index) of 5" :key="index">
+      <img class="cruise_pic" />
+      <div class="cruise_cont">
+        <span class="cruise_title">标题</span>
+        <div>视屏大小：12M</div>
+        <div class="cruise_time">上传时间：2020-02-02</div>
+      </div>
+    </el-card>
+  </div>
 </template>
 
 <script>

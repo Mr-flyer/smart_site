@@ -18,7 +18,11 @@ import VehicleBarrier from "../views/Security/VehicleBarrier.vue";
 import VideoMonitoring from "../views/Security/VideoMonitoring.vue";
 // 三维物联
 import IOT from "../views/IOT/index.vue";
+import TDRealScene from "../views/IOT/TDRealScene.vue";
 import UAVCruise from "../views/IOT/UAVCruise.vue";
+// 三维文档
+import TDDocument from "../views/TDDocument/TDDocument.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -106,8 +110,18 @@ const routes = [
             name: "UAVCruise",
             component: UAVCruise,
           },
+          {
+            path: "/IOT/TDRealScene",
+            name: "TDRealScene",
+            component: TDRealScene,
+          }
         ],
       },
+      {
+        path: "/TDDocument",
+        name: "TDDocument",
+        component: TDDocument
+      }
     ],
   },
 ];
