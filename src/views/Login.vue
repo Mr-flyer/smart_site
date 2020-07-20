@@ -24,7 +24,7 @@
                             <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                         </el-input>
                     </el-form-item>
-                    <el-form-item prop="code">
+                    <!-- <el-form-item prop="code">
                         <el-input
                             v-model="ruleForm.code" 
                             maxlength="4"
@@ -39,7 +39,7 @@
                                 </div>
                             </template>
                         </el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item>
                       <el-button size="medium" type="primary" :loading="loginLoading" class="login-submit" @click="submitForm('ruleForm')">{{loginLoading?'登录中...':'登录'}}</el-button>
                     </el-form-item>
@@ -61,7 +61,7 @@ export default {
             ruleForm: {
                 userName:'',
                 userPwd:'',
-                code: ''
+                // code: ''
             },
             codeImg: '',
             rememberPwd: false,
@@ -72,10 +72,10 @@ export default {
                 userPwd: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
                 ],
-                code: [
-                    { required: true, message: '请输入验证码', trigger: 'blur' },
-                    { min: 4, max: 4, message: '请输入验证码', trigger: 'blur' }
-                ]
+                // code: [
+                //     { required: true, message: '请输入验证码', trigger: 'blur' },
+                //     { min: 4, max: 4, message: '请输入验证码', trigger: 'blur' }
+                // ]
             },
             dialogVisible: false,
             loading: false,
@@ -103,25 +103,25 @@ export default {
             let _that = this;
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.$router.push({ path: '/System/HomeSet'});
-                    // this.loginLoading = true;
-                    // this.$http.post('/api/v1/user/login', {
-                    //     username: this.ruleForm.userName,
-                    //     password: this.ruleForm.userPwd,
-                    //     code: this.ruleForm.code
-                    // })
-                    // .then((res)=> {
-                    //     if(this.rememberPwd) {      //记住密码
-                    //         this.setCookie(this.ruleForm.userName, this.ruleForm.userPwd, 7);
-                    //     }
-                    //     this.loginLoading = false;
-                    //     localStorage.setItem('user_info', JSON.stringify(res.data));
-                    //     this.$store.state.userInfo = res.data;
-                    //     this.$router.push({ path: '/Main'});
-                    // })
-                    // .catch(()=> {
-                    //     this.loginLoading = false;
-                    // })
+                    
+                    this.loginLoading = true;
+                    this.$http.post('api/v1/user/login', {
+                        username: this.ruleForm.userName,
+                        password: this.ruleForm.userPwd,
+                        // code: this.ruleForm.code
+                    })
+                    .then((res)=> {
+                        if(this.rememberPwd) {      //记住密码
+                            this.setCookie(this.ruleForm.userName, this.ruleForm.userPwd, 7);
+                        }
+                        this.loginLoading = false;
+                        localStorage.setItem('user_info', JSON.stringify(res.data));
+                        this.$store.state.userInfo = res.data;
+                        this.$router.push({ path: '/System/HomeSet'});
+                    })
+                    .catch(()=> {
+                        this.loginLoading = false;
+                    })
                 }
             });
         },
