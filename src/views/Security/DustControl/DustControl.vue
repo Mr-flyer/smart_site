@@ -88,7 +88,16 @@
           </el-card>
           <el-card class="mb-20" shadow="never">
             <div slot="header" class="test_header">
-              <span>实时监测</span>
+              <div>实时监测
+                <el-tooltip class="item" effect="dark" placement="right-end">
+                  <div slot="content">
+                    N：仪表正常 F：停用 M：处于维护期产生的数据 <br />
+                    S: 手动输入的设定值 D：故障 B：异常 <br />
+                    T：超过上限，爆表 C:处于校准状态 <br />
+                  </div>
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </div>
               <el-tooltip class="item" effect="dark" content="标准值设置" placement="top">
                 <!-- <el-button type="info" icon="el-icon-s-tools" size="small" circle @click="showEquipmentVisible = true"></el-button> -->
                 <i class="el-icon-setting icon-size" @click="showEquipmentVisible = true"></i>

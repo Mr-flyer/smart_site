@@ -116,14 +116,18 @@
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
               项目模型
             </template>
-            <div class="video_wrap"></div>
+            <div class="video_wrap">
+              <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4" />
+            </div>
           </el-card>
           <el-card class="panel-wrap real_scene-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
               项目实景
             </template>
-            <div class="video_wrap"></div>
+            <div class="video_wrap">
+              <video autoplay loop muted  src="../assets/video/HYBPlan.mp4"></video>
+            </div>
           </el-card>
         </el-col>
         <!-- 右 -->
@@ -278,12 +282,12 @@
     </el-main>
     <div class="navbar_wrap">
       <div class="navbar_inner">
-        <div class="navbar_item">项目总览</div>
-        <div class="navbar_item">安全管理</div>
-        <div class="navbar_item">系统管理</div>
-        <div class="navbar_item">三维物联</div>
-        <div class="navbar_item">生产管理</div>
-        <div class="navbar_item">三维文档</div>
+        <router-link class="navbar_item" :to="{name: '', redirect: '/home'}">项目总览</router-link>
+        <router-link class="navbar_item" :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}">安全管理</router-link>
+        <router-link class="navbar_item" :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}">系统管理</router-link>
+        <router-link class="navbar_item" :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}">三维物联</router-link>
+        <router-link class="navbar_item" :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}">生产管理</router-link>
+        <router-link class="navbar_item" :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}">三维文档</router-link>
       </div>
     </div>
   </el-container>
@@ -477,7 +481,7 @@ export default {
     lineWeaterEchart,
     barBigEchart,
     pieBigEchart
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -958,7 +962,7 @@ $txtColor2: #ffde7b;
   }
   .monitoring_video {
     height: 188px;
-    background-color: aqua;
+    background-color: #e4e7ea;
   }
   .monitoring_desc {
     font-size: 16px;
@@ -1052,17 +1056,27 @@ $txtColor2: #ffde7b;
   }
 }
 
-.model-wrap {
+.center_wrap {
   .video_wrap {
-    height: 435px;
-    background-color: #e4e7ea;
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
-}
-.real_scene-wrap {
-  .video_wrap {
-    height: 356px;
-    background-color: #e4e7ea;
+  .model-wrap {
+    .video_wrap {
+      height: 435px;
+      // background-color: #e4e7ea;
+    }
   }
+  .real_scene-wrap {
+    .video_wrap {
+      height: 356px;
+      // background-color: #e4e7ea;
+    }
+  }
+
 }
 // 页脚tabber
 .navbar_wrap {
@@ -1095,5 +1109,9 @@ $txtColor2: #ffde7b;
       background-image: url(../assets/bigScreen/navitem_active@2x.png);
     }
   }
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
 }
 </style>

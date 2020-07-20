@@ -184,7 +184,19 @@ export default {
             name: "车辆道闸",
             routerName: "VehicleBarrier",
             path: "/Security/VehicleBarrier"
-          }
+          },
+          {
+            name: "安全教育(2期)",
+          },
+          {
+            name: "危大工程监测预警（2期）",
+          },
+          {
+            name: "现场安全隐患排查（2期）",
+          },
+          {
+            name: "高处作业防护预警（2期）",
+          },
         ]
       },
       {
@@ -204,10 +216,35 @@ export default {
         ]
       },
       {
+        name: "生产管理（2期）",
+        icon: "el-icon-tickets",
+        menuItemList: [
+          {
+            name: "三维进度（2期）",
+          },
+          {
+            name: "施工验收（2期）",
+          },
+          {
+            name: "协同会审（2期）",
+          },
+          {
+            name: "云会议（2期）",
+          },
+        ]
+      },
+      {
         name: "三维文档",
         icon: "el-icon-document",
         routerName: "TDDocument",
         path: "/TDDocument",
+        menuItemList: []
+      },
+      {
+        name: "用户中心",
+        icon: "el-icon-document",
+        routerName: "UserCenter",
+        path: "/UserCenter",
         menuItemList: []
       }
     ];
@@ -410,6 +447,7 @@ export default {
       display: flex;
       align-items: center;
       .icon-circle {
+        flex: none;
         width: 6px;
         height: 6px;
         border-radius: 50%;
