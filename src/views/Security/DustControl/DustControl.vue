@@ -13,92 +13,117 @@
         <el-tab-pane label="塔吊自动喷淋系统" name="2"></el-tab-pane>
       </el-tabs>
     </el-card>
-
-    <el-row class="page_cont" :gutter="20">
-      <el-col :span="8">
-        <el-card shadow="never">
-          <div slot="header">地图</div>
-          <div></div>
-        </el-card>
-        <el-card shadow="never">
-          <div slot="header">参数排序</div>
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="name" label="设备名称" width="180"></el-table-column>
-            <el-table-column prop="date" label="pm2.5 mg/m³" width="180"></el-table-column>
-            <el-table-column prop="date" label="pm10 mg/m³" width="180"></el-table-column>
-            <el-table-column prop="date" label="TSP mg/m³" width="180"></el-table-column>
-            <el-table-column prop="address" label="噪音 dB"></el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-      <el-col :span="16">
-        <el-card shadow="never">
-          <div slot="header">
-            设备选择
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </div>
-          <el-form
-            :model="formEquipment"
-            status-icon
-            :rules="rules"
-            ref="ruleForm"
-            label-width="100px"
-            class="demo-ruleForm"
-          >
-            <el-form-item label="设备名称" prop="name">
-              <el-input type="password" v-model="formEquipment.name" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="设备ID" prop="code">
-              <el-input type="password" v-model="formEquipment.code" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="更新时间" prop="time">
-              <el-input v-model="formEquipment.time"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('formEquipment')">提交</el-button>
-              <el-button type="primary" @click="editEquipment">修改</el-button>
-              <el-button @click="showEquipmentVisible = true">基准值设置</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-        <el-card shadow="never">
-          <div slot="header">实时监测</div>
-          <div class="weather_wrap">
-            <div class="weather_item color_warning" v-for="(item, index) of 9" :key="index">
-              <i class="el-icon-s-flag"></i>
-              <div class="weather_cont">
-                <div class="title">
-                  pm2.5
-                  <b>N</b>
+    <div class="page_cont">
+      <el-card class="mb-20" shadow="never" :body-style="bodyStyle">
+        <span>实时监测</span>
+        <el-button type="primary" plain size="small" @click="gotoHistory">监测历史数据</el-button>
+      </el-card>
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <el-card class="mb-20 map-wrap" shadow="never">
+            <div slot="header" class="map-hd">
+              <span>地图</span>
+              <el-tooltip class="item" effect="dark" content="上传地图" placement="top">
+                <i class="el-icon-upload2 icon-size"></i>
+              </el-tooltip>
+            </div>
+            <div class="map-bd"></div>
+          </el-card>
+          <el-card class="mb-20" shadow="never">
+            <div slot="header">参数排序</div>
+            <el-table :data="tableData" style="width: 100%" border>
+              <el-table-column prop="name" label="设备名称"></el-table-column>
+              <el-table-column prop="date" label="pm2.5 mg/m³" sortable width="140"></el-table-column>
+              <el-table-column prop="date" label="pm10 mg/m³" sortable width="140"></el-table-column>
+              <el-table-column prop="date" label="TSP mg/m³" sortable width="140"></el-table-column>
+              <el-table-column prop="date" label="噪音 dB" sortable width="140"></el-table-column>
+            </el-table>
+          </el-card>
+        </el-col>
+        <el-col :span="16">
+          <el-card class="mb-20" shadow="never">
+            <div slot="header">
+              设备选择
+              <el-select v-model="value" placeholder="请选择" size="small">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+            <el-form
+              :model="formEquipment"
+              status-icon
+              :rules="rules"
+              ref="ruleForm"
+              label-width="100px"
+              class="formEquipment-wrap"
+            >
+              <el-form-item class="equipment-name-wrap" label="设备名称：" prop="name">
+                <el-input type="text" v-html="formEquipment.name"></el-input>
+                <!-- <el-button class="equipment-name-btn" type="primary" @click="editEquipmentName" size="">修改</el-button> -->
+                <el-button
+                  class="equipment-name-btn"
+                  size="small"
+                  type="primary"
+                  icon="el-icon-edit"
+                  circle
+                  @click="editEquipmentName"
+                ></el-button>
+              </el-form-item>
+              <el-form-item label="设备ID：" prop="code">
+                <el-input type="text" v-html="formEquipment.code"></el-input>
+              </el-form-item>
+              <el-form-item label="更新时间：" prop="time">
+                <el-input v-html="formEquipment.time"></el-input>
+              </el-form-item>
+              <!-- <el-form-item>
+                <el-button type="primary" @click="submitForm('formEquipment')">提交</el-button>
+                <el-button type="primary" @click="editEquipment">修改</el-button>
+                <el-button @click="showEquipmentVisible = true">基准值设置</el-button>
+              </el-form-item>-->
+            </el-form>
+          </el-card>
+          <el-card class="mb-20" shadow="never">
+            <div slot="header" class="test_header">
+              <span>实时监测</span>
+              <el-tooltip class="item" effect="dark" content="标准值设置" placement="top">
+                <!-- <el-button type="info" icon="el-icon-s-tools" size="small" circle @click="showEquipmentVisible = true"></el-button> -->
+                <i class="el-icon-setting icon-size" @click="showEquipmentVisible = true"></i>
+              </el-tooltip>
+            </div>
+            <div class="weather_wrap">
+              <div class="weather_item color_warning" v-for="(item, index) of 9" :key="index">
+                <i class="el-icon-s-flag"></i>
+                <div class="weather_cont">
+                  <div class="title">
+                    pm2.5
+                    <b>N</b>
+                  </div>
+                  <div class="count">
+                    <b>30</b>mg/m³
+                  </div>
+                  <div class="desc">标准值：75mg/m³</div>
                 </div>
-                <div class="count">
-                  <b>30</b>mg/m³
-                </div>
-                <div class="desc">标准值：75mg/m³</div>
               </div>
             </div>
-          </div>
-        </el-card>
-        <el-card shadow="never">
-          <div slot="header">查看数据方式</div>
-          <div class="grid-main">
-            <div class="grid-item">
-              <lineEchart :infoObj="infoSourceTrend" />
+          </el-card>
+          <el-card shadow="never">
+            <div slot="header">查看数据方式</div>
+            <div class="grid-main">
+              <div class="grid-item">
+                <lineEchart :infoObj="infoSourceTrend" />
+              </div>
+              <div class="grid-item">
+                <lineEchart :infoObj="infoSourceTrend02" />
+              </div>
             </div>
-            <div class="grid-item">
-              <lineEchart :infoObj="infoSourceTrend02" />
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
 
     <!-- 设备标准值设置 -->
     <el-dialog title="标准值设置" :visible.sync="showEquipmentVisible">
@@ -116,6 +141,11 @@
         <el-form-item label="TSP" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off">
             <template slot="append">mg/m³</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="噪音" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off">
+            <template slot="append">dB</template>
           </el-input>
         </el-form-item>
         <!-- <el-form-item label="活动区域" :label-width="formLabelWidth">
@@ -183,17 +213,23 @@ const options = [
 // 校验input 为空
 const noEmpty = (rule, value, callback) => {
   if (value === "") callback(new Error("必填项不能为空"));
+  callback();
 };
 export default {
   data: () => ({
+    bodyStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "space-between"
+    },
     active: "0",
     options,
     value: "",
     tableData,
     formEquipment: {
-      name: "",
-      code: "",
-      time: ""
+      name: "设备名称",
+      code: "设备ID",
+      time: "时间"
     },
     rules: {
       name: [{ validator: noEmpty, trigger: "blur" }],
@@ -227,7 +263,7 @@ export default {
       xdata: [],
       color: ["#9357F1", "#5599FE"],
       data: []
-    },
+    }
   }),
   created() {
     // 扬尘监测
@@ -250,9 +286,7 @@ export default {
       legend: ["噪声"],
       xdata: ["10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "12:00"],
       color: ["#9357F1"],
-      data: [
-        [120, 132, 101, 134, 90, 230, 210]
-      ]
+      data: [[120, 132, 101, 134, 90, 230, 210]]
     };
   },
   methods: {
@@ -260,25 +294,17 @@ export default {
       console.log(`tabs切换: `, val);
     },
     // 修改设备名称
-    editEquipment() {
-      this.$prompt("请输入设备名称", "提示", {
+    editEquipmentName() {
+      this.$prompt("设备名称", "编辑", {
         confirmButtonText: "确定",
-        cancelButtonText: "取消"
-        // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        // inputErrorMessage: "邮箱格式不正确"
-      })
-        .then(({ value }) => {
-          this.$message({
-            type: "success",
-            message: "你的设备名称是: " + value
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "取消输入"
-          });
+        cancelButtonText: "取消",
+        inputValue: this.formEquipment.name
+      }).then(({ value }) => {
+        this.$message({
+          type: "success",
+          message: "你的设备名称是: " + value
         });
+      });
     },
     // 修改设备名称
     submitForm(formName) {
@@ -290,6 +316,9 @@ export default {
           return false;
         }
       });
+    },
+    gotoHistory() {
+      this.$router.push("/Security/DustControlHistoryList");
     }
   },
   components: {
@@ -298,11 +327,48 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $colorSuccess: #67c23a;
 $colorWarning: #e6a23c;
 $colorDanger: #f56c6c;
 $colorInfo: #909399;
+.page_cont {
+  .icon-size {
+    font-size: 20px;
+  }
+  .test_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+// 地图
+.map-wrap {
+  .map-hd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .map-bd {
+    height: 500px;
+  }
+}
+.formEquipment-wrap {
+  .equipment-name-wrap {
+    display: flex;
+  }
+  .equipment-name-btn {
+    margin-left: 20px;
+  }
+  .el-form-item__content {
+    display: flex;
+    align-items: center;
+    margin-left: 0 !important;
+  }
+  .el-form-item {
+    margin-bottom: 0;
+  }
+}
 .weather_wrap {
   display: flex;
   flex-wrap: wrap;
@@ -311,6 +377,7 @@ $colorInfo: #909399;
   display: flex;
   align-items: center;
   min-width: 200px;
+  margin-bottom: 20px;
   // max-width: 20%;
   .el-icon-s-flag {
     flex: none;
