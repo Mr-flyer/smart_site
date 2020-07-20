@@ -57,7 +57,7 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-            <div class="real-name-btns"><el-button type="primary">查询</el-button><el-button>重置</el-button></div>
+            <div class="select-btns"><el-button type="primary">查询</el-button><el-button>重置</el-button></div>
         </div>
         <div class="add-admin-btn">
             <el-button icon="el-icon-delete">删除</el-button>
@@ -314,18 +314,6 @@
                 width: 100%;
                 text-align: right;
             }
-        }
-        .add-admin-btn {
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: flex-end;
-            .admin-search {
-                display: inline-flex;
-            }
-        }
-        .admin-page {
-            text-align: right;
-            margin-top: 24px;
         }
         .staff-form {
             max-height: 500px;

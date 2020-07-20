@@ -102,7 +102,6 @@
             },
             changeFile(res) {
                 let _that = this;
-                this.file = res.raw;
                 var reader = new FileReader();    
                 reader.readAsDataURL(res.raw);
                 reader.onloadend = function(e) {

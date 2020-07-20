@@ -77,6 +77,21 @@ p {
   padding: 24px;
   box-sizing: border-box;
 }
+.select-btns {
+  text-align: right;
+}
+.admin-page {
+  text-align: right;
+  margin-top: 24px;
+}
+.add-admin-btn {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: flex-end;
+  .admin-search {
+    display: inline-flex;
+  }
+}
 
 /* 自定义时间 */
 .modal-time-con {

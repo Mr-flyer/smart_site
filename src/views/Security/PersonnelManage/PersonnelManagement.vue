@@ -1,13 +1,14 @@
 <template>
     <div class="home-set main-content">
         <el-tabs v-model="activeName">
-            <el-tab-pane label="实名管理" name="first">
+            <el-tab-pane label="实名管理" name="first" lazy>
                 <v-realName></v-realName>
             </el-tab-pane>
-            <el-tab-pane label="门禁管理" name="second">
+            <el-tab-pane label="门禁管理" name="second" lazy>
                 <v-accessControl></v-accessControl>
             </el-tab-pane>
-            <el-tab-pane label="在岗信息" name="three">
+            <el-tab-pane label="在岗信息" name="three" lazy>
+                <v-jobInfo></v-jobInfo>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -16,15 +17,19 @@
 <script>
     import realName from './RealName';
     import accessControl from './AccessControl';
+    import jobInfo from './JobInfo';
     export default {
         components: {
             'v-realName': realName,
-            'v-accessControl': accessControl
+            'v-accessControl': accessControl,
+            'v-jobInfo': jobInfo
         },
         data() {
             return {
-                activeName: 'second'
+                activeName: 'first'
             }
+        },
+        methods: {
         }
     }
 </script>

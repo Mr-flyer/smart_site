@@ -5,7 +5,7 @@
                 <el-input placeholder="请输入姓名"/><el-button type="primary">搜索</el-button>
             </div>
             <div>
-                <i>导出</i>
+                <el-button icon="el-icon-top-right" type="primary">导出</el-button>
                 <el-button icon="el-icon-plus" type="primary" @click="dialogFormVisible = true">新增管理员</el-button>
             </div>
         </div>
