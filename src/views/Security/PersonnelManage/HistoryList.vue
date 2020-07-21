@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-manage main-content">
+  <div class="admin-manage main-content" v-loading="isLoading">
         <el-page-header class="list-head" @back="goBack" content="历史记录">
         </el-page-header>
         <div class="real-name">
@@ -8,30 +8,30 @@
                     <el-input v-model="formInline.user" placeholder="请输入员工姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="单位类型">
-                    <el-select v-model="formInline.type" placeholder="请选择单位类型">
-                        <el-option label="全部" value="shanghai"></el-option>
-                        <el-option label="管理单位" value="shanghai"></el-option>
+                    <el-select v-model="formInline.company_type" placeholder="请选择单位类型">
+                        <el-option :label="item.name" :value="item.id" v-for="item in companyTypeList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="公司名称">
-                    <el-input v-model="formInline.company" placeholder="请输入公司名称"></el-input>
+                    <el-select v-model="formInline.company" placeholder="请选择单位">
+                        <el-option :label="item.name" :value="item.id" v-for="item in companyList" :key="item.id"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="班组">
-                    <el-select v-model="formInline.class" placeholder="请选择班组">
-                        <el-option label="全部" value="shanghai"></el-option>
-                        <el-option label="管理单位" value="shanghai"></el-option>
+                    <el-select v-model="formInline.team" placeholder="请选择班组">
+                        <el-option :label="item.name" :value="item.id" v-for="item in teamList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="工种">
-                    <el-select v-model="formInline.jobType" placeholder="请选择工种">
-                        <el-option label="全部" value="shanghai"></el-option>
-                        <el-option label="管理单位" value="shanghai"></el-option>
+                    <el-select v-model="formInline.workType" placeholder="请选择工种">
+                        <el-option :label="item.name" :value="item.id" v-for="item in workTypeList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="出入类型">
-                    <el-select v-model="formInline.type" placeholder="请选择出入类型">
-                        <el-option label="全部" value="shanghai"></el-option>
-                        <el-option label="管理单位" value="shanghai"></el-option>
+                    <el-select v-model="formInline.accessType" placeholder="请选择出入类型">
+                        <el-option label="全部" :value="''"></el-option>
+                        <el-option label="出" :value="0"></el-option>
+                        <el-option label="入" :value="1"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="发生时间">
@@ -50,7 +50,9 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-            <div class="real-name-btns"><el-button type="primary">查询</el-button><el-button>重置</el-button></div>
+            <div class="real-name-btns">
+                <el-button @click="search" type="primary">查询</el-button><el-button @click="reset">重置</el-button>
+            </div>
         </div>
         <div class="add-admin-btn">
             <el-button icon="el-icon-top-right" type="primary">导出</el-button>
@@ -64,43 +66,53 @@
                 width="80">
                 <template slot-scope="scope">{{scope.$index+1}}</template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 prop="eventType"
                 label="事件类型"
                 width="100">
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
                 prop="name"
                 label="姓名"
                 width="100">
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 prop="staffId"
                 label="员工ID">
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
-                prop="companyType"
                 label="单位类型"
                 width="180">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.company_type == item.id" v-for="item in companyTypeList" :key="item.id">{{item.name}}</div>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="companyName"
                 label="单位名称">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.company == item.id" v-for="item in companyList" :key="item.id">{{item.name}}</div>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="role"
-                label="角色"
+                label="身份"
                 width="150">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.identity == item.id" v-for="item in identityList" :key="item.id">{{item.name}}</div>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="class"
                 label="班组"
                 width="150">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.team == item.id" v-for="item in teamList" :key="item.id">{{item.name}}</div>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="jobType"
                 label="工种"
                 width="180">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.work_type == item.id" v-for="item in workTypeList" :key="item.id">{{item.name}}</div>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="time"
@@ -108,25 +120,25 @@
                 width="180">
             </el-table-column>
             <el-table-column
-                prop="address"
+                prop="door_no"
                 label="门禁点">
             </el-table-column>
             <el-table-column
-                prop="type"
                 label="出入类型"
                 width="100px">
+                <template slot-scope="scope">
+                    <div>{{scope.row.in_or_out===0?'出':'入'}}</div>
+                </template>
             </el-table-column>
         </el-table>
         <el-pagination
             class="admin-page"
             background
-            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[20, 30, 40, 50]"
             :page-size="20"
-            layout="sizes, prev, pager, next, jumper"
-            :total="100">
+            layout="prev, pager, next, jumper"
+            :total="count">
         </el-pagination>
   </div>
 </template>
@@ -135,41 +147,98 @@
     export default {
         data() {
             return {
-                tableData: [
-                    {
-                        eventType: '人脸识别',
-                        name: '张三',
-                        staffId: 1,
-                        gender: '男',
-                        companyType: '管理单位',
-                        companyName: '中国第一建筑公司',
-                        role: '超级管理员',
-                        class: '班组1',
-                        jobType: '工种1',
-                        time: '2020-09-09 12：00：00',
-                        address: '1号门',
-                        type: '出'
-                    }
-                ],
+                isLoading: false,
+                tableData: [],
                 currentPage: 1,
+                count: 0,
                 formInline: {
                     user: '',
-                    type: '',
+                    company_type: '',
                     company: '',
-                    class: '',
-                    jobType: '',
-                    type: '',
+                    team: '',
+                    workType: '',
+                    accessType: '',
+                    time: [],
+                    address: ''
+                },
+                identityList: [
+                    {id: 0, name: '管理人员'},
+                    {id: 1, name: '施工人员'}
+                ],
+                companyTypeList: [],
+                companyList: [],
+                teamList: [],
+                workTypeList: []
+            }
+        },
+        created() {
+            // 单位类型
+            let company_type = this.$http.get('api/v1/user/company_type/').then((res)=>{
+                this.companyTypeList = res.data;
+                this.companyTypeList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            // 单位名称
+            let company = this.$http.get('api/v1/user/company/').then((res)=>{
+                this.companyList = res.data;
+                this.companyList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            // 班组
+            let team = this.$http.get('api/v1/user/team/').then((res)=>{
+                this.teamList = res.data;
+                this.teamList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            // 工种
+            let work_type = this.$http.get('api/v1/user/work_type/').then((res)=>{
+                this.workTypeList = res.data;
+                this.workTypeList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            let firstRequest = this.$http.get(`api/v1/security/user_door?page=1&page_size=20`).then((res)=>{
+                this.tableData = res.data;
+                this.count = res.count;
+            }).catch(()=>{})
+            this.isLoading = true;
+            this.$http.requestAll([company_type, company, team, work_type])
+            .then(()=>{
+                this.isLoading = false;
+            }).catch(()=>{})
+        },
+        methods: {
+            requestInfo(val) {
+                this.isLoading = true;
+                this.currentPage = val;
+                let start_time='';
+                let end_time='';
+                if(this.formInline.time.length===2) {
+                    start_time = this.common.YMD(Date.parse(this.formInline.time[0])/1000);
+                    end_time = this.common.YMD(Date.parse(this.formInline.time[1])/1000);
+                }
+                this.$http.get(`api/v1/security/user_door?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&start_time=${start_time}&end_time=${end_time}`)
+                .then((res)=>{
+                    this.isLoading = false;
+                    this.tableData = res.data;
+                    this.count = res.count;
+                })
+                .catch(()=>{})
+            },
+            handleCurrentChange(val) {
+                this.requestInfo(val);
+            },
+            // 查询
+            search() {
+                this.requestInfo(1);
+            },
+            // 重置
+            reset() {
+                this.formInline = {
+                    user: '',
+                    company_type: '',
+                    company: '',
+                    team: '',
+                    workType: '',
+                    accessType: '',
                     time: [],
                     address: ''
                 }
-            }
-        },
-        methods: {
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
             },
             // 返回上一页
             goBack() {

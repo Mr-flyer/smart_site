@@ -254,7 +254,7 @@
                     company: '',
                     class: '',
                     jobType: '',
-                    head_img: require('../../../assets/head_img.jpg'),
+                    head_img: require('../../../assets/head_img.png'),
                     role: '',
                     einlass: '',
                     leavingTime: ''

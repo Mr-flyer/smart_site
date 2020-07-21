@@ -9,7 +9,7 @@
                 <el-card class="box-card" shadow="never">
                     <div slot="header" class="clearfix">
                         <span>统计选择：
-                            <el-select v-model="countSelect">
+                            <el-select v-model="countSelect" @change="changeCount">
                                 <el-option label="人员总况" :value="0"></el-option>
                                 <el-option label="施工单位总况" :value="1"></el-option>
                                 <el-option label="管理人员总况" :value="2"></el-option>
@@ -284,6 +284,9 @@
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
+            },
+            changeCount() {
+                this.countPicSelect = 0;
             }
         }
     }

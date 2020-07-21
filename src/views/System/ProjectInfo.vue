@@ -144,11 +144,51 @@
             onSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        let build = this.form.build_company.some((item)=>{
+                            return item == '';
+                        })
+                        if(build) {
+                            this.$message({
+                                type: 'warning',
+                                message: '建设单位里包含空值，请填写完整'
+                            })
+                            return false;
+                        }
+                        let design = this.form.design_company.some((item)=>{
+                            return item == '';
+                        })
+                        if(design) {
+                            this.$message({
+                                type: 'warning',
+                                message: '设计单位里包含空值，请填写完整'
+                            })
+                            return false;
+                        }
+                        let construction = this.form.construction_company.some((item)=>{
+                            return item == '';
+                        })
+                        if(construction) {
+                            this.$message({
+                                type: 'warning',
+                                message: '施工单位里包含空值，请填写完整'
+                            })
+                            return false;
+                        }
+                        let supervisor = this.form.supervisor_company.some((item)=>{
+                            return item == '';
+                        })
+                        if(supervisor) {
+                            this.$message({
+                                type: 'warning',
+                                message: '监理单位里包含空值，请填写完整'
+                            })
+                            return false;
+                        }
                         if(this.isAdd) {        //添加
                             this.isLoading = true;
                             this.$http.post('api/v1/system/project/', {
                                 name: this.form.name,
-                                start_date: this.form.start_date?this.$common.YMD(this.$common.DateParse(this.form.start_date)): null,
+                                start_date: this.form.start_date ? this.common.YMD(Date.parse(this.form.start_date)/1000): null,
                                 addr: this.form.addr,
                                 cost: this.form.cost ? this.form.cost : null,
                                 period: this.form.period,
@@ -173,7 +213,7 @@
                             this.isLoading = true;
                             this.$http.put('api/v1/system/project/', {
                                 name: this.form.name,
-                                start_date: this.form.start_date ? this.common.YMD(this.form.start_date): null,
+                                start_date: this.form.start_date ? this.common.YMD(Date.parse(this.form.start_date)/1000): null,
                                 addr: this.form.addr,
                                 cost: this.form.cost ? this.form.cost : null,
                                 period: this.form.period,
@@ -218,7 +258,7 @@
             }
         }
         .project-icon {
-            font-size: 22px;
+            font-size: 20px;
             margin-left: 12px;
             cursor: pointer;
         }
