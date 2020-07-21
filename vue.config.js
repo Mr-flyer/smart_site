@@ -1,7 +1,7 @@
 // const pxtorem = require("postcss-pxtorem");
 module.exports = {
   // 项目部署路径，默认部署在一个域名的根路径上（"production"为生产模式）
-  publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
+  publicPath: process.env.NODE_ENV === "production" ? "./" : "./",
   outputDir: "dist", // 打包后 项目导出的文件路径 ( --no-clean 可关闭每次打包清除dist)
   assetsDir: "", // 打包后 项目静态资源(js、css、img、fonts)的 (相对于 outputDir 的) 目录
   indexPath: "index.html", // 打包后 项目首页导出路径(相对于 outputDir ，可设绝对)

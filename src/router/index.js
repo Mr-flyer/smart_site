@@ -22,6 +22,8 @@ import TDRealScene from "../views/IOT/TDRealScene.vue";
 import UAVCruise from "../views/IOT/UAVCruise.vue";
 // 三维文档
 import TDDocument from "../views/TDDocument/TDDocument.vue";
+// 个人中心
+import UserCenter from "../views/UserCenter/UserCenter.vue";
 
 Vue.use(VueRouter);
 
@@ -121,13 +123,18 @@ const routes = [
         path: "/TDDocument",
         name: "TDDocument",
         component: TDDocument
+      },
+      {
+        path: "/UserCenter",
+        name: "UserCenter",
+        component: UserCenter
       }
     ],
   },
 ];
 
 const router = new VueRouter({
-  mode: "history",
+  mode: "hash",
   base: process.env.BASE_URL,
   routes,
 });
