@@ -218,18 +218,18 @@ export default {
   data() {
     return {
       tableData: [
-        {
-          name: "张三",
-          staffId: 1,
-          gender: "男",
-          companyType: "管理单位",
-          companyName: "中国第一建筑公司",
-          role: "超级管理员",
-          class: "班组1",
-          jobType: "工种1",
-          createTime: "2020-09-09 12：00：00",
-          isRelevance: "是"
-        }
+        // {
+        //   name: "张三",
+        //   staffId: 1,
+        //   gender: "男",
+        //   companyType: "管理单位",
+        //   companyName: "中国第一建筑公司",
+        //   role: "超级管理员",
+        //   class: "班组1",
+        //   jobType: "工种1",
+        //   createTime: "2020-09-09 12：00：00",
+        //   isRelevance: "是"
+        // }
       ],
       currentPage: 1,
       formInline: {
@@ -267,11 +267,11 @@ export default {
         workType: [],
         sex: [
             { id: 0, name: "男" },
-          { id: 1, name: "女" }
+            { id: 1, name: "女" }
         ],
         is_real_name: [
             { id: 0, name: "否"},
-          { id: 1, name: "是"}
+            { id: 1, name: "是"}
         ],
         identity: [
             { id: 0, name: "管理人员"},
