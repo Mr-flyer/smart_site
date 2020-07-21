@@ -278,14 +278,6 @@
                     }
                 }
             }
-            ::v-deep .el-tree-node {
-                .is-leaf + .el-checkbox .el-checkbox__inner {
-                    display: inline-block;
-                }
-                .el-checkbox .el-checkbox__inner {
-                    display: none;
-                }
-            }
         }
         .video-play {
             width: calc(100% - 300px);

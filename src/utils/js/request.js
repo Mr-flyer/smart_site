@@ -141,15 +141,17 @@ let common = {
         })
     },
     requestAll(arr) {
-        axios.all(arr)
-        .then(
-            axios.spread(() => {
-                console.log('全部加载完成')
-            })
-        )
-        .catch(err => {
-            console.log(err.response)
-        });
+        return new Promise((resolve, reject) =>{ 
+            axios.all(arr)
+            .then(
+                axios.spread(() => {
+                    resolve('success');
+                })
+            )
+            .catch(err => {
+                reject(err.data)
+            });
+        })
     }
 }
 function sucErrFun(res) {

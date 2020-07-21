@@ -20,7 +20,7 @@ Vue.config.productionTip = false;
 /********
  *** axios配置：发送请求前拦截
 *********/
-axios.defaults.timeout = 8000; //设定超时时间
+// axios.defaults.timeout = 10000; //设定超时时间
 axios.defaults.withCredentials = true;//让ajax携带cookie
 axios.interceptors.request.use(config => {
   if(localStorage.getItem('token')) {

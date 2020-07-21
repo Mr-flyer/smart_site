@@ -126,7 +126,7 @@
               项目实景
             </template>
             <div class="video_wrap">
-              <video autoplay loop muted  src="../assets/video/HYBPlan.mp4"></video>
+              <video autoplay loop muted  src="../assets/video/HYB00-TimeLiner.mp4"></video>
             </div>
           </el-card>
         </el-col>

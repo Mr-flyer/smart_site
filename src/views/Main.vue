@@ -45,7 +45,8 @@
           <span class="head-menu-user">
             <el-dropdown @command="personalCenter">
               <span class="head-menu">
-                <img class="head-sculpture" :src="userInfo.head_img" />
+                <img class="head-sculpture" v-if="userInfo.head_img" :src="userInfo.head_img" />
+                <img class="head-sculpture" v-else src="../assets/head_img.png" />
                 {{userInfo.username}}
                 <i class="el-icon-caret-bottom"></i>
               </span>

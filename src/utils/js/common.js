@@ -42,9 +42,15 @@ export default {
         return true;
     },
     // Y-M-D
-    YMD(date) {
-        let dateValue = `${date.getFullYear()}-${(date.getMonth() + 1) < 10 ?'0'+ (date.getMonth() + 1):(date.getMonth() + 1)}-${date.getDate() < 10 ?'0'+date.getDate():date.getDate()}`;
-        return dateValue;
+    YMD(str) {
+        let time= new Date(str * 1000);
+        let y = time.getFullYear();
+        let m = time.getMonth()+1;
+        let d = time.getDate();
+        return y+'-'+this.add0(m)+'-'+this.add0(d);
+    },
+    add0(m){
+        return m<10 ? '0'+m : m;
     },
     // 日期转换时间戳
     DateParse(date) {

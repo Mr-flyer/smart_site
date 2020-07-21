@@ -29,6 +29,8 @@
                 activeName: 'first'
             }
         },
+        created() {
+        },
         methods: {
         }
     }

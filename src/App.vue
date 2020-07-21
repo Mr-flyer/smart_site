@@ -38,6 +38,12 @@ p {
   margin-left: 12px;
   color: #9fa6b1;
 }
+.green {
+  color: green;
+}
+.red {
+  color: red;
+}
 .set-btns {
   width: 100%;
   text-align: center;

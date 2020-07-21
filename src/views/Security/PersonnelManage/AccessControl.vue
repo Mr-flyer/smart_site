@@ -30,15 +30,6 @@
                 <el-card class="box-card" shadow="never">
                     <div slot="header" class="clearfix access-control-head">
                         <span>门禁地图</span>
-                        <!-- <el-upload
-                            class="upload-demo"
-                            action="#"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                        </el-upload> -->
                         <el-upload
                             class="avatar-uploader"
                             action="#"
@@ -54,7 +45,7 @@
                     <div class="text item access-control-pics">
                         <el-image
                         class="access-control-pic"
-                        :src="accessControlPic"
+                        :src="mapPic"
                         fit="cover"></el-image>
                     </div>
                 </el-card>
@@ -153,7 +144,8 @@
                         type: '出'
                     }
                 ],
-                accessControlPic: require('../../../assets/head_img.jpg')
+                accessControlPic: require('../../../assets/head_img.png'),
+                mapPic: require('../../../assets/china_map.png')
             }
         },
         methods: {
