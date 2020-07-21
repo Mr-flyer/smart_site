@@ -30,7 +30,7 @@ axios.interceptors.request.use(config => {
   }, error => {
     Message({
       type: 'error',
-      message: '数据链接异常，请刷新重试！'
+      message: '数据链接异常，请重试！'
     })
     return Promise.reject(error)
 })
@@ -58,7 +58,7 @@ axios.interceptors.response.use(
     if(config.__retryCount >= config.retry) {
       Message({
         type: 'error',
-        message: '数据链接异常，请刷新重试！'
+        message: '数据链接异常，请重试！'
       })
       return Promise.reject(error);
     }

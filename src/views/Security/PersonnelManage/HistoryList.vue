@@ -51,7 +51,7 @@
                 </el-form-item>
             </el-form>
             <div class="real-name-btns">
-                <el-button @click="search" type="primary">查询</el-button><el-button @click="reset">重置</el-button>
+                <el-button @click="search" :disabled="isLoading" type="primary">查询</el-button><el-button @click="reset">重置</el-button>
             </div>
         </div>
         <div class="add-admin-btn">
@@ -82,7 +82,7 @@
             </el-table-column> -->
             <el-table-column
                 label="单位类型"
-                width="180">
+                width="140">
                 <template slot-scope="scope">
                     <div v-if="scope.row.company_type == item.id" v-for="item in companyTypeList" :key="item.id">{{item.name}}</div>
                 </template>
@@ -95,21 +95,21 @@
             </el-table-column>
             <el-table-column
                 label="身份"
-                width="150">
+                width="140">
                 <template slot-scope="scope">
                     <div v-if="scope.row.identity == item.id" v-for="item in identityList" :key="item.id">{{item.name}}</div>
                 </template>
             </el-table-column>
             <el-table-column
                 label="班组"
-                width="150">
+                width="140">
                 <template slot-scope="scope">
                     <div v-if="scope.row.team == item.id" v-for="item in teamList" :key="item.id">{{item.name}}</div>
                 </template>
             </el-table-column>
             <el-table-column
                 label="工种"
-                width="180">
+                width="140">
                 <template slot-scope="scope">
                     <div v-if="scope.row.work_type == item.id" v-for="item in workTypeList" :key="item.id">{{item.name}}</div>
                 </template>
@@ -121,11 +121,12 @@
             </el-table-column>
             <el-table-column
                 prop="door_no"
-                label="门禁点">
+                label="门禁点"
+                width="120">
             </el-table-column>
             <el-table-column
                 label="出入类型"
-                width="100px">
+                width="80px">
                 <template slot-scope="scope">
                     <div>{{scope.row.in_or_out===0?'出':'入'}}</div>
                 </template>

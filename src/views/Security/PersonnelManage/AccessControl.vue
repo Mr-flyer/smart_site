@@ -163,7 +163,7 @@
                 var reader = new FileReader();    
                 reader.readAsDataURL(res.raw);
                 reader.onloadend = function(e) {
-                    _that.accessControlPic = e.target.result;
+                    _that.mapPic = e.target.result;
                 }
             },
             beforeAvatarUpload(file) {

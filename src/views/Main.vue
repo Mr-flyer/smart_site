@@ -269,10 +269,7 @@ export default {
             })
             .then(res => {
               this.loading = false;
-              this.$message({
-                type: "success",
-                message: "密码修改成功"
-              });
+              this.$message.success("密码修改成功");
               this.setCookie(this.ruleForm.checkPass, 7);
               this.$router.push("/");
             })
@@ -455,11 +452,6 @@ export default {
     .el-icon-caret-bottom {
       margin-left: 16px;
     }
-  }
-  ::-webkit-scrollbar {
-    /*滚动条整体样式*/
-    width: 0px; /*高宽分别对应横竖滚动条的尺寸*/
-    height: 0px;
   }
 }
 </style>

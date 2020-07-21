@@ -14,11 +14,12 @@
             </div>
             <el-tree 
                 :data="data"
+                highlight-current
                 @node-click="handleNodeClick"
             ></el-tree>
         </span
         ><span class="video-play">
-            <div id="playWnd" class="playWnd"></div>
+            <div id="playWnd" class="playWnd" ref="haikangVideo"></div>
         </span>
     </div>
 </template>
@@ -45,15 +46,6 @@
                                 children: [ { label: '监控1' }, { label: '监控2' } ]
                             }
                         ]
-                    },
-                    {
-                        label: '区域2',
-                        children: [
-                            {
-                                label: '出入口',
-                                children: [ { label: '监控1' }, { label: '监控2' } ]
-                            }
-                        ]
                     }
                 ],
                 oWebControl: null,
@@ -69,25 +61,41 @@
                         this.oWebControl.JS_Disconnect().then(function(){}, function() {});
                     }
                 }else {
-                    this.initPlugin();
+                    this.$nextTick(()=>{
+                        let w = this.$refs.haikangVideo.offsetWidth;
+                        let h = this.$refs.haikangVideo.offsetHeight;
+                        this.initPlugin(w, h);
+                    })
                 }
             }
         },
         created() {
-            this.initPlugin();
+            this.$nextTick(()=>{
+                let w = this.$refs.haikangVideo.offsetWidth;
+                let h = this.$refs.haikangVideo.offsetHeight;
+                this.initPlugin(w, h);
+            })
         },
         mounted() {
             let _that = this;
             window.addEventListener("resize",function(){
                 if (_that.oWebControl != null) {
-                    _that.oWebControl.JS_Resize(800, 400);
-                    _that.setWndCover();
+                    _that.$nextTick(()=>{
+                        let w = _that.$refs.haikangVideo.offsetWidth;
+                        let h = _that.$refs.haikangVideo.offsetHeight;
+                        _that.oWebControl.JS_Resize(w, h);
+                    })
+                    // _that.setWndCover();
                 }
             }),
             window.addEventListener("scroll",function(){
                 if (_that.oWebControl != null) {
-                    _that.oWebControl.JS_Resize(800, 400);
-                    _that.setWndCover();
+                    _that.$nextTick(()=>{
+                        let w = _that.$refs.haikangVideo.offsetWidth;
+                        let h = _that.$refs.haikangVideo.offsetHeight;
+                        _that.oWebControl.JS_Resize(w, h);
+                    })
+                    // _that.setWndCover();
                 }
             })
         },
@@ -95,7 +103,7 @@
             handleNodeClick() {
 
             },
-            initPlugin() {
+            initPlugin(w, h) {
                 let _that = this;
                 this.oWebControl = new WebControl({
                     szPluginContainer: "playWnd",
@@ -117,7 +125,7 @@
                                 }
                             });
                             //JS_CreateWnd 创建视频播放窗口，宽高可设定
-                            _that.oWebControl.JS_CreateWnd("playWnd", 800, 400).then(function () {
+                            _that.oWebControl.JS_CreateWnd("playWnd", w, h).then(function () {
                                 _that.init(); // 创建播放实例成功后初始化
                                 // console.log("JS_CreateWnd success");
                             });
@@ -135,7 +143,7 @@
                         _that.initCount ++;
                         if (_that.initCount < 3) { 
                             setTimeout(function () {
-                                _that.initPlugin();
+                                _that.initPlugin(w, h);
                             }, 3000)
                         } else {
                             $("#playWnd").html("插件启动失败，请检查插件是否安装！");
@@ -168,35 +176,6 @@
                 var encrypt = new JSEncrypt();
                 encrypt.setPublicKey(this.pubKey);
                 return encrypt.encrypt(value);
-            },
-            setWndCover() {
-                var iWidth = $(window).width();
-                var iHeight = $(window).height();
-                var oDivRect = $("#playWnd").get(0).getBoundingClientRect();
-
-                var iCoverLeft = (oDivRect.left < 0) ? Math.abs(oDivRect.left): 0;
-                var iCoverTop = (oDivRect.top < 0) ? Math.abs(oDivRect.top): 0;
-                var iCoverRight = (oDivRect.right - iWidth > 0) ? Math.round(oDivRect.right - iWidth) : 0;
-                var iCoverBottom = (oDivRect.bottom - iHeight > 0) ? Math.round(oDivRect.bottom - iHeight) : 0;
-
-                iCoverLeft = (iCoverLeft > 800) ? 800 : iCoverLeft;
-                iCoverTop = (iCoverTop > 400) ? 400 : iCoverTop;
-                iCoverRight = (iCoverRight > 800) ? 800 : iCoverRight;
-                iCoverBottom = (iCoverBottom > 400) ? 400 : iCoverBottom;
-
-                this.oWebControl.JS_RepairPartWindow(0, 0, 801, 400);  // 多1个像素点防止还原后边界缺失一个像素条
-                if (iCoverLeft != 0) {
-                    this.oWebControl.JS_CuttingPartWindow(0, 0, iCoverLeft, 400);
-                }
-                if (iCoverTop != 0) {
-                    this.oWebControl.JS_CuttingPartWindow(0, 0, 801, iCoverTop);  // 多剪掉一个像素条，防止出现剪掉一部分窗口后出现一个像素条
-                }
-                if (iCoverRight != 0) {
-                    this.oWebControl.JS_CuttingPartWindow(800 - iCoverRight, 0, iCoverRight, 400);
-                }
-                if (iCoverBottom != 0) {
-                    this.oWebControl.JS_CuttingPartWindow(0, 400 - iCoverBottom, 800, iCoverBottom);
-                }
             },
             init() {
                 let _that = this;
@@ -278,14 +257,18 @@
                     }
                 }
             }
+            ::v-deep .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+                color: #409EFF;
+            }
         }
         .video-play {
             width: calc(100% - 300px);
             overflow: auto;
             padding-left: 20px;
             .playWnd {
-                width: 800px;
-                height: 400px;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
             }
         }
     }
