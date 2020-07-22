@@ -43,11 +43,11 @@
                 </div>
                 <div class="sum-type-item">
                   <span>合同工期</span>
-                  {{survey.period}}天
+                  {{survey.period || 0}}天
                 </div>
                 <div class="sum-type-item">
                   <span>建筑面积</span>
-                  {{survey.area}}平方米
+                  {{survey.area || 0}}平方米
                 </div>
               </div>
               <div class="sum-desc">
