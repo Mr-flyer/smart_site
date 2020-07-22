@@ -98,7 +98,7 @@
               </div>
               <el-tooltip class="item" effect="dark" content="标准值设置" placement="top">
                 <!-- <el-button type="info" icon="el-icon-s-tools" size="small" circle @click="showEquipmentVisible = true"></el-button> -->
-                <i class="el-icon-setting icon-size" @click="showEquipmentVisible = true"></i>
+                <i class="el-icon-setting icon-size" @click="standradSet"></i>
               </el-tooltip>
             </div>
             <div class="weather_wrap" v-if="JSON.stringify(securityDetection) != '{}' && securityDetection!=''">
@@ -209,6 +209,7 @@ export default {
         tsp: null,
         noise: null
     },
+    formValue:  '',
     infoSourceTrend: {
       title: "扬尘监测TSP+PM2.5+PM10",
       isLoading: true,
@@ -290,6 +291,18 @@ export default {
             this.dust_chart = [];
         }
     })
+    // 标准值设置
+    this.$http.get('api/v1/security/dust_set/')
+      .then((res) => {
+          this.form.pm2_5 = res.data.pm2_5;
+          this.form.pm10 = res.data.pm10;
+          this.form.tsp = res.data.tsp;
+          this.form.noise = res.data.noise;
+          this.formValue = JSON.parse(JSON.stringify(this.form));
+      })
+      .catch((err) => {
+          
+      })
   },
   methods: {
     renderheader(h, { column, $index }) {
@@ -475,6 +488,11 @@ export default {
         }
         return false;
     },
+    // 标准值设置
+    standradSet() {
+      this.showEquipmentVisible = true;
+      this.form = JSON.parse(JSON.stringify(this.formValue));
+    },
     equipmentSub() {
         this.equipmentLoading = true;
         this.$http.put('api/v1/security/dust_set/', this.form)
@@ -482,6 +500,7 @@ export default {
             this.equipmentLoading = false;
             this.$message.success('标准值设置成功');
             this.showEquipmentVisible = false;
+            this.formValue = JSON.parse(JSON.stringify(this.form));
             this.handelSecurity(res);
         })
         .catch((err) => {
