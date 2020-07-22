@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-loading="loading">
     <el-card class="page_header" shadow="never" :body-style="{ paddingBottom: 0 }">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
@@ -20,73 +20,71 @@
       </el-card>
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-card class="mb-20 map-wrap" shadow="never">
-            <div slot="header" class="map-hd">
-              <span>地图</span>
-              <el-tooltip class="item" effect="dark" content="上传地图" placement="top">
-                <i class="el-icon-upload2 icon-size"></i>
-              </el-tooltip>
-            </div>
-            <div class="map-bd"></div>
-          </el-card>
-          <el-card class="mb-20" shadow="never">
-            <div slot="header">参数排序</div>
-            <el-table :data="tableData" style="width: 100%" border>
-              <el-table-column prop="name" label="设备名称"></el-table-column>
-              <el-table-column prop="date" label="pm2.5 mg/m³" sortable width="140"></el-table-column>
-              <el-table-column prop="date" label="pm10 mg/m³" sortable width="140"></el-table-column>
-              <el-table-column prop="date" label="TSP mg/m³" sortable width="140"></el-table-column>
-              <el-table-column prop="date" label="噪音 dB" sortable width="140"></el-table-column>
-            </el-table>
-          </el-card>
+            <el-card class="mb-20" shadow="never">
+                <div slot="header">参数排序</div>
+                <el-table :data="options" style="width: 100%" border>
+                  <el-table-column prop="name" label="设备名称"></el-table-column>
+                  <el-table-column prop="date" :label="'pm2.5|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
+                  <el-table-column prop="date" :label="'pm10|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
+                  <el-table-column prop="date" :label="'TSP|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
+                  <el-table-column prop="date" :label="'噪音|(dB)'" sortable :render-header="renderheader"></el-table-column>
+                </el-table>
+            </el-card>
+            <el-card class="mb-20 map-wrap" shadow="never" v-loading="imgLoading">
+                <div slot="header" class="map-hd">
+                    <span>地图</span>
+                    <el-upload
+                        class="avatar-uploader"
+                        action="#"
+                        :show-file-list="false"
+                        :on-change="changeFile"
+                        :before-upload="beforeAvatarUpload"
+                        accept="image/png,image/gif,image/jpg,image/jpeg">
+                        <el-button style="float: right; padding: 3px 0" type="text">上传地图</el-button>
+                    </el-upload>
+                </div>
+                <div class="map-bd">
+                    <img
+                    v-if="mapPic"
+                    class="access-control-pic"
+                    :src="mapPic"/>
+                    <img
+                    v-else
+                    class="access-control-pic"
+                    src="../../../assets/security_map.jpg"/>
+                </div>
+            </el-card>
         </el-col>
         <el-col :span="16">
           <el-card class="mb-20" shadow="never">
             <div slot="header">
               设备选择
-              <el-select v-model="value" placeholder="请选择" size="small">
+              <el-select :value="formEquipment.id" @change="changeDevice" placeholder="请选择" size="small">
                 <el-option
                   v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
                 ></el-option>
               </el-select>
             </div>
-            <el-form
-              :model="formEquipment"
-              status-icon
-              :rules="rules"
-              ref="ruleForm"
-              label-width="100px"
-              class="formEquipment-wrap"
-            >
-              <el-form-item class="equipment-name-wrap" label="设备名称：" prop="name">
-                <el-input type="text" v-html="formEquipment.name"></el-input>
-                <!-- <el-button class="equipment-name-btn" type="primary" @click="editEquipmentName" size="">修改</el-button> -->
-                <el-button
-                  class="equipment-name-btn"
-                  size="small"
-                  type="primary"
-                  icon="el-icon-edit"
-                  circle
-                  @click="editEquipmentName"
-                ></el-button>
-              </el-form-item>
-              <el-form-item label="设备ID：" prop="code">
-                <el-input type="text" v-html="formEquipment.code"></el-input>
-              </el-form-item>
-              <el-form-item label="更新时间：" prop="time">
-                <el-input v-html="formEquipment.time"></el-input>
-              </el-form-item>
-              <!-- <el-form-item>
-                <el-button type="primary" @click="submitForm('formEquipment')">提交</el-button>
-                <el-button type="primary" @click="editEquipment">修改</el-button>
-                <el-button @click="showEquipmentVisible = true">基准值设置</el-button>
-              </el-form-item>-->
-            </el-form>
+            <div class="formEquipment-table" v-if="JSON.stringify(formEquipment) != '{}' && formEquipment!=''">
+                <div><span class="device-label">设备名称：</span>{{formEquipment.name}}<el-button
+                    class="equipment-name-btn"
+                    size="small"
+                    type="primary"
+                    icon="el-icon-edit"
+                    circle
+                    @click="editEquipmentName">
+                </el-button></div>
+                <div><span class="device-label">设备ID：</span>{{formEquipment.mn}}</div>
+                <div><span class="device-label">更新时间：</span>{{formEquipment.time}}</div>
+            </div>
+            <div class="formEquipment-table" v-show="JSON.stringify(formEquipment) == '{}'">
+                <v-empty :value="formEquipment"></v-empty>
+            </div>
           </el-card>
-          <el-card class="mb-20" shadow="never">
+          <el-card class="mb-20" shadow="never" v-loading="sdLoading">
             <div slot="header" class="test_header">
               <div>实时监测
                 <el-tooltip class="item" effect="dark" placement="right-end">
@@ -103,31 +101,43 @@
                 <i class="el-icon-setting icon-size" @click="showEquipmentVisible = true"></i>
               </el-tooltip>
             </div>
-            <div class="weather_wrap">
-              <div class="weather_item color_warning" v-for="(item, index) of 9" :key="index">
-                <i class="el-icon-s-flag"></i>
+            <div class="weather_wrap" v-if="JSON.stringify(securityDetection) != '{}' && securityDetection!=''">
+              <div class="weather_item color_warning" v-for="(item, key) of securityDetection" :key="key">
+                <img class="security_icon" :src="item.icon"/>
                 <div class="weather_cont">
                   <div class="title">
-                    pm2.5
-                    <b>N</b>
+                    {{item.name}}
+                    <b>{{item.flag}}</b>
                   </div>
                   <div class="count">
-                    <b>30</b>mg/m³
+                    <b>{{item.value}}</b>{{item.unit}}
                   </div>
-                  <div class="desc">标准值：75mg/m³</div>
+                  <div class="desc" v-if="item.standardValue">标准值：{{item.standardValue}}{{item.unit}}</div>
                 </div>
               </div>
             </div>
+            <div class="weather_wrap" v-show="JSON.stringify(securityDetection) == '{}'">
+                <v-empty :value="securityDetection"></v-empty>
+            </div>
           </el-card>
           <el-card shadow="never">
-            <div slot="header">查看数据方式</div>
-            <div class="grid-main">
-              <div class="grid-item">
+            <div slot="header">查看数据方式
+                <el-select v-model="checkTypeValue">
+                    <el-option
+                    v-for="item in checkType"
+                    :key="item.value"
+                    :label="item.name"
+                    :value="item.value"
+                    ></el-option>
+                </el-select>
+            </div>
+            <div class="grid-main" v-if="dust_chart.length > 0">
+              <div class="grid-item" v-for="item in dust_chart">
                 <lineEchart :infoObj="infoSourceTrend" />
               </div>
-              <div class="grid-item">
-                <lineEchart :infoObj="infoSourceTrend02" />
-              </div>
+            </div>
+            <div class="grid-main" v-else>
+                <v-empty :value="dust_chart"></v-empty>
             </div>
           </el-card>
         </el-col>
@@ -136,37 +146,31 @@
 
     <!-- 设备标准值设置 -->
     <el-dialog title="标准值设置" :visible.sync="showEquipmentVisible">
-      <el-form :model="form">
-        <el-form-item label="pm2.5" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off">
+      <el-form :model="form" label-width="80px" v-loading="equipmentLoading">
+        <el-form-item label="pm2.5">
+          <el-input v-model="form.pm2_5" autocomplete="off">
             <template slot="append">mg/m³</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="pm10" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off">
+        <el-form-item label="pm10">
+          <el-input v-model="form.pm10" autocomplete="off">
             <template slot="append">mg/m³</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="TSP" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off">
+        <el-form-item label="TSP">
+          <el-input v-model="form.tsp" autocomplete="off">
             <template slot="append">mg/m³</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="噪音" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off">
+        <el-form-item label="噪音">
+          <el-input v-model="form.noise" autocomplete="off">
             <template slot="append">dB</template>
           </el-input>
         </el-form-item>
-        <!-- <el-form-item label="活动区域" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showEquipmentVisible = false">取 消</el-button>
-        <el-button type="primary" @click="showEquipmentVisible = false">确 定</el-button>
+        <el-button type="primary" @click="equipmentSub">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -174,51 +178,7 @@
 
 <script>
 import lineEchart from "@/components/lineEchart";
-const tableData = [
-  {
-    date: "2016-05-02",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1518 弄"
-  },
-  {
-    date: "2016-05-04",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1517 弄"
-  },
-  {
-    date: "2016-05-01",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1519 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1516 弄"
-  }
-];
-// 设备选择
-const options = [
-  {
-    value: "选项1",
-    label: "黄金糕"
-  },
-  {
-    value: "选项2",
-    label: "双皮奶"
-  },
-  {
-    value: "选项3",
-    label: "蚵仔煎"
-  },
-  {
-    value: "选项4",
-    label: "龙须面"
-  },
-  {
-    value: "选项5",
-    label: "北京烤鸭"
-  }
-];
+import empty from "@/components/empty";
 // 校验input 为空
 const noEmpty = (rule, value, callback) => {
   if (value === "") callback(new Error("必填项不能为空"));
@@ -232,14 +192,11 @@ export default {
       "justify-content": "space-between"
     },
     active: "0",
-    options,
-    value: "",
-    tableData,
-    formEquipment: {
-      name: "设备名称",
-      code: "设备ID",
-      time: "时间"
-    },
+    loading: false,
+    imgLoading: false,      //地图loading
+    options: [],
+    tableData: [],
+    formEquipment: '',
     rules: {
       name: [{ validator: noEmpty, trigger: "blur" }],
       code: [{ validator: noEmpty, trigger: "blur" }],
@@ -247,16 +204,11 @@ export default {
     },
     showEquipmentVisible: false,
     form: {
-      name: "",
-      region: "",
-      date1: "",
-      date2: "",
-      delivery: false,
-      type: [],
-      resource: "",
-      desc: ""
+        pm2_5: null,
+        pm10: null,
+        tsp: null,
+        noise: null
     },
-    formLabelWidth: "80px",
     infoSourceTrend: {
       title: "扬尘监测TSP+PM2.5+PM10",
       isLoading: true,
@@ -272,7 +224,20 @@ export default {
       xdata: [],
       color: ["#9357F1", "#5599FE"],
       data: []
-    }
+    },
+    mapPic: '',
+    securityDetection: '',
+    sdLoading: false,
+    dust_chart: '',
+    checkTypeValue: '',
+    checkType: [
+        {name: '实时', value: ''},
+        {name: '按小时', value: 0},
+        {name: '按天', value: 1},
+        {name: '按月', value: 2},
+        {name: '按年', value: 3},
+    ],
+    equipmentLoading: false
   }),
   created() {
     // 扬尘监测
@@ -297,10 +262,130 @@ export default {
       color: ["#9357F1"],
       data: [[120, 132, 101, 134, 90, 230, 210]]
     };
+    // 设备列表
+    this.loading = true;
+    this.$http.get('api/v1/security/equipment/')
+    .then((res)=>{
+        this.loading = false;
+        this.options = res.data;
+        if(this.options.length > 0) {
+            this.formEquipment = this.options[0];
+            // 实时监测
+            this.imgLoading = true;
+            this.sdLoading = true;
+            this.$http.get(`api/v1/security/dust?mn=${this.formEquipment.id}`)
+            .then((res)=>{
+                this.handelSecurity(res);
+            })
+            .catch(()=>{})
+            // 折线图
+            this.$http.get('api/v1/security/dust_chart')
+            .then((res) => {
+                this.dust_chart = res.data;
+            })
+            .catch(()=>{})
+        }else {
+            this.formEquipment = {};
+            this.securityDetection = {};
+            this.dust_chart = [];
+        }
+    })
   },
   methods: {
+    renderheader(h, { column, $index }) {
+      return h('span', {
+          class: ['head-unit']
+      }, [
+        h('span', {}, column.label.split('|')[0]),
+        h('br'),
+        h('span', {}, column.label.split('|')[1])
+      ]);
+    },
     handleClick(val) {
       console.log(`tabs切换: `, val);
+    },
+    handelSecurity(res) {
+        this.sdLoading = false;
+        this.imgLoading = false;
+        if(JSON.stringify(res.data) !== '{}') {
+            this.mapPic = res.data.img;
+            this.securityDetection = {
+                'pm2_5': {
+                    name: 'pm2.5',
+                    standardValue: 0,
+                    value: res.data.pm2_5,
+                    flag: 'N',
+                    unit: 'mg/m³',
+                    icon: require('../../../assets/security/pm_icon.png')
+                },
+                'pm10': {
+                    name: 'pm10',
+                    standardValue: 0,
+                    value: res.data.pm10,
+                    flag: 'F',
+                    unit: 'mg/m³',
+                    icon: require('../../../assets/security/pm_ten_icon.png')
+                },
+                'tsp': {
+                    name: 'TSP',
+                    standardValue: 0,
+                    value: res.data.tsp,
+                    flag: 'M',
+                    unit: 'mg/m³',
+                    icon: require('../../../assets/security/tsp_icon.png')
+                },
+                'noise': {
+                    name: '噪音',
+                    standardValue: 0,
+                    value: res.data.noise,
+                    flag: 'S',
+                    unit: 'dB',
+                    icon: require('../../../assets/security/zaoyin_icon.png')
+                },
+                'centigrade': {
+                    name: '温度',
+                    standardValue: '',
+                    value: res.data.centigrade,
+                    flag: 'D',
+                    unit: '℃',
+                    icon: require('../../../assets/security/wendu_icon.png')
+                },
+                'wind_direction': {
+                    name: '风向',
+                    standardValue: '',
+                    value: res.data.wind_direction,
+                    flag: 'B',
+                    unit: '',
+                    icon: require('../../../assets/security/fengxiang_icon.png')
+                },
+                'humidity': {
+                    name: '湿度',
+                    standardValue: '',
+                    value: res.data.humidity,
+                    flag: 'N',
+                    unit: '%',
+                    icon: require('../../../assets/security/shidu_icon.png')
+                },
+                'pressure': {
+                    name: '气压',
+                    standardValue: '',
+                    value: res.data.pressure,
+                    flag: 'C',
+                    unit: '千帕',
+                    icon: require('../../../assets/security/qiya_icon.png')
+                },
+                'wind_speed': {
+                    name: '风速',
+                    standardValue: '',
+                    value: res.data.wind_speed,
+                    flag: 'T',
+                    unit: 'm/s',
+                    icon: require('../../../assets/security/fengsu_icon.png')
+                }
+            }
+        }else {
+            this.securityDetection = {};
+        }
     },
     // 修改设备名称
     editEquipmentName() {
@@ -309,10 +394,24 @@ export default {
         cancelButtonText: "取消",
         inputValue: this.formEquipment.name
       }).then(({ value }) => {
-        this.$message({
-          type: "success",
-          message: "你的设备名称是: " + value
-        });
+          if(!value) {
+              this.$message.warning('请填写设备名称');
+          }else {
+              this.$http.put(`api/v1/security/equipment/${this.formEquipment.id}`, {
+                  name: this.formEquipment.name
+              })
+              .then((res) => {
+                  this.$message.success('设备名称修改成功');
+                  for(let i=0;i<this.options.length;i++) {
+                      if(this.options[i].id === res.data.id) {
+                          this.options[i] = res.data;
+                          this.formEquipment = res.data;
+                          break;
+                      }
+                  }
+              })
+              .catch(()=>{})
+          }
       });
     },
     // 修改设备名称
@@ -326,12 +425,76 @@ export default {
         }
       });
     },
+    // 改变设备
+    changeDevice(e) {
+        for(let i=0;i<this.options.length;i++) {
+            if(this.options[i].id == e) {
+                this.formEquipment = this.options[i];
+                // 实时监测
+                this.imgLoading = true;
+                this.sdLoading = true;
+                this.$http.get(`api/v1/security/dust?mn=${this.formEquipment.id}`)
+                .then((res)=>{
+                    this.handelSecurity(res);
+                })
+                .catch(()=>{})
+                // 折线图
+                this.$http.get('api/v1/security/dust_chart')
+                .then((res) => {
+                    this.dust_chart = res.data;
+                })
+                .catch(()=>{})
+                break;
+            }
+        }
+    },
+    // 上传地图
+    changeFile(res) {
+        let _that = this;
+        var reader = new FileReader();    
+        reader.readAsDataURL(res.raw);
+        reader.onloadend = function(e) {
+            _that.imgLoading = true;
+            let params = new FormData();
+            params.append('img', res.raw);
+            _that.$http.put('api/v1/security/dust_set/', params)
+            .then((res) => {
+                _that.imgLoading = false;
+                _that.$message.success('地图上传成功');
+                _that.mapPic = e.target.result;
+            })
+            .catch((err) => {
+                _that.imgLoading = false;
+            })
+        }
+    },
+    beforeAvatarUpload(file) {
+        const isLt2M = file.size / 1024 / 1024 < 10;
+        if (!isLt2M) {
+            this.$message.error('上传头像图片大小不能超过 10MB!');
+        }
+        return false;
+    },
+    equipmentSub() {
+        this.equipmentLoading = true;
+        this.$http.put('api/v1/security/dust_set/', this.form)
+        .then((res) => {
+            this.equipmentLoading = false;
+            this.$message.success('标准值设置成功');
+            this.showEquipmentVisible = false;
+            this.handelSecurity(res);
+        })
+        .catch((err) => {
+            this.equipmentLoading = false;
+        })
+    },
     gotoHistory() {
       this.$router.push("/Security/DustControlHistoryList");
     }
   },
   components: {
-    lineEchart
+    lineEchart,
+    'v-empty': empty
   }
 };
 </script>
@@ -341,6 +504,15 @@ $colorSuccess: #67c23a;
 $colorWarning: #e6a23c;
 $colorDanger: #f56c6c;
 $colorInfo: #909399;
+::v-deep .el-table th>.cell {
+    display: flex;
+}
+::v-deep .head-unit {
+    &>span:nth-child(3) {
+        font-size: 12px;
+        color: #bbb;
+    }
+}
 .page_cont {
   .icon-size {
     font-size: 20px;
@@ -359,37 +531,48 @@ $colorInfo: #909399;
     justify-content: space-between;
   }
   .map-bd {
-    height: 500px;
+    min-height: 250px;
+    .access-control-pic {
+        width: 100%;
+
+    }
   }
 }
-.formEquipment-wrap {
-  .equipment-name-wrap {
-    display: flex;
-  }
-  .equipment-name-btn {
-    margin-left: 20px;
-  }
-  .el-form-item__content {
-    display: flex;
-    align-items: center;
-    margin-left: 0 !important;
-  }
-  .el-form-item {
-    margin-bottom: 0;
-  }
+.formEquipment-table {
+    min-height: 150px;
+    &>div {
+        margin-top: 20px;
+        .device-label {
+            width: 100px;
+            display: inline-block;
+            text-align: right;
+        }
+        .equipment-name-btn {
+            margin-left: 20px;
+        }
+    }
+    &>div:first-child {
+        margin-top: 0;
+    }
 }
 .weather_wrap {
   display: flex;
   flex-wrap: wrap;
+  min-height: 250px;
 }
 .weather_item {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   min-width: 200px;
   margin-bottom: 20px;
   // max-width: 20%;
   .el-icon-s-flag {
     flex: none;
+  }
+  .security_icon {
+      width: 50px;
+      height: 50px;
+      margin-right: 16px;
   }
   .weather_cont {
     flex: 1;
@@ -434,6 +617,7 @@ $colorInfo: #909399;
   }
 }
 .grid-main {
+    min-height: 250px;
   .grid-item {
     height: 330px;
     position: relative;

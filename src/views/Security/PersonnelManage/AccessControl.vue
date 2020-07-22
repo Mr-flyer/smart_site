@@ -145,7 +145,7 @@
                     }
                 ],
                 accessControlPic: require('../../../assets/head_img.png'),
-                mapPic: require('../../../assets/china_map.png')
+                mapPic: require('../../../assets/access_control_map.jpg')
             }
         },
         methods: {
