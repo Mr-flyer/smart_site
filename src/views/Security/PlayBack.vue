@@ -5,13 +5,29 @@
                 <el-input placeholder="搜索监控通道"></el-input><el-button type="primary">搜索</el-button>
             </div>
             <el-tree :data="data" highlight-current @node-click="handleNodeClick"></el-tree>
+            <div class="play-back-time">
+                <!-- <el-date-picker
+                    v-model="playBackTime"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                </el-date-picker> -->
+                <el-date-picker
+                    type="dates"
+                    v-model="playBackTime"
+                    placeholder="选择一个或多个日期"
+                    @change="changeBackTime"
+                    @focus="focusTime">
+                </el-date-picker>
+            </div>
         </span>
         <span class="play-back-list">
             <div class="select-input">
                 <el-input placeholder="输入名称"></el-input>
                 <span class="select-type">
                     锁定类型：
-                    <el-select placeholder="请选择锁定类型">
+                    <el-select v-model="lockType" placeholder="请选择锁定类型">
                         <el-option label="全部" value="shanghai"></el-option>
                         <el-option label="已锁定" value="shanghai"></el-option>
                         <el-option label="未锁定" value="beijing"></el-option>
@@ -63,7 +79,9 @@
                             }
                         ]
                     }
-                ]
+                ],
+                lockType: '',
+                playBackTime: ''
             }
         },
         created() {
@@ -72,6 +90,27 @@
         methods: {
             handleNodeClick() {
 
+            },
+            timeUpdatethree(val){
+                let sTime=new Date(val[0]).getTime();
+                let eTime=new Date(val[1]).getTime();
+                let reduceDate=(eTime-sTime)/1000/60/60/24;
+                if(reduceDate>3){
+                    return true;
+                }
+            },
+            focusTime() {
+                this.playBackTime = [];
+            },
+            changeBackTime(val) {
+                if(val!=null){
+                    if(this.timeUpdatethree(val)){
+                        this.$message.warning('查询天数不能大于3天');
+                        this.playBackTime = [];
+                    }else{
+                        
+                    }
+                }
             }
         }
     }
@@ -93,6 +132,10 @@
             }
             ::v-deep .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
                 color: #409EFF;
+            }
+            .play-back-time {
+                position: absolute;
+                bottom: 0;
             }
         }
         .play-back-list {

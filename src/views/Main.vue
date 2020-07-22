@@ -1,9 +1,9 @@
 <template>
   <el-container class="main-container">
     <el-aside :class="showMenu ? 'main-aside':'hide-main-aside'">
-      <div class="main-logo">
+      <!-- <div class="main-logo">
         <img src="../assets/logo.png" />
-      </div>
+      </div> -->
       <el-menu
         background-color="#05101b"
         text-color="#C8CFDB"
