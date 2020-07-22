@@ -4,7 +4,7 @@
             <div class="video-tree-input">
                 <el-input placeholder="搜索监控通道"></el-input><el-button type="primary">搜索</el-button>
             </div>
-            <el-tree :data="data" @node-click="handleNodeClick"></el-tree>
+            <el-tree :data="data" highlight-current @node-click="handleNodeClick"></el-tree>
         </span>
         <span class="play-back-list">
             <div class="select-input">
@@ -62,15 +62,6 @@
                                 children: [ { label: '监控1' }, { label: '监控2' } ]
                             }
                         ]
-                    },
-                    {
-                        label: '区域2',
-                        children: [
-                            {
-                                label: '出入口',
-                                children: [ { label: '监控1' }, { label: '监控2' } ]
-                            }
-                        ]
                     }
                 ]
             }
@@ -99,6 +90,9 @@
             overflow: auto;
             .video-tree-input {
                 display: flex;
+            }
+            ::v-deep .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+                color: #409EFF;
             }
         }
         .play-back-list {

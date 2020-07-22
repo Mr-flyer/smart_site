@@ -161,10 +161,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: '下线成功!'
-                    });
+                    this.$message.success("下线成功");
                 }).catch(() => {});
             },
             // 删除管理员
@@ -174,10 +171,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                    });
+                    this.$message.success("删除成功");
                 }).catch(() => {});
             }
         }

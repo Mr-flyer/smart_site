@@ -9,6 +9,10 @@
             }
         },
         mounted() {
+            let _that = this;
+            window.addEventListener("resize", function() {
+                _that.PieChart.resize();
+            });
             this.init();
         },
         methods: {

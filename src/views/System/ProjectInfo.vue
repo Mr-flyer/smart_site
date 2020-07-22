@@ -42,7 +42,7 @@
                 </el-input>
             </el-form-item>
             <el-form-item label="建设单位">
-                <i v-if="form.build_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('build_company')"></i>
+                <i v-if="form.build_company.length<=0" class="project-icon-n el-icon-circle-plus-outline" @click.prevent="add('build_company')"></i>
                 <div v-else class="form-divs">
                     <div class="form-div" v-for="(item, index) in form.build_company" :key="index">
                         <el-input v-model="form.build_company[index]"></el-input>
@@ -52,7 +52,7 @@
                 </div>
             </el-form-item>
             <el-form-item label="设计单位">
-                <i v-if="form.design_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('design_company')"></i>
+                <i v-if="form.design_company.length<=0" class="project-icon-n el-icon-circle-plus-outline" @click.prevent="add('design_company')"></i>
                 <div v-else class="form-divs">
                     <div class="form-div" v-for="(item, index) in form.design_company" :key="index">
                         <el-input v-model="form.design_company[index]"></el-input>
@@ -62,7 +62,7 @@
                 </div>
             </el-form-item>
             <el-form-item label="监理单位">
-                <i v-if="form.supervisor_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('supervisor_company')"></i>
+                <i v-if="form.supervisor_company.length<=0" class="project-icon-n el-icon-circle-plus-outline" @click.prevent="add('supervisor_company')"></i>
                 <div v-else class="form-divs">
                     <div class="form-div" v-for="(item, index) in form.supervisor_company" :key="index">
                         <el-input v-model="form.supervisor_company[index]"></el-input>
@@ -72,7 +72,7 @@
                 </div>
             </el-form-item>
             <el-form-item label="施工单位">
-                <i v-if="form.construction_company.length<=0" class="project-icon el-icon-circle-plus-outline" @click.prevent="add('construction_company')"></i>
+                <i v-if="form.construction_company.length<=0" class="project-icon-n el-icon-circle-plus-outline" @click.prevent="add('construction_company')"></i>
                 <div v-else class="form-divs">
                     <div class="form-div" v-for="(item, index) in form.construction_company" :key="index">
                         <el-input v-model="form.construction_company[index]"></el-input>
@@ -148,40 +148,28 @@
                             return item == '';
                         })
                         if(build) {
-                            this.$message({
-                                type: 'warning',
-                                message: '建设单位里包含空值，请填写完整'
-                            })
+                            this.$message.warning('建设单位里包含空值，请填写完整');
                             return false;
                         }
                         let design = this.form.design_company.some((item)=>{
                             return item == '';
                         })
                         if(design) {
-                            this.$message({
-                                type: 'warning',
-                                message: '设计单位里包含空值，请填写完整'
-                            })
+                            this.$message.warning('设计单位里包含空值，请填写完整');
                             return false;
                         }
                         let construction = this.form.construction_company.some((item)=>{
                             return item == '';
                         })
                         if(construction) {
-                            this.$message({
-                                type: 'warning',
-                                message: '施工单位里包含空值，请填写完整'
-                            })
+                            this.$message.warning('施工单位里包含空值，请填写完整');
                             return false;
                         }
                         let supervisor = this.form.supervisor_company.some((item)=>{
                             return item == '';
                         })
                         if(supervisor) {
-                            this.$message({
-                                type: 'warning',
-                                message: '监理单位里包含空值，请填写完整'
-                            })
+                            this.$message.warning('监理单位里包含空值，请填写完整');
                             return false;
                         }
                         if(this.isAdd) {        //添加
@@ -201,10 +189,7 @@
                             .then((res)=>{
                                 this.isLoading = false;
                                 this.isAdd = false;
-                                this.$message({
-                                    type: 'success',
-                                    message: '设置成功'
-                                })
+                                this.$message.success('设置成功');
                             })
                             .catch(()=>{
                                 this.isLoading = false;
@@ -226,10 +211,7 @@
                             .then((res)=>{
                                 this.isLoading = false;
                                 this.isAdd = false;
-                                this.$message({
-                                    type: 'success',
-                                    message: '设置成功'
-                                })
+                                this.$message.success('设置成功');
                             })
                             .catch(()=>{
                                 this.isLoading = false;
@@ -257,10 +239,13 @@
                 margin-top: 0;
             }
         }
-        .project-icon {
-            font-size: 20px;
+        .project-icon, .project-icon-n {
+            font-size: 22px;
             margin-left: 12px;
             cursor: pointer;
+        }
+        .project-icon-n {
+            margin-top: 9px;
         }
         ::v-deep .el-upload {
             border: 1px dashed #d9d9d9;

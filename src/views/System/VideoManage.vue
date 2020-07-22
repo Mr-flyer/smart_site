@@ -79,7 +79,7 @@
                     <el-upload
                         class="upload-demo"
                         action="#"
-                        accept="video/*"
+                        accept="video/mp4"
                         :show-file-list="false"
                         :on-change="changeFile">
                         <el-button size="small" type="primary">点击上传</el-button>
@@ -92,18 +92,20 @@
                     prop="monitor_id"
                     label="监控展示"
                     :rules="{ required: form.area===2, message: '监控展示不能为空', trigger: 'blur' }">
-                    <el-tree 
-                        ref="monitor"
+                    <el-tree
                         :data="data"
-                        node-key="id"
                         show-checkbox
+                        node-key="id"
+                        ref="monitor"
+                        check-strictly
                         @check="getMonitor"
-                    ></el-tree>
+                        :props="defaultProps">
+                    </el-tree>
                 </el-form-item>
                 <el-form-item
                     prop="sort"
                     label="排序"
-                    :rules="{ required: true, message: '视频不能为空', trigger: 'blur' }">
+                    :rules="{ required: true, message: '视频排序不能为空', trigger: 'blur' }">
                     <el-select v-model="form.sort" placeholder="请选择视频排序">
                     <el-option v-for="item in 5" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
@@ -174,35 +176,35 @@
                 tableIndex: 0,
                 showVideo: false,
                 videoSrc: '',
-                data: [
-                    {
-                        id: 11,
-                        label: '区域1',
-                        children: [
-                            {
-                                id: 111,
-                                label: '消防通道',
-                                children: [ {id: 1, label: '监控1'}, { id: 2, label: '监控2' }, { id: 3,label: '监控3' } ]
-                            },
-                            {
-                                id: 112,
-                                label: '停车场',
-                                children: [ {id: 1, label: '监控1'}, { id: 2, label: '监控2' } ]
-                            }
-                        ]
-                    },
-                    {
-                        id: 12,
-                        label: '区域2',
-                        children: [
-                            {
-                                id: 121,
-                                label: '出入口',
-                                children: [ {id: 1, label: '监控1'}, { id: 2, label: '监控2' }, { id: 3,label: '监控3' } ]
-                            }
-                        ]
-                    }
-                ]
+                data: [{
+                    id: 1,
+                    label: '区域1',
+                    children: [{
+                        id: 1,
+                        label: '停车场',
+                        children: [{
+                            id: 7,
+                            label: '监控1'
+                        }, {
+                            id: 8,
+                            label: '监控2'
+                        }]
+                    },{
+                        id: 2,
+                        label: '消防通道',
+                        children: [{
+                            id: 9,
+                            label: '监控1'
+                        }, {
+                            id: 10,
+                            label: '监控2'
+                        }]
+                    }]
+                }],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                }
             }
         },
         created() {
@@ -223,9 +225,9 @@
             handleCurrentChange(val) {
                 this.requestInfo(val);
             },
-            getMonitor() {
-                let res = this.$refs.monitor.getCurrentKey();
-                console.log(res)
+            getMonitor(val) {
+                let res = this.$refs.monitor.getCheckedKeys();
+                this.form.monitor_id = res;
             },
             // 新增视频
             addVideo() {
@@ -234,7 +236,17 @@
                 this.fileName = '';
                 this.isEdit = false;
                 this.$nextTick(() => {
+                    this.form = {
+                        area: '',
+                        video: '',
+                        sort: '',
+                        status: true,
+                        startTime: '',
+                        endTime: '',
+                        monitor_id: []
+                    }
                     this.$refs.form.resetFields();
+                    this.$refs.monitor.setCheckedKeys([]);
                 })
             },
             changeFile(file) {
@@ -285,10 +297,7 @@
                         .then((res)=>{
                             this.isLoading = false;
                             item.is_show = false;
-                            this.$message({
-                                type: 'success',
-                                message: '下线成功!'
-                            });
+                            this.$message.success("下线成功");
                         })
                         .catch(()=>{
                             this.isLoading = false;
@@ -307,10 +316,7 @@
                         .then((res)=>{
                             this.isLoading = false;
                             item.is_show = true;
-                            this.$message({
-                                type: 'success',
-                                message: '上线成功!'
-                            });
+                            this.$message.success("下线成功");
                         })
                         .catch(()=>{
                             this.isLoading = false;
@@ -329,10 +335,7 @@
                     this.$http.delete(`api/v1/system/video/${item.id}`)
                     .then((res)=>{
                         this.isLoading = false;
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
+                        this.$message.success("删除成功");
                         this.requestInfo(1);
                     })
                     .catch(()=>{
@@ -343,6 +346,12 @@
             submit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        if(this.form.area === 2) {
+                            if(this.form.monitor_id.length > 2) {
+                                this.$message.warning('视频监控展示最多只能选择2个');
+                                return false;
+                            }
+                        }
                         this.videoLoading = true;
                         let param = new FormData();
                         param.append('area', this.form.area);
@@ -361,10 +370,7 @@
                             .then((res)=>{
                                 this.videoLoading = false;
                                 this.dialogFormVisible = false;
-                                this.$message({
-                                    type: 'success',
-                                    message: '视频修改成功'
-                                })
+                                this.$message.success('视频修改成功');
                                 this.tableData[this.tableIndex] = res.data;
                             })
                             .catch(()=>{
@@ -375,10 +381,7 @@
                             .then((res)=>{
                                 this.videoLoading = false;
                                 this.dialogFormVisible = false;
-                                this.$message({
-                                    type: 'success',
-                                    message: '视频添加成功'
-                                })
+                                this.$message.success('视频添加成功');
                                 this.tableData.unshift(res.data);
                             })
                             .catch(()=>{
@@ -416,6 +419,9 @@
             .el-checkbox .el-checkbox__inner {
                 display: none;
             }
+        }
+        ::v-deep .el-tree {
+            margin-top: 6px;
         }
     }
 </style>
