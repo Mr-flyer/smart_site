@@ -73,7 +73,7 @@
                 <el-table-column prop="name" label="车牌" width="180"></el-table-column>
                 <el-table-column prop="date" label="发生时间" width="180"></el-table-column>
                 <el-table-column prop="address" label="门禁点"></el-table-column>
-                <el-table-column prop="address" label="出入类型"></el-table-column>
+                <el-table-column prop="address" label="出入"></el-table-column>
               </el-table>
             </el-card>
           </el-col>

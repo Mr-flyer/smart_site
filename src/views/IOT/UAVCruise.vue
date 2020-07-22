@@ -1,13 +1,17 @@
 <template>
   <div class="cruise_wrap">
-    <el-card class="cruise_item" :body-style="cardBodyStyle" shadow="hover" v-for="(item, index) of 5" :key="index">
-      <img class="cruise_pic" />
+    <el-card class="cruise_item" :body-style="cardBodyStyle" shadow="hover" v-for="(item, index) of videoList" :key="index" >
+      <!-- <img class="cruise_pic" /> -->
+      <video class="cruise_pic" :src="item.video" @click="openView(item.video)"></video>
       <div class="cruise_cont">
-        <span class="cruise_title">标题</span>
-        <div>视屏大小：12M</div>
-        <div class="cruise_time">上传时间：2020-02-02</div>
+        <span class="cruise_title">{{item.video_name}}</span>
+        <!-- <div>视频大小：12M</div> -->
+        <!-- <div class="cruise_time">上传时间：2020-02-02</div> -->
       </div>
     </el-card>
+    <el-dialog title="收货地址" :visible="dialogTableVisible" @close="dialogTableVisible = false">
+      <video controls :src="currtVideo"></video>
+    </el-dialog>
   </div>
 </template>
 
@@ -17,8 +21,29 @@ export default {
     cardBodyStyle: {
       padding: 0
     },
-    active: "first"
-  })
+    videoList: [],
+    active: "first",
+    dialogTableVisible: false,
+    currtVideo: ''
+  }),
+  created() {
+    this.$http.get(`api/v1/system/video`, {
+      area: 1
+    })
+    .then(({data}) => {
+      console.log(data);
+      this.videoList = data
+    }).catch((err) => {
+      
+    });
+  },
+  methods: {
+    openView(video) {
+      console.log(video);
+      this.dialogTableVisible = true
+      this.currtVideo = video
+    }
+  }
 }
 </script>
 
@@ -36,6 +61,7 @@ export default {
     .cruise_pic {
       width: 100%;
       height: 270px;
+      object-fit: cover;
       background-color: antiquewhite;
     }
     .cruise_cont {

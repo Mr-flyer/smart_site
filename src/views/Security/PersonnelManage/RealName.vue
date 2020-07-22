@@ -14,7 +14,7 @@
         </el-form-item>
         <el-form-item label="单位类型" prop="company_type">
           <el-select v-model="formInline.company_type" placeholder="请选择单位类型">
-            <el-option label="全部" :value="0"></el-option>
+            <el-option label="全部" value=""></el-option>
             <el-option
               v-for="(v, i) of initData.companyType"
               :key="i"
@@ -25,24 +25,25 @@
         </el-form-item>
         <el-form-item label="公司名称" prop="company">
           <el-select v-model="formInline.company" placeholder="请选择单位">
-            <el-option label="全部" :value="0"></el-option>
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="(v, i) of initData.company" :key="i" :label="v.name" :value="v.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="班组" prop="team">
           <el-select v-model="formInline.team" placeholder="请选择班组">
-            <el-option label="全部" :value="0"></el-option>
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="(v, i) of initData.team" :key="i" :label="v.name" :value="v.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="工种" prop="work_type">
           <el-select v-model="formInline.work_type" placeholder="请选择工种">
-            <el-option label="全部" :value="0"></el-option>
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="(v, i) of initData.workType" :key="i" :label="v.name" :value="v.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="formInline.sex" placeholder="请选择性别">
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="(v, i) of initData.sex" :key="i" :label="v.name" :value="v.id"></el-option>
           </el-select>
         </el-form-item>
@@ -66,6 +67,7 @@
         </el-form-item>
         <el-form-item label="是否关联实名" prop="is_real_name">
           <el-select v-model="formInline.is_real_name" placeholder="请选择是否关联实名">
+            <el-option label="全部" value=""></el-option>
             <el-option
               v-for="(v, i) of initData.is_real_name"
               :key="i"
@@ -80,15 +82,15 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="add-admin-btn">
+    <!-- <div class="add-admin-btn">
       <el-button icon="el-icon-delete">删除</el-button>
       <el-button icon="el-icon-top-right" type="primary">导出</el-button>
-    </div>
-    <el-table :data="personnelList" border style="width: 100%">
-      <el-table-column align="center" type="selection" width="55" />
+    </div> -->
+    <el-table :data="personnelList" v-loading="loading" border style="width: 100%" >
+      <!-- <el-table-column align="center" type="selection" width="55" /> -->
       <el-table-column align="center" type="index" label="序号" width="80" />
       <el-table-column align="center" prop="name" label="姓名" width="100" />
-      <el-table-column align="center" prop="staff_id" label="员工ID" />
+      <!-- <el-table-column align="center" prop="staff_id" label="员工ID" /> -->
       <el-table-column align="center" prop="sex_txt" label="性别" width="60" />
       <el-table-column align="center" prop="company_type_txt" label="单位类型" width="180" />
       <el-table-column align="center" prop="company_txt" label="单位名称" />
@@ -99,7 +101,7 @@
       <el-table-column align="center" label="操作" fixed="right" width="140" #default="{row}">
         <el-button type="text" size="small" @click="dialogFormVisible = true">查看</el-button>
         <el-button type="text" size="small" @click="showEditStaffInfo(row.id)">编辑</el-button>
-        <el-button type="text" size="small" @click="delBtn" >删除</el-button>
+        <!-- <el-button type="text" size="small" @click="delBtn" >删除</el-button> -->
       </el-table-column>
     </el-table>
     <el-pagination
@@ -107,11 +109,11 @@
       background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage"
+      :current-page="formInline.page"
       :page-sizes="[20, 30, 40, 50]"
       :page-size="20"
-      layout="sizes, prev, pager, next, jumper"
-      :total="100"
+      layout="prev, pager, next, jumper"
+      :total="tableTotle"
     ></el-pagination>
     <el-dialog title="员工详情" :visible.sync="dialogFormVisible" width="720px">
       <el-form class="staff-form" :model="form" label-width="150px">
@@ -207,14 +209,15 @@ export default {
       currentPage: 1,
       formInline: {
         name: "",
-        company_type: 0,
-        company: 0,
-        team: 0,
-        work_type: 0,
-        sex: 0,
+        company_type: "",
+        company: "",
+        team: "",
+        work_type: "",
+        sex: "",
         // into_time: [],
         // leave_time: [],
-        is_real_name: 0
+        is_real_name: "",
+        page: 1
       },
       dialogFormVisible: false,
       form: {
@@ -252,7 +255,9 @@ export default {
         ],
         leave_time: [],
         into_time: []
-      }
+      },
+      tableTotle: 0,
+      loading: false
     };
   },
   computed: {
@@ -307,19 +312,26 @@ export default {
       this.initData.workType = data;
     });
     // return false;
-    this.$http.get("api/v1/security/user/").then(({ data }) => {
-      //   console.log(data);
+    this.$http.get("api/v1/security/user/", {
+      page: 2,
+    }).then(({ count, data }) => {
+        console.log(data);
+        this.tableTotle = count
       setTimeout(() => {
         this.tableData = data;
       }, 1000);
     });
   },
   methods: {
+    // 切换每页条数时
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
     },
+    // 切换页码时
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
+      this.formInline.page = val
+      this._setTableList()
     },
     changeFile(res) {
       let _that = this;
@@ -354,43 +366,26 @@ export default {
     },
     // 搜索人员列表
     submiteSearch() {
-      //   console.log(this.formInline);
-      this.formInline.start_into_time = dayjs(
-        this.initData.into_time[0]
-      ).format("YYYY-MM-DD");
-      this.formInline.end_into_time = dayjs(this.initData.into_time[1]).format(
-        "YYYY-MM-DD"
-      );
-      this.formInline.start_leave_time = dayjs(
-        this.initData.leave_time[0]
-      ).format("YYYY-MM-DD");
-      this.formInline.end_leave_time = dayjs(
-        this.initData.leave_time[1]
-      ).format("YYYY-MM-DD");
-      this.$message(`搜索字段序列==${JSON.stringify(this.formInline)}`);
-      console.log(this.formInline);
-      this.$http
-        .get("api/v1/security/user/", this.formInline)
-        .then(({ data }) => {
-          console.log(data);
-        });
+      this.formInline.page = 1
+      this._setTableList()
     },
     // 重置搜索
     resetForm(formName) {
-      console.log("重置", this.$refs[formName].resetFields);
+      this.formInline.page = 1
       this.$refs[formName].resetFields();
+      this._setTableList()
     },
+    // 编辑人员信息
     showEditStaffInfo(id) {
       console.log(id);
       this.$http.get(`api/v1/security/user/${id}`).then(({ data }) => {
-        console.log(data);
         this.form = data;
         this.dialogFormVisible = true;
       });
     },
     // 编辑员工信息
     editStaffInfo() {
-      console.log("编辑员工信息", this.form);
+      // console.log("编辑员工信息", this.form);
       // this.dialogFormVisible = false
       this.$http
         .patch(`api/v1/security/user/${this.form.id}`, this.form)
@@ -402,12 +397,39 @@ export default {
             message: "编辑成功！"
           });
         });
+    },
+    // 格式化表格数据
+    _setTableList() {
+      this.loading = true
+      this.formInline.start_into_time = this.initData.into_time[0] ? dayjs(
+        this.initData.into_time[0]
+      ).format("YYYY-MM-DD") : '';
+      this.formInline.end_into_time = this.initData.into_time[1] ? dayjs(this.initData.into_time[1]).format(
+        "YYYY-MM-DD"
+      ) : '';
+      this.formInline.start_leave_time = this.initData.leave_time[0] ? dayjs(
+        this.initData.leave_time[0]
+      ).format("YYYY-MM-DD") : '';
+      this.formInline.end_leave_time = this.initData.leave_time[1] ? dayjs(
+        this.initData.leave_time[1]
+      ).format("YYYY-MM-DD") : '';
+      this.$message(`搜索字段序列==${JSON.stringify(this.formInline)}`);
+      this.$http
+        .get("api/v1/security/user/", this.formInline)
+        .then(({ data }) => {
+          this.tableData = data
+          this.loading = false
+        })
+        .catch(err => {
+          this.loading = false
+        })
     }
   }
 };
 </script>
 <style lang="scss" scoped>
 .admin-manage {
+  padding: 0;
   .real-name {
     border-bottom: 1px solid #e5e5e5;
     padding-bottom: 16px;

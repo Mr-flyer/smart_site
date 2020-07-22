@@ -167,7 +167,7 @@ export default {
         icon: "el-icon-menu",
         menuItemList: [
           {
-            name: "视屏监控",
+            name: "视频监控",
             routerName: "VideoMonitoring",
             path: "/Security/VideoMonitoring"
           },
