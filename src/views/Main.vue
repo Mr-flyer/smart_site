@@ -2,7 +2,7 @@
   <el-container class="main-container">
     <el-aside :class="showMenu ? 'main-aside':'hide-main-aside'">
       <div class="main-logo">
-        <img src="../assets/logo.png" />
+        <!-- <img src="../assets/logo.png" /> -->
       </div>
       <el-menu
         background-color="#05101b"
@@ -187,16 +187,16 @@ export default {
             path: "/Security/VehicleBarrier"
           },
           {
-            name: "安全教育(2期)",
+            name: "安全教育",
           },
           {
-            name: "危大工程监测预警（2期）",
+            name: "危大工程监测预警",
           },
           {
-            name: "现场安全隐患排查（2期）",
+            name: "现场安全隐患排查",
           },
           {
-            name: "高处作业防护预警（2期）",
+            name: "高处作业防护预警",
           },
         ]
       },
@@ -217,20 +217,20 @@ export default {
         ]
       },
       {
-        name: "生产管理（2期）",
+        name: "生产管理",
         icon: "el-icon-tickets",
         menuItemList: [
           {
-            name: "三维进度（2期）",
+            name: "三维进度",
           },
           {
-            name: "施工验收（2期）",
+            name: "施工验收",
           },
           {
-            name: "协同会审（2期）",
+            name: "协同会审",
           },
           {
-            name: "云会议（2期）",
+            name: "云会议",
           },
         ]
       },

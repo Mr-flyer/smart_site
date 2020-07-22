@@ -37,7 +37,7 @@ export default {
   methods: {
     lineFun() {
       this.lineChart = this.$echarts.init(this.$refs.lineChart);
-      console.log(this.infoObj);
+      // console.log(this.infoObj);
       let series = this.infoObj.data.map((v, i) => ({
         name: this.infoObj.legend[i],
         data: this.infoObj.data[i],

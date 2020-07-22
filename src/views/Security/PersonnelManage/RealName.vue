@@ -66,7 +66,12 @@
         </el-form-item>
         <el-form-item label="是否关联实名" prop="is_real_name">
           <el-select v-model="formInline.is_real_name" placeholder="请选择是否关联实名">
-              <el-option v-for="(v, i) of initData.is_real_name" :key="i" :label="v.name" :value="v.id"></el-option>
+            <el-option
+              v-for="(v, i) of initData.is_real_name"
+              :key="i"
+              :label="v.name"
+              :value="v.id"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item class="select-btns">
@@ -79,54 +84,22 @@
       <el-button icon="el-icon-delete">删除</el-button>
       <el-button icon="el-icon-top-right" type="primary">导出</el-button>
     </div>
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label="序号" width="80">
-        <template slot-scope="scope">{{scope.$index+1}}</template>
-      </el-table-column>
-      <el-table-column prop="name" label="姓名" width="100"></el-table-column>
-      <el-table-column prop="staff_id" label="员工ID"></el-table-column>
-      <el-table-column prop="sex" label="性别" width="60" >
-          <template slot-scope="scope">
-              <span>{{scope.row.sex ? '女' : '男'}}</span>
-          </template>
-      </el-table-column>
-      <el-table-column prop="company_type" label="单位类型" width="180">
-          <template slot-scope="scope">
-              <span>{{typeof scope.row.company_type == 'number' ? initData.companyType.find(v=> v.id == scope.row.company_type).name : '暂未分配'}}</span>
-          </template>
-      </el-table-column>
-      <el-table-column prop="company" label="单位名称">
-          <template slot-scope="scope">
-              <span>{{typeof scope.row.company == 'number' ? initData.company.find(v=> v.id == scope.row.company).name : '暂未分配'}}</span>
-          </template>
-      </el-table-column>
-      <el-table-column prop="identity" label="角色" width="150">
-          <template slot-scope="scope">
-              <span>{{typeof scope.row.identity == 'number' ? initData.identity.find(v=> v.id == scope.row.identity).name : '暂未分配'}}</span>
-          </template>
-      </el-table-column>
-      <el-table-column prop="team" label="班组" width="150">
-          <template slot-scope="scope">
-              <span>{{typeof scope.row.team == 'number' ? initData.team.find(v=> v.id == scope.row.team).name : '暂未分配'}}</span>
-          </template>
-      </el-table-column>
-      <el-table-column prop="work_type" label="工种" width="180">
-          <template slot-scope="scope">
-              <span>{{typeof scope.row.work_type == 'number' ? initData.workType.find(v=> v.id == scope.row.work_type).name : '暂未分配'}}</span>
-          </template>
-      </el-table-column>
-      <el-table-column prop="is_real_name" label="关联实名" width="100">
-          <template slot-scope="scope">
-              <span>{{typeof scope.row.company_type == 'number' ? '是' : '否'}}</span>
-          </template>
-      </el-table-column>
-      <el-table-column label="操作" fixed="right" width="140">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="dialogFormVisible = true">查看</el-button>
-          <el-button @click="showEditStaffInfo(scope.row.id)" type="text" size="small">编辑</el-button>
-          <el-button @click="delBtn" type="text" size="small">删除</el-button>
-        </template>
+    <el-table :data="personnelList" border style="width: 100%">
+      <el-table-column align="center" type="selection" width="55" />
+      <el-table-column align="center" type="index" label="序号" width="80" />
+      <el-table-column align="center" prop="name" label="姓名" width="100" />
+      <el-table-column align="center" prop="staff_id" label="员工ID" />
+      <el-table-column align="center" prop="sex_txt" label="性别" width="60" />
+      <el-table-column align="center" prop="company_type_txt" label="单位类型" width="180" />
+      <el-table-column align="center" prop="company_txt" label="单位名称" />
+      <el-table-column align="center" prop="identity_txt" label="角色" width="150" />
+      <el-table-column align="center" prop="team_txt" label="班组" width="150" />
+      <el-table-column align="center" prop="work_type_txt" label="工种" width="180" />
+      <el-table-column align="center" prop="is_real_name_txt" label="关联实名" width="100" />
+      <el-table-column align="center" label="操作" fixed="right" width="140" #default="{row}">
+        <el-button type="text" size="small" @click="dialogFormVisible = true">查看</el-button>
+        <el-button type="text" size="small" @click="showEditStaffInfo(row.id)">编辑</el-button>
+        <el-button type="text" size="small" @click="delBtn" >删除</el-button>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -213,7 +186,7 @@
 </template>
 
 <script>
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 export default {
   data() {
     return {
@@ -254,7 +227,7 @@ export default {
         company: "",
         team: "",
         work_type: "",
-        identity: "",
+        identity: ""
         // einlass: "",
         // leavingTime: "",
         // head_img: require("../../../assets/head_img.jpg"),
@@ -266,21 +239,54 @@ export default {
         team: [],
         workType: [],
         sex: [
-            { id: 0, name: "男" },
-            { id: 1, name: "女" }
+          { id: 0, name: "男" },
+          { id: 1, name: "女" }
         ],
         is_real_name: [
-            { id: 0, name: "否"},
-            { id: 1, name: "是"}
+          { id: 0, name: "否" },
+          { id: 1, name: "是" }
         ],
         identity: [
-            { id: 0, name: "管理人员"},
-            { id: 1, name: "施工人员"},
+          { id: 0, name: "管理人员" },
+          { id: 1, name: "施工人员" }
         ],
         leave_time: [],
         into_time: []
       }
     };
+  },
+  computed: {
+    // 人员列表
+    personnelList() {
+      return this.tableData.length
+        ? this.tableData.map(el => ({
+            ...el,
+            company_txt:
+              typeof el.company == "number"
+                ? this.initData.company.find(v => v.id == el.company).name
+                : "暂未分配",
+            company_type_txt:
+              typeof el.company_type == "number"
+                ? this.initData.companyType.find(v => v.id == el.company_type)
+                    .name
+                : "暂未分配",
+            sex_txt: el.sex ? "女" : "男",
+            is_real_name_txt: el.is_real_name ? "是" : "否",
+            identity_txt:
+              typeof el.identity == "number"
+                ? this.initData.identity.find(v => v.id == el.identity).name
+                : "暂未分配",
+            team_txt:
+              typeof el.team == "number"
+                ? this.initData.team.find(v => v.id == el.team).name
+                : "暂未分配",
+            work_type_txt:
+              typeof el.work_type == "number"
+                ? this.initData.workType.find(v => v.id == el.work_type).name
+                : "暂未分配"
+          }))
+        : [];
+    }
   },
   created() {
     // return false;
@@ -297,15 +303,15 @@ export default {
       this.initData.team = data;
     });
     this.$http.get("api/v1/user/work_type/").then(({ data }) => {
-        // console.log("工种", data);
+      // console.log("工种", data);
       this.initData.workType = data;
     });
     // return false;
     this.$http.get("api/v1/security/user/").then(({ data }) => {
-    //   console.log(data);
-        setTimeout(() => {
-            this.tableData = data
-        }, 1000)
+      //   console.log(data);
+      setTimeout(() => {
+        this.tableData = data;
+      }, 1000);
     });
   },
   methods: {
@@ -349,15 +355,25 @@ export default {
     // 搜索人员列表
     submiteSearch() {
       //   console.log(this.formInline);
-      this.formInline.start_into_time = dayjs(this.initData.into_time[0]).format('YYYY-MM-DD')
-      this.formInline.end_into_time = dayjs(this.initData.into_time[1]).format('YYYY-MM-DD')
-      this.formInline.start_leave_time = dayjs(this.initData.leave_time[0]).format('YYYY-MM-DD')
-      this.formInline.end_leave_time = dayjs(this.initData.leave_time[1]).format('YYYY-MM-DD')
+      this.formInline.start_into_time = dayjs(
+        this.initData.into_time[0]
+      ).format("YYYY-MM-DD");
+      this.formInline.end_into_time = dayjs(this.initData.into_time[1]).format(
+        "YYYY-MM-DD"
+      );
+      this.formInline.start_leave_time = dayjs(
+        this.initData.leave_time[0]
+      ).format("YYYY-MM-DD");
+      this.formInline.end_leave_time = dayjs(
+        this.initData.leave_time[1]
+      ).format("YYYY-MM-DD");
       this.$message(`搜索字段序列==${JSON.stringify(this.formInline)}`);
       console.log(this.formInline);
-      this.$http.get("api/v1/security/user/", this.formInline).then(({ data }) => {
-        console.log(data);
-      });
+      this.$http
+        .get("api/v1/security/user/", this.formInline)
+        .then(({ data }) => {
+          console.log(data);
+        });
     },
     // 重置搜索
     resetForm(formName) {
@@ -365,27 +381,27 @@ export default {
       this.$refs[formName].resetFields();
     },
     showEditStaffInfo(id) {
-        console.log(id);
-        this.$http.get(`api/v1/security/user/${id}`)
-        .then(({data}) => {
-            console.log(data);
-            this.form = data
-            this.dialogFormVisible = true
-        })
+      console.log(id);
+      this.$http.get(`api/v1/security/user/${id}`).then(({ data }) => {
+        console.log(data);
+        this.form = data;
+        this.dialogFormVisible = true;
+      });
     },
     // 编辑员工信息
     editStaffInfo() {
-        console.log("编辑员工信息", this.form);
-        // this.dialogFormVisible = false
-        this.$http.patch(`api/v1/security/user/${this.form.id}`, this.form)
+      console.log("编辑员工信息", this.form);
+      // this.dialogFormVisible = false
+      this.$http
+        .patch(`api/v1/security/user/${this.form.id}`, this.form)
         .then(res => {
-            // console.log(res);
-            this.dialogFormVisible = false
-            this.$message({
-                type: 'success',
-                message: '编辑成功！'
-            })
-        })
+          // console.log(res);
+          this.dialogFormVisible = false;
+          this.$message({
+            type: "success",
+            message: "编辑成功！"
+          });
+        });
     }
   }
 };

@@ -328,7 +328,7 @@ export default {
           backgroundColor: this.Ycolors[eq]
         };
       });
-      console.log("obj", obj);
+      // console.log("obj", obj);
       return obj;
     }
   }
