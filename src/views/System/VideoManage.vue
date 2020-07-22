@@ -236,6 +236,15 @@
                 this.fileName = '';
                 this.isEdit = false;
                 this.$nextTick(() => {
+                    this.form = {
+                        area: '',
+                        video: '',
+                        sort: '',
+                        status: true,
+                        startTime: '',
+                        endTime: '',
+                        monitor_id: []
+                    }
                     this.$refs.form.resetFields();
                     this.$refs.monitor.setCheckedKeys([]);
                 })
@@ -372,7 +381,7 @@
                             .then((res)=>{
                                 this.videoLoading = false;
                                 this.dialogFormVisible = false;
-                                this.$messagesuccess('视频添加成功');
+                                this.$message.success('视频添加成功');
                                 this.tableData.unshift(res.data);
                             })
                             .catch(()=>{

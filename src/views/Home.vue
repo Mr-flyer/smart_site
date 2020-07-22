@@ -111,24 +111,24 @@
         </el-col>
         <!-- 中 -->
         <el-col :span="12" class="center_wrap">
-          <el-card class="panel-wrap model-wrap" shadow="never">
-            <template slot="header">
-              <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              项目模型
-            </template>
-            <div class="video_wrap">
-              <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4" />
-            </div>
-          </el-card>
-          <el-card class="panel-wrap real_scene-wrap" shadow="never">
-            <template slot="header">
-              <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              项目实景
-            </template>
-            <div class="video_wrap">
-              <video autoplay loop muted  src="../assets/video/HYB00-TimeLiner.mp4"></video>
-            </div>
-          </el-card>
+            <el-card class="panel-wrap model-wrap" shadow="never">
+                <template slot="header">
+                    <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
+                    项目模型
+                </template>
+                <div class="video_wrap">
+                    <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4" />
+                </div>
+            </el-card>
+            <el-card class="panel-wrap real_scene-wrap" shadow="never">
+                <template slot="header">
+                    <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
+                    项目实景
+                </template>
+                <div class="video_wrap">
+                    <video autoplay loop muted  src="../assets/video/HYB00-TimeLiner.mp4"></video>
+                </div>
+            </el-card>
         </el-col>
         <!-- 右 -->
         <el-col :span="6">
