@@ -222,6 +222,8 @@ export default {
         menuItemList: [
           {
             name: "三维进度",
+            routerName: "Document3D",
+            path: "/Production/Document3D"
           },
           {
             name: "施工验收",

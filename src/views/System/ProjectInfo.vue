@@ -36,7 +36,7 @@
                     <template slot="append">天</template>
                 </el-input>
             </el-form-item> -->
-            <el-form-item label="建筑面积">
+            <el-form-item label="场地面积">
                 <el-input v-model="form.area">
                     <template slot="append">平方米</template>
                 </el-input>

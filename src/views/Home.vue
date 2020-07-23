@@ -8,7 +8,8 @@
         </div>
         <div class="time-wrap">{{timeInfo}}</div>
       </div>
-      <div class="header_title">虹洋热电联产扩建项目</div>
+      <div class="sub_title">江苏省电力设计院</div>
+      <div class="header_title">虹洋热电联产扩建项目智慧工地管理系统</div>
       <div class="header_left">
         <div class="header_item">
           <img src="../assets/bigScreen/icon_location@2x.png" alt />连云港
@@ -41,12 +42,16 @@
                   <span>合同造价</span>
                   {{survey.costTxt}}
                 </div>
-                <div class="sum-type-item">
+                <!-- <div class="sum-type-item">
                   <span>合同工期</span>
                   {{survey.period || 0}}天
-                </div>
+                </div> -->
                 <div class="sum-type-item">
                   <span>建筑面积</span>
+                  {{survey.field_area || 0}}平方米
+                </div>
+                <div class="sum-type-item">
+                  <span>场地面积</span>
                   {{survey.area || 0}}平方米
                 </div>
               </div>
@@ -113,31 +118,29 @@
           <el-card class="panel-wrap model-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              模拟进度
+              模拟进度--{{video01Name}}
             </template>
             <div class="video_wrap">
-                <!-- controls -->
-              <video
+              <!-- <video
                 id="video01"
                 autoplay
-                loop
                 muted
                 :src="video01"
                 @ended="videoend"
                 @error="videoerr"
-              />
+              /> -->
             </div>
           </el-card>
           <el-card class="panel-wrap real_scene-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              项目实景
+              项目实景--{{video02Name}}
             </template>
             <div class="video_wrap">
               <video
                 id="video02"
                 autoplay
-                loop
+                controls
                 muted
                 :src="video02"
                 @ended="videoend02"
@@ -283,7 +286,7 @@
             <div class="monitoring_group">
               <div class="monitoring_item">
                 <div class="monitoring_video">
-                  <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4"></video>
+                  <video autoplay loop muted src="http://218.92.33.126:23080/media/jiankong/2.mp4"></video>
                 </div>
                 <div class="monitoring_desc">
                   监控点1
@@ -292,7 +295,7 @@
               </div>
               <div class="monitoring_item">
                 <div class="monitoring_video">
-                  <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4"></video>
+                  <video autoplay loop muted src="http://218.92.33.126:23080/media/jiankong/3.mp4"></video>
                 </div>
                 <div class="monitoring_desc">
                   监控点1
@@ -1812,28 +1815,38 @@ export default {
     weekTxt: '',
     dateTime: '',
     timeInfo: '',
+    timer: '',
     video01Index: 0,
     video02Index: 0,
     todayWeatherData: [],
     tomorrowWeatherData: [],
     threeWeatherData: [],
     weather: ["xue", "lei", "shachen", "wu", "bingbao", "yun", "yu", "yin", "qing"],
-    todayNoise: ''
+    todayNoise: '',
   }),
   computed: {},
-  // watch: {
-  //   time() {
-  //     return Date.now()
-  //   }
-  // },
   created() {
     this.weekTxt = this.week[dayjs().day()]
     this.dateTime = dayjs().format('YYYY年MM月DD日')
-    this.timeInfo = dayjs().format('HH:mm')
+      this.timeInfo = dayjs().format('HH:mm:ss')
+    this.timer = setInterval(() => {
+      this.timeInfo = dayjs().format('HH:mm:ss')
+    }, 1000)
+    this.$http.get(`api/v1/security/dust_chart`, {
+        check_mode: "hour"
+    })
+    .then(({data: dustData}) => {
+      // console.log(dustData);
+      let TSP = dustData.map(v => Number(v.tsp))
+      let PM2_5 = dustData.map(v => Number(v.pm2_5))
+      let PM10 = dustData.map(v => Number(v.pm10))
+      // console.log([TSP, PM2_5, PM10]);
+      this.infoDustTrend.xdata = dustData.map(v => dayjs(v.time).format('HH:mm'))
+      this.infoDustTrend.data = [TSP, PM2_5, PM10]
+    })
     this.$http.get(`api/v1/index/tianqi`).then(({data: weatherAllData}) => {
       this.weatherCity = weatherAllData.city
       let { data, noise } = weatherAllData
-      console.log(noise);
       this.todayWeatherData = data[0];
       this.todayNoise = noise
       if (this.weather.includes(this.todayWeatherData.wea_day_img)) {
@@ -1875,10 +1888,17 @@ export default {
     this.$http.get(`api/v1/system/video`).then(({ data }) => {
       this.video01Arr = data.filter(v => !v.area);
       this.video02Arr = data.filter(v => v.area);
+      console.log(this.video02Arr);
       this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
       this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
       // console.log(data.filter(v => !v.area)[1]);
     });
+  },
+  beforeDestroy() {
+    // 清除计时器
+    if(this.timer) clearInterval(this.timer)
   },
   methods: {
     format_price(val) {
@@ -1935,11 +1955,13 @@ export default {
       } else this.video01Index = 0;
       console.log(this.video01Index, this.video01Arr);
       this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
     },
     videoerr() {
       console.log("失败");
       this.video01Index = 0;
       this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
     },
     videoend02() {
       console.log("结束");
@@ -1948,11 +1970,13 @@ export default {
         this.video02Index++;
       } else this.video02Index = 0;
       this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
     },
     videoerr02() {
       console.log("失败");
       this.video02Index = 0;
       this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
     }
   },
   components: {
@@ -2080,6 +2104,12 @@ $txtColor2: #ffde7b;
   justify-content: space-between;
   box-sizing: border-box;
   position: relative;
+  .sub_title {
+    position: absolute;
+    left: 15px; bottom: 0;
+    font-size: 18px;
+    transform: translate(100%, -20%);
+  }
   .header_right {
     display: flex;
     align-items: flex-end;
