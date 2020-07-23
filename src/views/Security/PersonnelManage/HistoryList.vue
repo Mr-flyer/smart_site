@@ -84,34 +84,49 @@
                 label="单位类型"
                 width="140">
                 <template slot-scope="scope">
-                    <div v-if="scope.row.company_type == item.id" v-for="item in companyTypeList" :key="item.id">{{item.name}}</div>
+                    <div v-if="scope.row.company_type">
+                        <div v-if="scope.row.company_type == item.id" v-for="item in companyTypeList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
                 </template>
             </el-table-column>
             <el-table-column
                 label="单位名称">
                 <template slot-scope="scope">
-                    <div v-if="scope.row.company == item.id" v-for="item in companyList" :key="item.id">{{item.name}}</div>
+                    <div v-if="scope.row.company">
+                        <div v-if="scope.row.company == item.id" v-for="item in companyList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
                 </template>
             </el-table-column>
             <el-table-column
                 label="身份"
                 width="140">
                 <template slot-scope="scope">
-                    <div v-if="scope.row.identity == item.id" v-for="item in identityList" :key="item.id">{{item.name}}</div>
+                    <div v-if="scope.row.identity">
+                        <div v-if="scope.row.identity == item.id" v-for="item in identityList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
                 </template>
             </el-table-column>
             <el-table-column
                 label="班组"
                 width="140">
                 <template slot-scope="scope">
-                    <div v-if="scope.row.team == item.id" v-for="item in teamList" :key="item.id">{{item.name}}</div>
+                    <div v-if="scope.row.team">
+                        <div v-if="scope.row.team == item.id" v-for="item in teamList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
                 </template>
             </el-table-column>
             <el-table-column
                 label="工种"
                 width="140">
                 <template slot-scope="scope">
-                    <div v-if="scope.row.work_type == item.id" v-for="item in workTypeList" :key="item.id">{{item.name}}</div>
+                    <div v-if="scope.row.work_type">
+                        <div v-if="scope.row.work_type == item.id" v-for="item in workTypeList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
                 </template>
             </el-table-column>
             <el-table-column

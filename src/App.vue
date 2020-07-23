@@ -39,10 +39,10 @@ p {
   color: #9fa6b1;
 }
 .green {
-  color: green;
+  color: green !important;
 }
 .red {
-  color: red;
+  color: red !important;
 }
 .set-btns {
   width: 100%;
@@ -84,6 +84,7 @@ p {
   box-sizing: border-box;
 }
 .select-btns {
+  width: 100%;
   text-align: right;
 }
 .admin-page {

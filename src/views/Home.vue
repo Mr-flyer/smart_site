@@ -3,10 +3,10 @@
     <el-header class="header_wrap">
       <div class="header_right">
         <div class="date-wrap">
-          <span>{{weekTxt}}</span>
-          <span>{{dateTime}}</span>
+          <span>星期二</span>
+          <span>2020年7月14日</span>
         </div>
-        <div class="time-wrap">{{timeInfo}}</div>
+        <div class="time-wrap">10:26:34</div>
       </div>
       <div class="header_title">虹洋热电联产扩建项目</div>
       <div class="header_left">
@@ -43,11 +43,11 @@
                 </div>
                 <div class="sum-type-item">
                   <span>合同工期</span>
-                  {{survey.period || 0}}天
+                  {{survey.period}}天
                 </div>
                 <div class="sum-type-item">
                   <span>建筑面积</span>
-                  {{survey.area || 0}}平方米
+                  {{survey.area}}平方米
                 </div>
               </div>
               <div class="sum-desc">
@@ -116,9 +116,9 @@
               项目模型
             </template>
             <div class="video_wrap">
-                <!-- controls -->
               <video
                 id="video01"
+                controls
                 autoplay
                 muted
                 :src="video01"
@@ -167,7 +167,7 @@
                     <div class="weather_today-state">
                       <img :src="todayWeatherData.wea_day_img" alt />
                       <div>
-                        <span>{{todayWeatherData.tem2}}-{{todayWeatherData.tem1}}℃</span>
+                        <span>{{todayWeatherData.tem2}}-{{todayWeatherData.tem1}}C</span>
                         <p>{{todayWeatherData.win[0]}}{{todayWeatherData.win_speed}}</p>
                       </div>
                     </div>
@@ -233,16 +233,16 @@
               <div class="security_current">
                 <div
                   class="security_current-item"
-                  v-for="(item, index) of securityList"
+                  v-for="(item, index) of 4"
                   :key="index"
                   :class="index || 'warning'"
                 >
                   <div class="security_current-hd">
-                    {{item.name}}
+                    PM2.5
                     <img v-show="!index" src="../assets/bigScreen/icon_warning@2x.png" alt />
                   </div>
                   <div class="security_current-bd txtcolor01">
-                    <span>54.1</span> {{item.company}}
+                    <span>54.1</span> ug/m
                   </div>
                 </div>
               </div>
@@ -308,19 +308,19 @@
         >安全管理</router-link>
         <router-link
           class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
+          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
         >系统管理</router-link>
         <router-link
           class="navbar_item"
-          :to="{name: 'UAVCruise', redirect: '/IOT/UAVCruise'}"
+          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
         >三维物联</router-link>
         <router-link
           class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
+          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
         >生产管理</router-link>
         <router-link
           class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
+          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
         >三维文档</router-link>
       </div>
     </div>
@@ -472,16 +472,20 @@ const options = {
   tableData: [
     {
       date: "2",
-      name: "吊塔"
+      name: "王小虎王小虎王小虎王小虎王小虎王小虎王小虎"
     },
     {
       date: "2",
-      name: "升降机"
+      name: "王小虎"
     },
     {
       date: "2",
-      name: "卸料台"
+      name: "王小虎"
     },
+    {
+      date: "2",
+      name: "王小虎"
+    }
   ],
   Ycolors: [
     "#276fff",
@@ -1778,13 +1782,7 @@ const options = {
       country: "中国",
       countryEn: "China"
     }
-  },
-  securityList: [
-    {name: 'TPS', company: "mg/m³"},
-    {name: 'PM2.5', company: "mg/m³"},
-    {name: 'PM10', company: "mg/m³"},
-    {name: '噪声', company: "dB"},
-  ],
+  }
 };
 export default {
   name: "Home",
@@ -1797,67 +1795,52 @@ export default {
       }
       return "";
     },
-    week: ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六',],
     video01: "",
     video02: "",
-    // time: this.week[dayjs().day()] ,
-    weekTxt: '',
-    dateTime: '',
-    timeInfo: '',
     video01Index: 0,
     video02Index: 0,
-    todayWeatherData: [],
-    tomorrowWeatherData: [],
-    threeWeatherData: [],
-    weather: ["xue", "lei", "shachen", "wu", "bingbao", "yun", "yu", "yin", "qing"]
+    weather: ["lei", "qing", "wu", "xue", "yu", "yun"]
   }),
   computed: {},
-  // watch: {
-  //   time() {
-  //     return Date.now()
-  //   }
-  // },
   created() {
-    this.weekTxt = this.week[dayjs().day()]
-    this.dateTime = dayjs().format('YYYY年MM月DD日')
-    this.timeInfo = dayjs().format('HH:mm')
-    this.$http.get(`api/v1/index/tianqi`).then(({data: weatherAllData}) => {
-      this.weatherCity = weatherAllData.city
-      let { data } = weatherAllData
-      console.log(data);
-      this.todayWeatherData = data[0];
-      if (this.weather.includes(this.todayWeatherData.wea_day_img)) {
-        this.todayWeatherData.wea_day_img = require(`../assets/weather/${data[0].wea_day_img}.png`);
-      } else {
-        this.todayWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
-      }
-      this.infoSourceTrend.xdata = data[0].hours.slice(0, 8).map(v => v.hours);
-      this.infoSourceTrend.data = [
-        data[0].hours.slice(0, 8).map(v => ({
-          value: v.tem,
-          label: {
-            show: true,
-            position: "top",
-            color: "#fff",
-            formatter: ({ value }) => `${value}℃`
-          }
-        }))
-      ];
-      this.tomorrowWeatherData = data[1];
-      this.tomorrowWeatherData.date = dayjs(data[1].date).format("MM/DD");
-      if (this.weather.includes(this.tomorrowWeatherData.wea_day_img)) {
-        this.tomorrowWeatherData.wea_day_img = require(`../assets/weather/${data[1].wea_day_img}.png`);
-      } else {
-        this.tomorrowWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
-      }
-      this.threeWeatherData = data[2];
-      this.threeWeatherData.date = dayjs(data[2].date).format("MM/DD");
-      if (this.weather.includes(this.threeWeatherData.wea_day_img)) {
-        this.threeWeatherData.wea_day_img = require(`../assets/weather/${data[2].wea_day_img}.png`);
-      } else {
-        this.threeWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
-      }
-    });
+    // console.log(this.weatherData);
+    let { data } = this.weatherData;
+    this.todayWeatherData = data[0];
+    if (this.weather.includes(this.todayWeatherData.wea_day_img)) {
+      this.todayWeatherData.wea_day_img = require(`../assets/weather/${data[0].wea_day_img}.png`);
+    } else {
+      this.todayWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
+    }
+    this.infoSourceTrend.xdata = data[0].hours.slice(0, 8).map(v => v.hours);
+    this.infoSourceTrend.data = [
+      data[0].hours.slice(0, 8).map(v => ({
+        value: v.tem,
+        label: {
+          show: true,
+          position: "top",
+          color: "#fff",
+          formatter: ({ value }) => `${value}℃`
+        }
+      }))
+    ];
+    console.log(data[0].hours);
+    this.tomorrowWeatherData = data[1];
+    this.tomorrowWeatherData.date = dayjs(data[1].date).format("MM/DD");
+    if (this.weather.includes(this.tomorrowWeatherData.wea_day_img)) {
+      this.tomorrowWeatherData.wea_day_img = require(`../assets/weather/${data[1].wea_day_img}.png`);
+    } else {
+      this.tomorrowWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
+    }
+    this.threeWeatherData = data[2];
+    this.threeWeatherData.date = dayjs(data[2].date).format("MM/DD");
+    if (this.weather.includes(this.threeWeatherData.wea_day_img)) {
+      this.threeWeatherData.wea_day_img = require(`../assets/weather/${data[2].wea_day_img}.png`);
+    } else {
+      this.threeWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
+    }
+    console.log(data[0].hours.slice(0, 8));
+
+    this.$http.get(`api/v1/index/tianqi`).then(res => {});
     this.$http.get(`api/v1/system/project`).then(({ data }) => {
       data.costTxt = this.format_price(data.cost);
       this.survey = data;

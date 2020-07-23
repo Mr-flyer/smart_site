@@ -150,16 +150,16 @@ export default {
             routerName: "HomeSet",
             path: "/System/HomeSet"
           },
-          {
-            name: "管理员设置",
-            routerName: "AdminList",
-            path: "/System/AdminList"
-          },
-          {
-            name: "角色管理",
-            routerName: "RoleSet",
-            path: "/System/RoleSet"
-          }
+          // {
+          //   name: "管理员设置",
+          //   routerName: "AdminList",
+          //   path: "/System/AdminList"
+          // },
+          // {
+          //   name: "角色管理",
+          //   routerName: "RoleSet",
+          //   path: "/System/RoleSet"
+          // }
         ]
       },
       {

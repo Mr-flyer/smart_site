@@ -9,8 +9,10 @@
         <!-- <div class="cruise_time">上传时间：2020-02-02</div> -->
       </div>
     </el-card>
-    <el-dialog title="收货地址" :visible="dialogTableVisible" @close="dialogTableVisible = false">
-      <video controls :src="currtVideo"></video>
+    <el-dialog title="视频预览" :visible="dialogTableVisible" width="940px" @close="dialogTableVisible = false">
+      <video :src="currtVideo"  autoplay width="900" height="500" controls="controls">
+        您的浏览器不支持 video 标签。
+      </video>
     </el-dialog>
   </div>
 </template>

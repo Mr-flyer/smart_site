@@ -5,22 +5,6 @@
                 <el-input placeholder="搜索监控通道"></el-input><el-button type="primary">搜索</el-button>
             </div>
             <el-tree :data="data" highlight-current @node-click="handleNodeClick"></el-tree>
-            <div class="play-back-time">
-                <!-- <el-date-picker
-                    v-model="playBackTime"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期">
-                </el-date-picker> -->
-                <el-date-picker
-                    type="dates"
-                    v-model="playBackTime"
-                    placeholder="选择一个或多个日期"
-                    @change="changeBackTime"
-                    @focus="focusTime">
-                </el-date-picker>
-            </div>
         </span>
         <span class="play-back-list">
             <div class="select-input">
@@ -33,6 +17,14 @@
                         <el-option label="未锁定" value="beijing"></el-option>
                     </el-select>
                 </span>
+                <el-date-picker
+                    class="time-input"
+                    v-model="monitoringTime"
+                    type="daterange"
+                    align="right"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                </el-date-picker>
                 <el-button type="primary">搜索</el-button>
             </div>
             <div class="play-back-ul">
@@ -81,7 +73,7 @@
                     }
                 ],
                 lockType: '',
-                playBackTime: ''
+                monitoringTime: []
             }
         },
         created() {
@@ -150,15 +142,18 @@
                 justify-content: flex-start;
                 margin-bottom: 20px;
                 ::v-deep .el-input {
-                    width: 200px;
+                    width: 230px;
                 }
                 ::v-deep .el-input__inner {
-                    width: 200px;
+                    width: 230px;
                 }
                 .select-type {
                     display: inline-flex;
                     align-items: center;
                     margin: 0 16px;
+                }
+                .time-input {
+                    margin-right: 16px;
                 }
             }
             .play-back-ul {
