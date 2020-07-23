@@ -313,7 +313,7 @@ export default {
     });
     // return false;
     this.$http.get("api/v1/security/user/", {
-      page: 2,
+      page: 1,
     }).then(({ count, data }) => {
         console.log(data);
         this.tableTotle = count
@@ -373,7 +373,13 @@ export default {
     resetForm(formName) {
       this.formInline.page = 1
       this.$refs[formName].resetFields();
-      this._setTableList()
+      this._setTableList();
+      this.formInline.start_into_time = '';
+      this.formInline.end_into_time = '';
+      this.formInline.start_leave_time = '';
+      this.formInline.end_leave_time = '';
+      this.initData.into_time = '';
+      this.initData.leave_time = '';
     },
     // 编辑人员信息
     showEditStaffInfo(id) {
@@ -413,7 +419,7 @@ export default {
       this.formInline.end_leave_time = this.initData.leave_time[1] ? dayjs(
         this.initData.leave_time[1]
       ).format("YYYY-MM-DD") : '';
-      this.$message(`搜索字段序列==${JSON.stringify(this.formInline)}`);
+      // this.$message(`搜索字段序列==${JSON.stringify(this.formInline)}`);
       this.$http
         .get("api/v1/security/user/", this.formInline)
         .then(({ data }) => {

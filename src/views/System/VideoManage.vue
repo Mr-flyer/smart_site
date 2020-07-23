@@ -168,7 +168,7 @@
                 fileName: '',
                 videoLoading: false,
                 videoArea: [
-                    {name: '项目模型', value: 0},
+                    {name: '模拟进度', value: 0},
                     {name: '项目实景', value: 1},
                     {name: '视频监控', value: 2}
                 ],

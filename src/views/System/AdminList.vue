@@ -1,11 +1,12 @@
 <template>
-  <div class="admin-manage main-content">
+  <div class="admin-manage main-content" v-loading="isLoading">
         <div class="add-admin-btn">
             <div class="admin-search">
-                <el-input placeholder="请输入姓名"/><el-button type="primary">搜索</el-button>
+                <el-input v-model="searchValue" placeholder="请输入姓名"/>
+                <el-button type="primary" @click="searchBtn">搜索</el-button>
             </div>
             <div>
-                <el-button icon="el-icon-top-right" type="primary">导出</el-button>
+                <!-- <el-button icon="el-icon-top-right" type="primary">导出</el-button> -->
                 <el-button icon="el-icon-plus" type="primary" @click="dialogFormVisible = true">新增管理员</el-button>
             </div>
         </div>
@@ -19,7 +20,7 @@
                 <template slot-scope="scope">{{scope.$index+1}}</template>
             </el-table-column>
             <el-table-column
-                prop="account"
+                prop="username"
                 label="账号"
                 width="140">
             </el-table-column>
@@ -28,34 +29,51 @@
                 label="姓名"
                 width="120">
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 prop="staffId"
                 label="员工ID"
                 width="100">
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
-                prop="companyType"
                 label="单位类型"
-                width="180">
+                width="140">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.company_type">
+                        <div v-if="scope.row.company_type == item.id" v-for="item in companyTypeList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="companyName"
                 label="单位名称">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.company">
+                        <div v-if="scope.row.company == item.id" v-for="item in companyList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="role"
-                label="角色"
-                width="150">
+                label="身份"
+                width="140">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.identity">
+                        <div v-if="scope.row.identity == item.id" v-for="item in identityList" :key="item.id">{{item.name}}</div>
+                    </div>
+                    <div v-else>/</div>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="createTime"
+                prop="date_joined"
                 label="创建时间"
                 width="180">
             </el-table-column>
             <el-table-column
-                prop="status"
                 label="状态"
                 width="100">
+                <template slot-scope="scope">
+                    <div :class="scope.row.is_active?'green':'red'">{{scope.row.is_active?'上线':'下线'}}</div>
+                </template>
             </el-table-column>
             <el-table-column
                     label="操作"
@@ -71,13 +89,11 @@
         <el-pagination
             class="admin-page"
             background
-            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[20, 30, 40, 50]"
             :page-size="20"
-            layout="sizes, prev, pager, next, jumper"
-            :total="100">
+            layout="prev, pager, next, jumper"
+            :total="count">
         </el-pagination>
         <el-dialog title="新增管理员" :visible.sync="dialogFormVisible" width="500px">
             <el-form :model="form" label-width="100px">
@@ -119,19 +135,10 @@
     export default {
         data() {
             return {
-                tableData: [
-                    {
-                        account: 'admin',
-                        name: '张三',
-                        staffId: 1,
-                        companyType: '管理单位',
-                        companyName: '中国第一建筑公司',
-                        role: '超级管理员',
-                        createTime: '2020-09-09 12：00：00',
-                        status: '正常'
-                    }
-                ],
+                searchValue: '',
+                tableData: [],
                 currentPage: 1,
+                count: 0,
                 dialogFormVisible: false,
                 form: {
                     account: '',
@@ -140,15 +147,62 @@
                     password: '',
                     role: '',
                     status: ''
-                }
+                },
+                isLoading: false,
+                companyTypeList: [],
+                companyList: [],
+                teamList: [],
+                workTypeList: []
             }
         },
+        created() {
+            // 单位类型
+            let company_type = this.$http.get('api/v1/user/company_type/').then((res)=>{
+                this.companyTypeList = res.data;
+                this.companyTypeList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            // 单位名称
+            let company = this.$http.get('api/v1/user/company/').then((res)=>{
+                this.companyList = res.data;
+                this.companyList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            // 班组
+            let team = this.$http.get('api/v1/user/team/').then((res)=>{
+                this.teamList = res.data;
+                this.teamList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            // 工种
+            let work_type = this.$http.get('api/v1/user/work_type/').then((res)=>{
+                this.workTypeList = res.data;
+                this.workTypeList.unshift({id: '', name: '全部'});
+            }).catch(()=>{})
+            let firstRequest = this.$http.get(`api/v1/user/admin/?name=${this.searchValue}&page=1&page_size=20`).then((res)=>{
+                this.tableData = res.data;
+                this.count = res.count;
+            }).catch(()=>{})
+            this.isLoading = true;
+            this.$http.requestAll([company_type, company, team, work_type])
+            .then(()=>{
+                this.isLoading = false;
+            }).catch(()=>{})
+        },
         methods: {
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+            requestInfo(val) {
+                this.isLoading = true;
+                this.currentPage = val;
+                this.$http.get(`api/v1/user/admin/?name=${this.searchValue}&page=${this.currentPage}&page_size=20`)
+                .then((res)=>{
+                    this.isLoading = false;
+                    this.tableData = res.data;
+                    this.count = res.count;
+                })
+                .catch(()=>{})
             },
             handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
+                this.requestInfo(val);
+            },
+            searchBtn() {
+                this.requestInfo(1);
             },
             // 创建角色
             addRoleBtn() {

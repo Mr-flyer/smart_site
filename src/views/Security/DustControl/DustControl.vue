@@ -9,8 +9,8 @@
       </el-breadcrumb>
       <el-tabs class="pdge_tabs" v-model="active" @tab-click="handleClick">
         <el-tab-pane label="扬尘噪声监测" name="0"></el-tab-pane>
-        <el-tab-pane label="厂界降尘自动喷淋系统" name="1"></el-tab-pane>
-        <el-tab-pane label="塔吊自动喷淋系统" name="2"></el-tab-pane>
+        <el-tab-pane label="厂界降尘自动喷淋系统" name="1" disabled></el-tab-pane>
+        <el-tab-pane label="塔吊自动喷淋系统" name="2" disabled></el-tab-pane>
       </el-tabs>
     </el-card>
     <div class="page_cont">
@@ -23,11 +23,15 @@
             <el-card class="mb-20" shadow="never">
                 <div slot="header">参数排序</div>
                 <el-table :data="options" style="width: 100%" border>
-                  <el-table-column prop="name" label="设备名称"></el-table-column>
+                  <el-table-column label="设备名称">
+                    <template slot-scope="scope">
+                      <div>{{scope.row.name ? scope.row.name : scope.row.mn}}</div>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="pm2_5" :label="'pm2.5|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
                   <el-table-column prop="pm10" :label="'pm10|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
                   <el-table-column prop="tsp" :label="'TSP|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
-                  <el-table-column prop="date" :label="'噪音|(dB)'" sortable :render-header="renderheader"></el-table-column>
+                  <el-table-column prop="noise" :label="'噪音|(dB)'" sortable :render-header="renderheader"></el-table-column>
                 </el-table>
             </el-card>
             <el-card class="mb-20 map-wrap" shadow="never" v-loading="imgLoading">
@@ -59,17 +63,17 @@
           <el-card class="mb-20" shadow="never">
             <div slot="header">
               设备选择
-              <el-select :value="formEquipment.id" @change="changeDevice" placeholder="请选择" size="small">
+              <el-select :value="formEquipment.mn" @change="changeDevice" placeholder="请选择" size="small">
                 <el-option
                   v-for="item in options"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.mn"
                 ></el-option>
               </el-select>
             </div>
             <div class="formEquipment-table" v-if="JSON.stringify(formEquipment) != '{}' && formEquipment!=''">
-                <div><span class="device-label">设备名称：</span>{{formEquipment.name}}<el-button
+                <div><span class="device-label">设备名称：</span>{{formEquipment.name ? formEquipment.name : formEquipment.mn}}<el-button
                     class="equipment-name-btn"
                     size="small"
                     type="primary"
@@ -78,7 +82,7 @@
                     @click="editEquipmentName">
                 </el-button></div>
                 <div><span class="device-label">设备ID：</span>{{formEquipment.mn}}</div>
-                <div><span class="device-label">更新时间：</span>{{formEquipment.time}}</div>
+                <div><span class="device-label">更新时间：</span>{{update_time}}</div>
             </div>
             <div class="formEquipment-table" v-show="JSON.stringify(formEquipment) == '{}'">
                 <v-empty :value="formEquipment"></v-empty>
@@ -110,9 +114,9 @@
                     <b>{{item.flag}}</b>
                   </div>
                   <div class="count">
-                    <b>{{item.value}}</b>{{item.unit}}
+                    <b :class="parseFloat(item.value) > formValue[key] ? 'red' : ''">{{item.value}}</b>{{item.unit}}
                   </div>
-                  <div class="desc" v-if="item.standardValue">标准值：{{item.standardValue}}{{item.unit}}</div>
+                  <div class="desc" v-if="formValue[key]">标准值：{{formValue[key]}}{{item.unit}}</div>
                 </div>
               </div>
             </div>
@@ -132,9 +136,9 @@
                 </el-select>
             </div>
             <div class="grid-main" v-if="dust_chart.length > 0">
-              <div class="grid-item" v-for="item in dust_chart">
+              <!-- <div class="grid-item" v-for="item in dust_chart">
                 <lineEchart :infoObj="infoSourceTrend" />
-              </div>
+              </div> -->
             </div>
             <div class="grid-main" v-else>
                 <v-empty :value="dust_chart"></v-empty>
@@ -238,7 +242,9 @@ export default {
         {name: '按月', value: 2},
         {name: '按年', value: 3},
     ],
-    equipmentLoading: false
+    equipmentLoading: false,
+    update_time: '',
+    seter: null
   }),
   created() {
     // 扬尘监测
@@ -304,6 +310,24 @@ export default {
           
       })
   },
+  mounted() {
+    this.seter = setInterval(()=>{
+      // 实时监测
+      this.imgLoading = true;
+      this.sdLoading = true;
+      this.$http.get(`api/v1/security/dust?mn=${this.formEquipment.id}`)
+      .then((res)=>{
+          this.handelSecurity(res);
+      })
+      .catch(()=>{})
+      // 折线图
+      this.$http.get('api/v1/security/dust_chart')
+      .then((res) => {
+          this.dust_chart = res.data;
+      })
+      .catch(()=>{})
+    }, 600000)
+  },
   methods: {
     renderheader(h, { column, $index }) {
       return h('span', {
@@ -322,6 +346,7 @@ export default {
         this.imgLoading = false;
         if(JSON.stringify(res.data) !== '{}') {
             this.mapPic = res.data.img;
+            this.update_time = res.data.update_time;
             this.securityDetection = {
                 'pm2_5': {
                     name: 'pm2.5',
@@ -405,19 +430,19 @@ export default {
       this.$prompt("设备名称", "编辑", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        inputValue: this.formEquipment.name
+        inputValue: this.formEquipment.name ? this.formEquipment.name : this.formEquipment.mn
       }).then(({ value }) => {
           if(!value) {
               this.$message.warning('请填写设备名称');
           }else {
               this.$http.put(`api/v1/security/equipment/${this.formEquipment.id}`, {
-                  name: this.formEquipment.name
+                  name: value
               })
               .then((res) => {
                   this.$message.success('设备名称修改成功');
                   for(let i=0;i<this.options.length;i++) {
-                      if(this.options[i].id === res.data.id) {
-                          this.options[i] = res.data;
+                      if(this.options[i].mn === res.data.mn) {
+                          this.options[i].name = res.data.name;
                           this.formEquipment = res.data;
                           break;
                       }
@@ -427,21 +452,10 @@ export default {
           }
       });
     },
-    // 修改设备名称
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
     // 改变设备
     changeDevice(e) {
         for(let i=0;i<this.options.length;i++) {
-            if(this.options[i].id == e) {
+            if(this.options[i].mn == e) {
                 this.formEquipment = this.options[i];
                 // 实时监测
                 this.imgLoading = true;
@@ -501,7 +515,7 @@ export default {
             this.$message.success('标准值设置成功');
             this.showEquipmentVisible = false;
             this.formValue = JSON.parse(JSON.stringify(this.form));
-            this.handelSecurity(res);
+            // this.handelSecurity(res);
         })
         .catch((err) => {
             this.equipmentLoading = false;
@@ -510,6 +524,9 @@ export default {
     gotoHistory() {
       this.$router.push("/Security/DustControlHistoryList");
     }
+  },
+  destroyed() {
+    clearInterval(this.seter);
   },
   components: {
     lineEchart,
