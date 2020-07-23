@@ -45,15 +45,15 @@
           <el-table-column type="index" label="序号" width="80"></el-table-column>
           <el-table-column prop="name" label="设备名称"></el-table-column>
           <el-table-column prop="date" label="时间" width="180"></el-table-column>
-          <el-table-column prop="name" label="pm2.5(mg/m³)" width="180"></el-table-column>
-          <el-table-column prop="name" label="pm10(mg/m³）" width="180"></el-table-column>
-          <el-table-column prop="name" label="TSP(mg/m³）" width="180"></el-table-column>
-          <el-table-column prop="name" label="噪声（dB）" width="180"></el-table-column>
-          <el-table-column prop="name" label="温度（℃）" width="180"></el-table-column>
-          <el-table-column prop="name" label="湿度（%）" width="180"></el-table-column>
-          <el-table-column prop="name" label="气压（百帕)" width="180"></el-table-column>
-          <el-table-column prop="name" label="风速（m/s）" width="180"></el-table-column>
-          <el-table-column prop="name" label="风向" width="180"></el-table-column>
+          <el-table-column prop="address" label="pm2.5(mg/m³)" width="180"></el-table-column>
+          <el-table-column prop="address" label="pm10(mg/m³）" width="180"></el-table-column>
+          <el-table-column prop="address" label="TSP(mg/m³）" width="180"></el-table-column>
+          <el-table-column prop="address" label="噪声（dB）" width="180"></el-table-column>
+          <el-table-column prop="address" label="温度（℃）" width="180"></el-table-column>
+          <el-table-column prop="address" label="湿度（%）" width="180"></el-table-column>
+          <el-table-column prop="address" label="气压（百帕)" width="180"></el-table-column>
+          <el-table-column prop="address" label="风速（m/s）" width="180"></el-table-column>
+          <el-table-column prop="address" label="风向" width="180"></el-table-column>
         </el-table>
       </el-card>
     </el-row>
@@ -64,23 +64,23 @@
 const tableData = [
   {
     date: "2016-05-02",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1518 弄"
+    name: "设备A",
+    address: 2
   },
   {
     date: "2016-05-04",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1517 弄"
+    name: "设备B",
+    address: 2
   },
   {
     date: "2016-05-01",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1519 弄"
+    name: "设备C",
+    address: 2
   },
   {
     date: "2016-05-03",
-    name: "王小虎",
-    address: "上海市普陀区金沙江路 1516 弄"
+    name: "设备D",
+    address: 2
   }
 ];
 export default {

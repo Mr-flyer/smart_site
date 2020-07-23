@@ -5,8 +5,8 @@
       <video class="cruise_pic" :src="item.video" @click="openView(item.video)"></video>
       <div class="cruise_cont">
         <span class="cruise_title">{{item.video_name}}</span>
-        <!-- <div>视频大小：12M</div> -->
-        <!-- <div class="cruise_time">上传时间：2020-02-02</div> -->
+        <div v-if="item.size">视频大小：{{item.size / 1024}}M</div>
+        <div v-if="item.create_time" class="cruise_time">上传时间：{{item.create_time}}</div>
       </div>
     </el-card>
     <el-dialog title="收货地址" :visible="dialogTableVisible" @close="dialogTableVisible = false">

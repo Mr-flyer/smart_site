@@ -113,13 +113,14 @@
           <el-card class="panel-wrap model-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              项目模型
+              模拟进度
             </template>
             <div class="video_wrap">
                 <!-- controls -->
               <video
                 id="video01"
                 autoplay
+                loop
                 muted
                 :src="video01"
                 @ended="videoend"
@@ -181,7 +182,7 @@
                       <div class="weather_index-item">
                         <img src="../assets/bigScreen/weather_index02@2x.png" alt />
                         <p>
-                          <span>96</span>dB
+                          <span>{{todayNoise}}</span>dB
                         </p>
                       </div>
                       <div class="weather_index-item">
@@ -281,14 +282,18 @@
             </template>
             <div class="monitoring_group">
               <div class="monitoring_item">
-                <div class="monitoring_video"></div>
+                <div class="monitoring_video">
+                  <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4"></video>
+                </div>
                 <div class="monitoring_desc">
                   监控点1
                   <span>门口</span>
                 </div>
               </div>
               <div class="monitoring_item">
-                <div class="monitoring_video"></div>
+                <div class="monitoring_video">
+                  <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4"></video>
+                </div>
                 <div class="monitoring_desc">
                   监控点1
                   <span>门口</span>
@@ -304,12 +309,12 @@
         <router-link class="navbar_item" :to="{name: '', redirect: '/home'}">项目总览</router-link>
         <router-link
           class="navbar_item"
-          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
-        >安全管理</router-link>
-        <router-link
-          class="navbar_item"
           :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
         >系统管理</router-link>
+        <router-link
+          class="navbar_item"
+          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
+        >安全管理</router-link>
         <router-link
           class="navbar_item"
           :to="{name: 'UAVCruise', redirect: '/IOT/UAVCruise'}"
@@ -318,10 +323,13 @@
           class="navbar_item"
           :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
         >生产管理</router-link>
-        <router-link
+        <a class="navbar_item" href="http://218.94.40.2:8080/TPlant/login" target="_blank">
+          三维文档
+        </a>
+        <!-- <router-link
           class="navbar_item"
           :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
-        >三维文档</router-link>
+        >三维文档</router-link> -->
       </div>
     </div>
   </el-container>
@@ -1809,7 +1817,8 @@ export default {
     todayWeatherData: [],
     tomorrowWeatherData: [],
     threeWeatherData: [],
-    weather: ["xue", "lei", "shachen", "wu", "bingbao", "yun", "yu", "yin", "qing"]
+    weather: ["xue", "lei", "shachen", "wu", "bingbao", "yun", "yu", "yin", "qing"],
+    todayNoise: ''
   }),
   computed: {},
   // watch: {
@@ -1823,9 +1832,10 @@ export default {
     this.timeInfo = dayjs().format('HH:mm')
     this.$http.get(`api/v1/index/tianqi`).then(({data: weatherAllData}) => {
       this.weatherCity = weatherAllData.city
-      let { data } = weatherAllData
-      console.log(data);
+      let { data, noise } = weatherAllData
+      console.log(noise);
       this.todayWeatherData = data[0];
+      this.todayNoise = noise
       if (this.weather.includes(this.todayWeatherData.wea_day_img)) {
         this.todayWeatherData.wea_day_img = require(`../assets/weather/${data[0].wea_day_img}.png`);
       } else {
@@ -1919,11 +1929,11 @@ export default {
       return val;
     },
     videoend() {
-      console.log("结束");
       // let video02Arr = data.filter(v => v.area)
-      if (this.video01Index <= this.video01Arr.length) {
+      if (this.video01Index < this.video01Arr.length -1) {
         this.video01Index++;
       } else this.video01Index = 0;
+      console.log(this.video01Index, this.video01Arr);
       this.video01 = this.video01Arr[this.video01Index].video;
     },
     videoerr() {
@@ -1934,7 +1944,7 @@ export default {
     videoend02() {
       console.log("结束");
       // let video02Arr = data.filter(v => v.area)
-      if (this.video02Index <= this.video02Arr.length) {
+      if (this.video02Index < this.video02Arr.length -1) {
         this.video02Index++;
       } else this.video02Index = 0;
       this.video02 = this.video02Arr[this.video02Index].video;
@@ -2431,6 +2441,11 @@ $txtColor2: #ffde7b;
   .monitoring_video {
     height: 188px;
     background-color: #e4e7ea;
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
   .monitoring_desc {
     font-size: 16px;

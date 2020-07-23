@@ -24,9 +24,9 @@
                 <div slot="header">参数排序</div>
                 <el-table :data="options" style="width: 100%" border>
                   <el-table-column prop="name" label="设备名称"></el-table-column>
-                  <el-table-column prop="date" :label="'pm2.5|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
-                  <el-table-column prop="date" :label="'pm10|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
-                  <el-table-column prop="date" :label="'TSP|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
+                  <el-table-column prop="pm2_5" :label="'pm2.5|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
+                  <el-table-column prop="pm10" :label="'pm10|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
+                  <el-table-column prop="tsp" :label="'TSP|(mg/m³)'" sortable :render-header="renderheader"></el-table-column>
                   <el-table-column prop="date" :label="'噪音|(dB)'" sortable :render-header="renderheader"></el-table-column>
                 </el-table>
             </el-card>
