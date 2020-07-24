@@ -48,6 +48,10 @@ p {
   width: 100%;
   text-align: center;
 }
+.set-btns-right {
+  width: 100%;
+  text-align: right;
+}
 // 文本多行溢出省略
 // .line-over3 {
 //   overflow: hidden;

@@ -32,6 +32,7 @@
                         <el-option label="全部" :value="''"></el-option>
                         <el-option label="出" :value="0"></el-option>
                         <el-option label="入" :value="1"></el-option>
+                        <el-option label="未知" :value="2"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="发生时间">
@@ -50,11 +51,11 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-            <div class="real-name-btns">
+            <div class="select-btns">
                 <el-button @click="search" :disabled="isLoading" type="primary">查询</el-button><el-button @click="reset">重置</el-button>
             </div>
         </div>
-        <div class="add-admin-btn">
+        <div class="set-btns-right">
             <el-button icon="el-icon-top-right" type="primary">导出</el-button>
         </div>
         <el-table
@@ -103,7 +104,7 @@
                 label="身份"
                 width="140">
                 <template slot-scope="scope">
-                    <div v-if="scope.row.identity">
+                    <div v-if="scope.row.identity!=null">
                         <div v-if="scope.row.identity == item.id" v-for="item in identityList" :key="item.id">{{item.name}}</div>
                     </div>
                     <div v-else>/</div>
@@ -143,7 +144,7 @@
                 label="出入类型"
                 width="80px">
                 <template slot-scope="scope">
-                    <div>{{scope.row.in_or_out===0?'出':'入'}}</div>
+                    <div>{{scope.row.in_or_out===0?'出':scope.row.in_or_out===1?'入':'未知'}}</div>
                 </template>
             </el-table-column>
         </el-table>
@@ -224,11 +225,11 @@
                 this.currentPage = val;
                 let start_time='';
                 let end_time='';
-                if(this.formInline.time.length===2) {
-                    start_time = this.common.YMD(Date.parse(this.formInline.time[0])/1000);
-                    end_time = this.common.YMD(Date.parse(this.formInline.time[1])/1000);
+                if(this.formInline.time && this.formInline.time.length===2) {
+                    start_time = this.common.YMD(Date.parse(this.formInline.time[0])/1000)+ ' 00:00:00';
+                    end_time = this.common.YMD(Date.parse(this.formInline.time[1])/1000)+ ' 23:59:59';
                 }
-                this.$http.get(`api/v1/security/user_door?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&start_time=${start_time}&end_time=${end_time}`)
+                this.$http.get(`api/v1/security/user_door?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&start_time=${start_time}&end_time=${end_time}&in_or_out="${this.formInline.accessType}"`)
                 .then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;
@@ -275,10 +276,6 @@
             margin-bottom: 16px;
             ::v-deep .el-input input {
                 width: 180px;
-            }
-            .real-name-btns {
-                width: 100%;
-                text-align: right;
             }
         }
         .add-admin-btn {

@@ -128,7 +128,7 @@
                 autoplay
                 muted
                 ref="video01"
-                :src="'http://218.92.33.126:23080' + video01"
+                :src="video01"
                 @ended="videoend"
                 @error="videoerr"
               />
@@ -143,10 +143,9 @@
               <video
                 id="video02"
                 autoplay
-                controls
                 muted
                 ref="video02"
-                :src="'http://218.92.33.126:23080' + video02"
+                :src="video02"
                 @ended="videoend02"
                 @error="videoerr02"
               ></video>
@@ -302,7 +301,7 @@
                   <video autoplay loop muted src="http://218.92.33.126:23080/media/jiankong/3.mp4"></video>
                 </div>
                 <div class="monitoring_desc">
-                  监控点1
+                  监控点2
                   <span>门口</span>
                 </div>
               </div>
@@ -313,30 +312,24 @@
     </el-main>
     <div class="navbar_wrap">
       <div class="navbar_inner">
-        <router-link class="navbar_item" :to="{name: '', redirect: '/home'}">项目总览</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
-        >系统管理</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
-        >安全管理</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'UAVCruise', redirect: '/IOT/UAVCruise'}"
-        >三维物联</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
-        >生产管理</router-link>
-        <a class="navbar_item" href="http://218.94.40.2:8080/TPlant/login" target="_blank">
-          三维文档
-        </a>
-        <!-- <router-link
-          class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
-        >三维文档</router-link> -->
+        <div v-for="(item, $index) in routerList">
+          <div v-if="item.outLink">
+            <a :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" :href="item.routerPath" target="_blank">{{item.name}}</a>
+          </div>
+          <div v-else>
+            <router-link :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" v-if="item.routerPath" :to="{name: item.routerName, redirect: item.routerPath}">{{item.name}}</router-link>
+            <div v-else :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" @mouseover="mouseRouter($index)" @mouseout="routerIndex = -1">
+              <div>{{item.name}}</div>
+              <div class="child_navbars" v-show="routerIndex === $index">
+                <div v-for="site in item.list">
+                  <a :title="site.name" v-if="site.outLink" :href="site.routerPath" target="_blank" class="child_navbar_item"><span class="round_icon"></span>{{site.name}}</a>
+                  <router-link v-else :title="site.name" class="child_navbar_item" :to="{name: site.routerName, redirect: site.routerPath}"><span class="round_icon"></span>{{site.name}}</router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
       </div>
     </div>
   </el-container>
@@ -511,1295 +504,40 @@ const options = {
     "#fff372",
     "#e4e7ea"
   ],
-  weatherData: {
-    cityid: "101191001",
-    city: "连云港",
-    cityEn: "lianyungang",
-    country: "中国",
-    countryEn: "China",
-    update_time: "2020-07-22 12:52:26",
-    data: [
-      {
-        day: "22日（星期三）",
-        date: "2020-07-22",
-        week: "星期三",
-        wea: "雨",
-        wea_img: "yu",
-        wea_day: "大雨",
-        wea_day_img: "yu",
-        wea_night: "大雨",
-        wea_night_img: "yu",
-        tem: "23",
-        tem1: "26",
-        tem2: "22",
-        humidity: "100%",
-        visibility: "6.89km",
-        pressure: "1006",
-        win: ["东南风", "西南风"],
-        win_speed: "3-4级",
-        win_meter: "小于12km/h",
-        sunrise: "05:05",
-        sunset: "19:13",
-        air: "21",
-        air_level: "优",
-        air_tips: "空气很好，可以外出活动，呼吸新鲜空气，拥抱大自然！",
-        alarm: {
-          alarm_type: "暴雨",
-          alarm_level: "黄色",
-          alarm_content:
-            "连云港市气象台2020年07月22日08时48分发布暴雨黄色预警信号：预计今天白天到夜里我市大部分地区将出现6小时50毫米以上的强降水，并可能伴有雷电、8-10级雷暴大风和短时强降水等强对流天气，请注意防范。（预警信息来源：国家预警信息发布中心）"
-        },
-        hours: [
-          {
-            hours: "12时",
-            wea: "中雨",
-            wea_img: "yu",
-            tem: "23",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "13时",
-            wea: "中雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "14时",
-            wea: "中雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "15时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "16时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "17时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "18时",
-            wea: "中雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "19时",
-            wea: "中雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "20时",
-            wea: "中雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "21时",
-            wea: "大雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "22时",
-            wea: "大雨",
-            wea_img: "yu",
-            tem: "25",
-            win: "南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "23时",
-            wea: "大雨",
-            wea_img: "yu",
-            tem: "25",
-            win: "西南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "00时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "25",
-            win: "西南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "01时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "西南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "02时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "西南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "03时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "西南风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "04时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "23",
-            win: "西南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "05时",
-            wea: "小雨",
-            wea_img: "yu",
-            tem: "23",
-            win: "西南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "06时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "23",
-            win: "西南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "07时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "23",
-            win: "西南风",
-            win_speed: "&lt;3级"
-          }
-        ],
-        index: [
-          {
-            title: "紫外线指数",
-            level: "最弱",
-            desc: "辐射弱，涂擦SPF8-12防晒护肤品。"
-          },
-          {
-            title: "减肥指数",
-            level: "一颗星",
-            desc: "风雨相伴，坚持室内运动吧。"
-          },
-          {
-            title: "血糖指数",
-            level: "不易波动",
-            desc: "天气条件不易引起血糖波动。"
-          },
-          {
-            title: "穿衣指数",
-            level: "舒适",
-            desc: "建议穿长袖衬衫单裤等服装。"
-          },
-          {
-            title: "洗车指数",
-            level: "不宜",
-            desc: "有雨，雨水和泥水会弄脏爱车。"
-          },
-          {
-            title: "空气污染扩散指数",
-            level: "优",
-            desc: "气象条件非常有利于空气污染物扩散。"
-          }
-        ]
-      },
-      {
-        day: "23日（星期四）",
-        date: "2020-07-23",
-        week: "星期四",
-        wea: "阴转多云",
-        wea_img: "yun",
-        wea_day: "阴",
-        wea_day_img: "yin",
-        wea_night: "多云",
-        wea_night_img: "yun",
-        tem: "29",
-        tem1: "29",
-        tem2: "22",
-        humidity: "",
-        visibility: "",
-        pressure: "",
-        win: ["西北风", "西北风"],
-        win_speed: "3-4级",
-        win_meter: "",
-        sunrise: "05:06",
-        sunset: "19:12",
-        air: "",
-        air_level: "",
-        air_tips: "",
-        alarm: {
-          alarm_type: "",
-          alarm_level: "",
-          alarm_content: ""
-        },
-        hours: [
-          {
-            hours: "08时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "23",
-            win: "西南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "09时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "24",
-            win: "西风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "10时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "25",
-            win: "西风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "11时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "26",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "12时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "26",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "13时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "27",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "14时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "27",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "15时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "27",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "16时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "27",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "17时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "27",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "18时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "26",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "19时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "25",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "20时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "25",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "21时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "24",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "22时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "24",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "23时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "00时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "01时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "02时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "03时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "04时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "22",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "05时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "22",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "06时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "07时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "24",
-            win: "西北风",
-            win_speed: "3-4级"
-          }
-        ],
-        index: [
-          {
-            title: "紫外线指数",
-            level: "最弱",
-            desc: "辐射弱，涂擦SPF8-12防晒护肤品。"
-          },
-          {
-            title: "减肥指数",
-            level: "一颗星",
-            desc: "夏天悄然到，肉已无处藏。风虽有点大，室内可健身。"
-          },
-          {
-            title: "血糖指数",
-            level: "易波动",
-            desc: "气温多变，血糖易波动，请注意监测。"
-          },
-          {
-            title: "穿衣指数",
-            level: "热",
-            desc: "适合穿T恤、短薄外套等夏季服装。"
-          },
-          {
-            title: "洗车指数",
-            level: "不宜",
-            desc: "积水较多，车辆易溅上泥水。"
-          },
-          {
-            title: "空气污染扩散指数",
-            level: "良",
-            desc: "气象条件有利于空气污染物扩散。"
-          }
-        ]
-      },
-      {
-        day: "24日（星期五）",
-        date: "2020-07-24",
-        week: "星期五",
-        wea: "多云转晴",
-        wea_img: "yun",
-        wea_day: "多云",
-        wea_day_img: "yun",
-        wea_night: "晴",
-        wea_night_img: "qing",
-        tem: "29",
-        tem1: "29",
-        tem2: "20",
-        humidity: "",
-        visibility: "",
-        pressure: "",
-        win: ["北风", "西北风"],
-        win_speed: "3-4级转&lt;3级",
-        win_meter: "",
-        sunrise: "05:07",
-        sunset: "19:12",
-        air: "",
-        air_level: "",
-        air_tips: "",
-        alarm: {
-          alarm_type: "",
-          alarm_level: "",
-          alarm_content: ""
-        },
-        hours: [
-          {
-            hours: "08时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "24",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "09时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "25",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "10时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "25",
-            win: "西北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "11时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "26",
-            win: "北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "12时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "26",
-            win: "北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "13时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "27",
-            win: "北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "14时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "28",
-            win: "北风",
-            win_speed: "3-4级"
-          },
-          {
-            hours: "15时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "27",
-            win: "北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "16时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "27",
-            win: "北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "17时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "27",
-            win: "北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "18时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "26",
-            win: "北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "19时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "25",
-            win: "北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "20时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "24",
-            win: "北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "21时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "23",
-            win: "北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "22时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "23",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "23时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "23",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "00时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "22",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "01时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "22",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "02时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "22",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "03时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "22",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "04时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "22",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "05时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "21",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "06时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "22",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "07时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "23",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          }
-        ],
-        index: [
-          {
-            title: "紫外线指数",
-            level: "中等",
-            desc: "涂擦SPF大于15、PA+防晒护肤品。"
-          },
-          {
-            title: "减肥指数",
-            level: "一颗星",
-            desc: "夏天悄然到，肉已无处藏。风虽有点大，室内可健身。"
-          },
-          {
-            title: "血糖指数",
-            level: "不易波动",
-            desc: "天气条件好，血糖不易波动，可适时进行户外锻炼。"
-          },
-          {
-            title: "穿衣指数",
-            level: "热",
-            desc: "适合穿T恤、短薄外套等夏季服装。"
-          },
-          {
-            title: "洗车指数",
-            level: "较不宜",
-            desc: "风力较大，洗车后会蒙上灰尘。"
-          },
-          {
-            title: "空气污染扩散指数",
-            level: "良",
-            desc: "气象条件有利于空气污染物扩散。"
-          }
-        ]
-      },
-      {
-        day: "25日（星期六）",
-        date: "2020-07-25",
-        week: "星期六",
-        wea: "晴转多云",
-        wea_img: "yun",
-        wea_day: "晴",
-        wea_day_img: "qing",
-        wea_night: "多云",
-        wea_night_img: "yun",
-        tem: "29",
-        tem1: "29",
-        tem2: "22",
-        humidity: "",
-        visibility: "",
-        pressure: "",
-        win: ["东北风", "东北风"],
-        win_speed: "&lt;3级",
-        win_meter: "",
-        sunrise: "05:07",
-        sunset: "19:11",
-        air: "",
-        air_level: "",
-        air_tips: "",
-        alarm: {
-          alarm_type: "",
-          alarm_level: "",
-          alarm_content: ""
-        },
-        hours: [
-          {
-            hours: "08时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "24",
-            win: "西北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "11时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "28",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "14时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "29",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "17时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "28",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "20时",
-            wea: "晴",
-            wea_img: "qing",
-            tem: "24",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "23时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "24",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "02时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "05时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "南风",
-            win_speed: "&lt;3级"
-          }
-        ],
-        index: [
-          {
-            title: "紫外线指数",
-            level: "很强",
-            desc: "涂擦SPF20以上，PA++护肤品，避强光。"
-          },
-          {
-            title: "减肥指数",
-            level: "三颗星",
-            desc: "夏天悄然到，肉已无处藏。天气较舒适，快去运动吧。"
-          },
-          {
-            title: "血糖指数",
-            level: "不易波动",
-            desc: "天气条件好，血糖不易波动，可适时进行户外锻炼。"
-          },
-          {
-            title: "穿衣指数",
-            level: "热",
-            desc: "适合穿T恤、短薄外套等夏季服装。"
-          },
-          {
-            title: "洗车指数",
-            level: "较适宜",
-            desc: "无雨且风力较小，易保持清洁度。"
-          },
-          {
-            title: "空气污染扩散指数",
-            level: "中",
-            desc: "易感人群应适当减少室外活动。"
-          }
-        ]
-      },
-      {
-        day: "26日（星期日）",
-        date: "2020-07-26",
-        week: "星期日",
-        wea: "中雨转大雨",
-        wea_img: "yu",
-        wea_day: "中雨",
-        wea_day_img: "yu",
-        wea_night: "大雨",
-        wea_night_img: "yu",
-        tem: "26",
-        tem1: "26",
-        tem2: "23",
-        humidity: "",
-        visibility: "",
-        pressure: "",
-        win: ["东北风", "东风"],
-        win_speed: "&lt;3级",
-        win_meter: "",
-        sunrise: "05:08",
-        sunset: "19:10",
-        air: "",
-        air_level: "",
-        air_tips: "",
-        alarm: {
-          alarm_type: "",
-          alarm_level: "",
-          alarm_content: ""
-        },
-        hours: [
-          {
-            hours: "08时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "25",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "11时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "26",
-            win: "南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "14时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "26",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "17时",
-            wea: "大雨",
-            wea_img: "yu",
-            tem: "25",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "20时",
-            wea: "中雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "23时",
-            wea: "大雨",
-            wea_img: "yu",
-            tem: "24",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "02时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "23",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "05时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "23",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          }
-        ],
-        index: [
-          {
-            title: "紫外线指数",
-            level: "最弱",
-            desc: "辐射弱，涂擦SPF8-12防晒护肤品。"
-          },
-          {
-            title: "减肥指数",
-            level: "一颗星",
-            desc: "夏天肉难藏，雨天坚持室内运动吧。"
-          },
-          {
-            title: "血糖指数",
-            level: "不易波动",
-            desc: "天气条件不易引起血糖波动。"
-          },
-          {
-            title: "穿衣指数",
-            level: "舒适",
-            desc: "建议穿长袖衬衫单裤等服装。"
-          },
-          {
-            title: "洗车指数",
-            level: "不宜",
-            desc: "有雨，雨水和泥水会弄脏爱车。"
-          },
-          {
-            title: "空气污染扩散指数",
-            level: "优",
-            desc: "气象条件非常有利于空气污染物扩散。"
-          }
-        ]
-      },
-      {
-        day: "27日（星期一）",
-        date: "2020-07-27",
-        week: "星期一",
-        wea: "多云",
-        wea_img: "yun",
-        wea_day: "多云",
-        wea_day_img: "yun",
-        wea_night: "多云",
-        wea_night_img: "yun",
-        tem: "27",
-        tem1: "27",
-        tem2: "20",
-        humidity: "",
-        visibility: "",
-        pressure: "",
-        win: ["东南风", "东北风"],
-        win_speed: "&lt;3级",
-        win_meter: "",
-        sunrise: "05:09",
-        sunset: "19:10",
-        air: "",
-        air_level: "",
-        air_tips: "",
-        alarm: {
-          alarm_type: "",
-          alarm_level: "",
-          alarm_content: ""
-        },
-        hours: [
-          {
-            hours: "08时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "24",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "11时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "25",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "14时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "25",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "17时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "24",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "20时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "23",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "23时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "22",
-            win: "东南风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "02时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "22",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "05时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "22",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          }
-        ],
-        index: [
-          {
-            title: "紫外线指数",
-            level: "最弱",
-            desc: "辐射弱，涂擦SPF8-12防晒护肤品。"
-          },
-          {
-            title: "减肥指数",
-            level: "五颗星",
-            desc: "夏天悄然到，肉已无处藏。天气较舒适，快去运动吧。"
-          },
-          {
-            title: "血糖指数",
-            level: "不易波动",
-            desc: "天气条件好，血糖不易波动，可适时进行户外锻炼。"
-          },
-          {
-            title: "穿衣指数",
-            level: "热",
-            desc: "适合穿T恤、短薄外套等夏季服装。"
-          },
-          {
-            title: "洗车指数",
-            level: "不宜",
-            desc: "积水较多，车辆易溅上泥水。"
-          },
-          {
-            title: "空气污染扩散指数",
-            level: "中",
-            desc: "易感人群应适当减少室外活动。"
-          }
-        ]
-      },
-      {
-        day: "28日（星期二）",
-        date: "2020-07-28",
-        week: "星期二",
-        wea: "阴转多云",
-        wea_img: "yun",
-        wea_day: "阴",
-        wea_day_img: "yin",
-        wea_night: "多云",
-        wea_night_img: "yun",
-        tem: "25",
-        tem1: "25",
-        tem2: "22",
-        humidity: "",
-        visibility: "",
-        pressure: "",
-        win: ["东风", "东风"],
-        win_speed: "&lt;3级",
-        win_meter: "",
-        sunrise: "05:09",
-        sunset: "19:09",
-        air: "",
-        air_level: "",
-        air_tips: "",
-        alarm: {
-          alarm_type: "",
-          alarm_level: "",
-          alarm_content: ""
-        },
-        hours: [
-          {
-            hours: "08时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "11时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "24",
-            win: "东北风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "14时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "24",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "17时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "24",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "20时",
-            wea: "阴",
-            wea_img: "yin",
-            tem: "24",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "23时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "02时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "东风",
-            win_speed: "&lt;3级"
-          },
-          {
-            hours: "05时",
-            wea: "多云",
-            wea_img: "yun",
-            tem: "23",
-            win: "东风",
-            win_speed: "&lt;3级"
-          }
-        ],
-        index: [
-          {
-            title: "紫外线指数",
-            level: "最弱",
-            desc: "辐射弱，涂擦SPF8-12防晒护肤品。"
-          },
-          {
-            title: "减肥指数",
-            level: "五颗星",
-            desc: "夏天悄然到，肉已无处藏。天气较舒适，快去运动吧。"
-          },
-          {
-            title: "血糖指数",
-            level: "不易波动",
-            desc: "天气条件好，血糖不易波动，可适时进行户外锻炼。"
-          },
-          {
-            title: "穿衣指数",
-            level: "舒适",
-            desc: "建议穿长袖衬衫单裤等服装。"
-          },
-          {
-            title: "洗车指数",
-            level: "较适宜",
-            desc: "无雨且风力较小，易保持清洁度。"
-          },
-          {
-            title: "空气污染扩散指数",
-            level: "较差",
-            desc: "气象条件较不利于空气污染物扩散。。"
-          }
-        ]
-      }
-    ],
-    aqi: {
-      air: "23",
-      air_level: "优",
-      air_tips: "空气很好，可以外出活动，呼吸新鲜空气，拥抱大自然！",
-      pm25: "12",
-      pm25_desc: "优",
-      pm10: "17",
-      pm10_desc: "优",
-      o3: "72",
-      o3_desc: "优",
-      no2: "20",
-      no2_desc: "优",
-      so2: "5",
-      so2_desc: "优",
-      kouzhao: "无需戴口罩",
-      waichu: "适宜外出",
-      kaichuang: "适宜开窗",
-      jinghuaqi: "关闭净化器",
-      cityid: "101191001",
-      city: "连云港",
-      cityEn: "lianyungang",
-      country: "中国",
-      countryEn: "China"
-    }
-  },
+  weatherData: {},
   securityList: [
     {value: '', name: 'TPS', company: "mg/m³"},
     {value: '', name: 'PM2.5', company: "mg/m³"},
     {value: '', name: 'PM10', company: "mg/m³"},
     {value: '', name: '噪声', company: "dB"},
   ],
+  routerList: [
+    {name: '项目总览'},
+    {name: '系统管理', routerName:'HomeSet', routerPath: "/System/HomeSet"},
+    {name: '安全管理', list: [
+      {name: '视频监控', routerName: 'VideoMonitoring', routerPath: '/Security/VideoMonitoring'},
+      {name: '人员管理', routerName: 'PersonnelManagement', routerPath: '/Security/PersonnelManagement'},
+      {name: '扬尘管控', routerName: 'DustControl', routerPath: '/Security/DustControl'},
+      {name: '车辆道闸', routerName: 'VehicleBarrier', routerPath: '/Security/VehicleBarrier'},
+      {name: '安全教育', routerPath: ''},
+      {name: '危大工程监测预警', routerPath: ''},
+      {name: '现场安全隐患排查', routerPath: ''},
+      {name: '高处作业防护预警', routerPath: ''}
+    ]},
+    {name: '三维物联', list: [
+      {name: '三维实景物联', routerPath: 'http://58.33.87.122:6640/njdd/api/security/login.html', outLink: true,},
+      {name: '无人机巡航', routerName: 'UAVCruise', routerPath: '/IOT/UAVCruise'}
+    ]},
+    {name: '生产管理', list: [
+      {name: '三维进度', routerName: 'Document3D', routerPath: '/Production/Document3D'},
+      {name: '施工验收', routerPath: ''},
+      {name: '协同会审', routerPath: ''},
+      {name: '云会议', routerPath: ''}
+    ]},
+    {name: '三维文档', routerName: "", outLink: true, routerPath: 'http://218.94.40.2:8080/TPlant/login'}
+  ],
+  routerActiveIndex: 0,
+  routerIndex: -1
 };
 export default {
   name: "Home",
@@ -1813,8 +551,12 @@ export default {
       return "";
     },
     week: ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六',],
+    video01Arr: [],
+    video02Arr: [],
     video01: "",
     video02: "",
+    video01Name: '',
+    video02Name: '',
     // time: this.week[dayjs().day()] ,
     weekTxt: '',
     dateTime: '',
@@ -1875,18 +617,30 @@ export default {
       } else {
         this.todayWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
       }
-      this.infoSourceTrend.xdata = data[0].hours.slice(0, 8).map(v => v.hours);
-      this.infoSourceTrend.data = [
-        data[0].hours.slice(0, 8).map(v => ({
-          value: v.tem,
-          label: {
-            show: true,
-            position: "top",
-            color: "#fff",
-            formatter: ({ value }) => `${value}℃`
+      let obj = new Date();
+      let hour = obj.getHours();
+      if(hour<10) hour= '0'+hour;
+      for(let i=0;i<data[0].hours.length;i++) {
+        if(data[0].hours[i].hours.slice(0, 2) == hour) {
+          let sliceEnd = 8;
+          if(data[0].hours.length - i < 8) {
+            sliceEnd = data[0].hours.length;
           }
-        }))
-      ];
+          this.infoSourceTrend.xdata = data[0].hours.slice(i, i+sliceEnd).map(v => v.hours);
+          this.infoSourceTrend.data = [
+            data[0].hours.slice(i, i+sliceEnd).map(v => ({
+              value: v.tem,
+              label: {
+                show: true,
+                position: "top",
+                color: "#fff",
+                formatter: ({ value }) => `${value}℃`
+              }
+            }))
+          ];
+          break;
+        }
+      }
       this.tomorrowWeatherData = data[1];
       this.tomorrowWeatherData.date = dayjs(data[1].date).format("MM/DD");
       if (this.weather.includes(this.tomorrowWeatherData.wea_day_img)) {
@@ -1926,6 +680,9 @@ export default {
     if(this.timer) clearInterval(this.timer)
   },
   methods: {
+    mouseRouter(index) {
+      this.routerIndex = index;
+    },
     format_price(val) {
       if (val) {
         if (parseInt(val) >= 0 && parseInt(val) < 10000) {
@@ -2637,7 +1394,7 @@ $txtColor2: #ffde7b;
   .navbar_inner {
     display: flex;
   }
-  .navbar_item {
+  .navbar_item , .navbar_item_active {
     width: 162px;
     height: 59px;
     font-size: 20px;
@@ -2648,11 +1405,46 @@ $txtColor2: #ffde7b;
     padding-top: 10px;
     box-sizing: border-box;
     margin-left: -32px;
-    &:first-of-type {
-      width: 198px;
-      margin-left: 0;
-      background-image: url(../assets/bigScreen/navitem_active@2x.png);
+    position: relative;
+    cursor: pointer;
+    .child_navbars {
+      width: 124px;
+      height: auto;
+      background: rgba(4,9,16, .8);
+      position: absolute;
+      bottom: 59px;
+      left: 0;
+      &>div {
+        font-size: 15px;
+        .child_navbar_item {
+          padding: 4px 12px;
+          box-sizing: border-box;
+          overflow : hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+        .child_navbar_item:hover {
+          background-color: #0455AE;
+        }
+        .round_icon {
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          border: 1px solid #fff;
+          display: inline-block;
+          margin-right: 6px;
+          vertical-align: middle;
+          margin-top: -2px;
+        }
+      }
     }
+  }
+  .navbar_item_active {
+    width: 198px;
+    margin-left: 0;
+    background-image: url(../assets/bigScreen/navitem_active@2x.png);
   }
   a {
     color: #fff;

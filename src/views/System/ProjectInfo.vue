@@ -31,12 +31,12 @@
                     <template slot="append">元</template>
                 </el-input>
             </el-form-item>
-            <!-- <el-form-item label="合同工期">
-                <el-input @input="form.period = form.period.replace(/\D/g, '')" v-model="form.period">
-                    <template slot="append">天</template>
-                </el-input>
-            </el-form-item> -->
             <el-form-item label="场地面积">
+                <el-input v-model="form.field_area">
+                    <template slot="append">平方米</template>
+                </el-input>
+            </el-form-item>
+            <el-form-item label="建筑面积">
                 <el-input v-model="form.area">
                     <template slot="append">平方米</template>
                 </el-input>
@@ -99,7 +99,7 @@
                     addr: '',
                     // projectImg: '',
                     cost: '',
-                    // period: '',
+                    field_area: '',
                     area: '',
                     build_company: [],
                     design_company: [],
@@ -184,7 +184,7 @@
                                 start_date: this.form.start_date ? this.common.YMD(Date.parse(this.form.start_date)/1000): null,
                                 addr: this.form.addr,
                                 cost: this.form.cost ? this.form.cost : null,
-                                // period: this.form.period,
+                                field_area: this.form.field_area,
                                 area: this.form.area,
                                 build_company: this.form.build_company,
                                 design_company: this.form.design_company,
@@ -206,7 +206,7 @@
                                 start_date: this.form.start_date ? this.common.YMD(Date.parse(this.form.start_date)/1000): null,
                                 addr: this.form.addr,
                                 cost: this.form.cost ? this.form.cost : null,
-                                // period: this.form.period,
+                                field_area: this.form.field_area,
                                 area: this.form.area,
                                 build_company: this.form.build_company,
                                 design_company: this.form.design_company,

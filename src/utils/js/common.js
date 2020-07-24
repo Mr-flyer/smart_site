@@ -20,10 +20,16 @@ export default {
         }
         return true;
     },
-    checkEmail(email) {
-        var regEmail = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"); 
-        if(!regEmail.test(email)) {
-            return false;
+    /**
+     * @function {function} checkIdCard --身份证号验证
+     * @param {string | number} idNo --身份证号
+     * @param {boolean} required --是否必填项
+     */
+    checkIdCard(idNo) {
+        var regIdNo = /^[1-9][0-9]{5}([1][9][0-9]{2}|[2][0][0|1][0-9])([0][1-9]|[1][0|1|2])([0][1-9]|[1|2][0-9]|[3][0|1])[0-9]{3}([0-9]|[X])$/;;  
+        if(!regIdNo.test(idNo)){  
+            // Toast('请输入正确的身份证号');
+            return false;  
         }
         return true;
     },
