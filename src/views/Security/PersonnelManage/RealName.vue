@@ -153,7 +153,7 @@
                 label="关联实名"
                 width="80px">
                 <template slot-scope="scope">
-                    <div>{{scope.row.is_real_name===0?'是':'否'}}</div>
+                    <div>{{scope.row.is_real_name===1?'是':'否'}}</div>
                 </template>
             </el-table-column>
             <el-table-column
@@ -163,7 +163,7 @@
                 <template slot-scope="scope">
                     <el-button @click="checkBtn(scope.row)" type="text" size="small">查看</el-button>
                     <el-button @click="editStaffBtn(scope.row, scope.$index)" v-if="scope.row.is_real_name == 0" type="text" size="small">编辑</el-button>
-                    <el-button @click="delBtn(scope.row)" v-if="scope.row.is_real_name == 1" type="text" size="small">删除</el-button>
+                    <el-button @click="delBtn(scope.row)" v-if="scope.row.is_real_name == 0" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
