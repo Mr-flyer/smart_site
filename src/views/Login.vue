@@ -117,7 +117,7 @@ export default {
                         localStorage.setItem('user_info', JSON.stringify(res.data));
                         localStorage.setItem('token', res.token);
                         this.$store.state.userInfo = res.data;
-                        this.$router.push({ path: '/System/HomeSet'});
+                        this.$router.push({ path: '/home'});
                     })
                     .catch(()=> {
                         this.loginLoading = false;

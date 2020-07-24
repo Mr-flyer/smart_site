@@ -54,7 +54,7 @@
                 <el-button @click="search" :disabled="isLoading" type="primary">查询</el-button><el-button @click="reset">重置</el-button>
             </div>
         </div>
-        <div class="add-admin-btn">
+        <div class="set-btns-right">
             <el-button icon="el-icon-top-right" type="primary">导出</el-button>
         </div>
         <el-table
@@ -275,10 +275,6 @@
             margin-bottom: 16px;
             ::v-deep .el-input input {
                 width: 180px;
-            }
-            .real-name-btns {
-                width: 100%;
-                text-align: right;
             }
         }
         .add-admin-btn {
