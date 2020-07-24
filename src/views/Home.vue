@@ -8,7 +8,8 @@
         </div>
         <div class="time-wrap">{{timeInfo}}</div>
       </div>
-      <div class="header_title">虹洋热电联产扩建项目</div>
+      <div class="sub_title">江苏省电力设计院</div>
+      <div class="header_title">虹洋热电联产扩建项目智慧工地管理系统</div>
       <div class="header_left">
         <div class="header_item">
           <img src="../assets/bigScreen/icon_location@2x.png" alt />连云港
@@ -41,12 +42,16 @@
                   <span>合同造价</span>
                   {{survey.costTxt}}
                 </div>
-                <div class="sum-type-item">
+                <!-- <div class="sum-type-item">
                   <span>合同工期</span>
                   {{survey.period || 0}}天
-                </div>
+                </div> -->
                 <div class="sum-type-item">
                   <span>建筑面积</span>
+                  {{survey.field_area || 0}}平方米
+                </div>
+                <div class="sum-type-item">
+                  <span>场地面积</span>
                   {{survey.area || 0}}平方米
                 </div>
               </div>
@@ -113,31 +118,29 @@
           <el-card class="panel-wrap model-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              模拟进度
+              模拟进度--{{video01Name}}
             </template>
             <div class="video_wrap">
-                <!-- controls -->
-              <!-- <video
+              <video
                 id="video01"
                 autoplay
-                loop
                 muted
                 :src="video01"
                 @ended="videoend"
                 @error="videoerr"
-              /> -->
-              <video autoplay src="../assets/video/无人机航拍.mp4" controls/>
+              />
             </div>
           </el-card>
           <el-card class="panel-wrap real_scene-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              项目实景
+              项目实景--{{video02Name}}
             </template>
             <div class="video_wrap">
               <video
                 id="video02"
                 autoplay
+                controls
                 muted
                 :src="video02"
                 @ended="videoend02"
@@ -283,7 +286,7 @@
             <div class="monitoring_group">
               <div class="monitoring_item">
                 <div class="monitoring_video">
-                  <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4"></video>
+                  <video autoplay loop muted src="http://218.92.33.126:23080/media/jiankong/2.mp4"></video>
                 </div>
                 <div class="monitoring_desc">
                   监控点1
@@ -292,10 +295,10 @@
               </div>
               <div class="monitoring_item">
                 <div class="monitoring_video">
-                  <video autoplay loop muted src="../assets/video/HYB00-TimeLiner.mp4"></video>
+                  <video autoplay loop muted src="http://218.92.33.126:23080/media/jiankong/3.mp4"></video>
                 </div>
                 <div class="monitoring_desc">
-                  监控点1
+                  监控点2
                   <span>门口</span>
                 </div>
               </div>
@@ -306,30 +309,24 @@
     </el-main>
     <div class="navbar_wrap">
       <div class="navbar_inner">
-        <router-link class="navbar_item" :to="{name: '', redirect: '/home'}">项目总览</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
-        >系统管理</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'VideoMonitoring', redirect: '/Security/VideoMonitoring'}"
-        >安全管理</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'UAVCruise', redirect: '/IOT/UAVCruise'}"
-        >三维物联</router-link>
-        <router-link
-          class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
-        >生产管理</router-link>
-        <a class="navbar_item" href="http://218.94.40.2:8080/TPlant/login" target="_blank">
-          三维文档
-        </a>
-        <!-- <router-link
-          class="navbar_item"
-          :to="{name: 'HomeSet', redirect: '/System/HomeSet'}"
-        >三维文档</router-link> -->
+        <div v-for="(item, $index) in routerList">
+          <div v-if="item.outLink">
+            <a :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" :href="item.routerPath" target="_blank">{{item.name}}</a>
+          </div>
+          <div v-else>
+            <router-link :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" v-if="item.routerPath" :to="{name: item.routerName, redirect: item.routerPath}">{{item.name}}</router-link>
+            <div v-else :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" @mouseover="mouseRouter($index)" @mouseout="routerIndex = -1">
+              <div>{{item.name}}</div>
+              <div class="child_navbars" v-show="routerIndex === $index">
+                <div v-for="site in item.list">
+                  <a :title="site.name" v-if="site.outLink" :href="site.routerPath" target="_blank" class="child_navbar_item"><span class="round_icon"></span>{{site.name}}</a>
+                  <router-link v-else :title="site.name" class="child_navbar_item" :to="{name: site.routerName, redirect: site.routerPath}"><span class="round_icon"></span>{{site.name}}</router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
       </div>
     </div>
   </el-container>
@@ -506,11 +503,38 @@ const options = {
   ],
   weatherData: {},
   securityList: [
-    {name: 'TPS', company: "mg/m³"},
+    {name: 'TSP', company: "mg/m³"},
     {name: 'PM2.5', company: "mg/m³"},
     {name: 'PM10', company: "mg/m³"},
     {name: '噪声', company: "dB"},
   ],
+  routerList: [
+    {name: '项目总览'},
+    {name: '系统管理', routerName:'HomeSet', routerPath: "/System/HomeSet"},
+    {name: '安全管理', list: [
+      {name: '视频监控', routerName: 'VideoMonitoring', routerPath: '/Security/VideoMonitoring'},
+      {name: '人员管理', routerName: 'PersonnelManagement', routerPath: '/Security/PersonnelManagement'},
+      {name: '扬尘管控', routerName: 'DustControl', routerPath: '/Security/DustControl'},
+      {name: '车辆道闸', routerName: 'VehicleBarrier', routerPath: '/Security/VehicleBarrier'},
+      {name: '安全教育', routerPath: ''},
+      {name: '危大工程监测预警', routerPath: ''},
+      {name: '现场安全隐患排查', routerPath: ''},
+      {name: '高处作业防护预警', routerPath: ''}
+    ]},
+    {name: '三维物联', list: [
+      {name: '三维实景物联', routerPath: 'http://58.33.87.122:6640/njdd/api/security/login.html', outLink: true,},
+      {name: '无人机巡航', routerName: 'UAVCruise', routerPath: '/IOT/UAVCruise'}
+    ]},
+    {name: '生产管理', list: [
+      {name: '三维进度', routerName: 'Document3D', routerPath: '/Production/Document3D'},
+      {name: '施工验收', routerPath: ''},
+      {name: '协同会审', routerPath: ''},
+      {name: '云会议', routerPath: ''}
+    ]},
+    {name: '三维文档', routerName: "", outLink: true, routerPath: 'http://218.94.40.2:8080/TPlant/login'}
+  ],
+  routerActiveIndex: 0,
+  routerIndex: -1
 };
 export default {
   name: "Home",
@@ -528,28 +552,41 @@ export default {
     video02Arr: [],
     video01: "",
     video02: "",
+    video01Name: '',
+    video02Name: '',
     // time: this.week[dayjs().day()] ,
     weekTxt: '',
     dateTime: '',
     timeInfo: '',
+    timer: '',
     video01Index: 0,
     video02Index: 0,
     todayWeatherData: [],
     tomorrowWeatherData: [],
     threeWeatherData: [],
     weather: ["xue", "lei", "shachen", "wu", "bingbao", "yun", "yu", "yin", "qing"],
-    todayNoise: ''
+    todayNoise: '',
   }),
   computed: {},
-  // watch: {
-  //   time() {
-  //     return Date.now()
-  //   }
-  // },
   created() {
     this.weekTxt = this.week[dayjs().day()]
     this.dateTime = dayjs().format('YYYY年MM月DD日')
-    this.timeInfo = dayjs().format('HH:mm')
+      this.timeInfo = dayjs().format('HH:mm:ss')
+    this.timer = setInterval(() => {
+      this.timeInfo = dayjs().format('HH:mm:ss')
+    }, 1000)
+    this.$http.get(`api/v1/security/dust_chart`, {
+        check_mode: "hour"
+    })
+    .then(({data: dustData}) => {
+      // console.log(dustData);
+      let TSP = dustData.map(v => Number(v.tsp))
+      let PM2_5 = dustData.map(v => Number(v.pm2_5))
+      let PM10 = dustData.map(v => Number(v.pm10))
+      // console.log([TSP, PM2_5, PM10]);
+      this.infoDustTrend.xdata = dustData.map(v => dayjs(v.time).format('HH:mm'))
+      this.infoDustTrend.data = [TSP, PM2_5, PM10]
+    })
     this.$http.get(`api/v1/index/tianqi`).then(({data: weatherAllData}) => {
       this.weatherCity = weatherAllData.city
       let { data, noise } = weatherAllData
@@ -569,9 +606,9 @@ export default {
           if(data[0].hours.length - i < 8) {
             sliceEnd = data[0].hours.length;
           }
-          this.infoSourceTrend.xdata = data[0].hours.slice(i, sliceEnd).map(v => v.hours);
+          this.infoSourceTrend.xdata = data[0].hours.slice(i, i+sliceEnd).map(v => v.hours);
           this.infoSourceTrend.data = [
-            data[0].hours.slice(i, sliceEnd).map(v => ({
+            data[0].hours.slice(i, i+sliceEnd).map(v => ({
               value: v.tem,
               label: {
                 show: true,
@@ -606,12 +643,22 @@ export default {
     this.$http.get(`api/v1/system/video`).then(({ data }) => {
       this.video01Arr = data.filter(v => !v.area);
       this.video02Arr = data.filter(v => v.area);
-      if(this.video01Arr[this.video01Index]) this.video01 = this.video01Arr[this.video01Index].video;
-      if(this.video02Arr[this.video02Index]) this.video02 = this.video02Arr[this.video02Index].video;
+      console.log(this.video02Arr);
+      this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
+      this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
       // console.log(data.filter(v => !v.area)[1]);
     });
   },
+  beforeDestroy() {
+    // 清除计时器
+    if(this.timer) clearInterval(this.timer)
+  },
   methods: {
+    mouseRouter(index) {
+      this.routerIndex = index;
+    },
     format_price(val) {
       if (val) {
         if (parseInt(val) >= 0 && parseInt(val) < 10000) {
@@ -666,11 +713,13 @@ export default {
       } else this.video01Index = 0;
       console.log(this.video01Index, this.video01Arr);
       this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
     },
     videoerr() {
       console.log("失败");
       this.video01Index = 0;
-      if(this.video01Arr[this.video01Index]) this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
     },
     videoend02() {
       console.log("结束");
@@ -679,11 +728,13 @@ export default {
         this.video02Index++;
       } else this.video02Index = 0;
       this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
     },
     videoerr02() {
       console.log("失败");
       this.video02Index = 0;
-      if(this.video02Arr[this.video02Index]) this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
     }
   },
   components: {
@@ -811,6 +862,12 @@ $txtColor2: #ffde7b;
   justify-content: space-between;
   box-sizing: border-box;
   position: relative;
+  .sub_title {
+    position: absolute;
+    left: 15px; bottom: 0;
+    font-size: 18px;
+    transform: translate(100%, -20%);
+  }
   .header_right {
     display: flex;
     align-items: flex-end;
@@ -1305,7 +1362,7 @@ $txtColor2: #ffde7b;
   .navbar_inner {
     display: flex;
   }
-  .navbar_item {
+  .navbar_item , .navbar_item_active {
     width: 162px;
     height: 59px;
     font-size: 20px;
@@ -1316,11 +1373,46 @@ $txtColor2: #ffde7b;
     padding-top: 10px;
     box-sizing: border-box;
     margin-left: -32px;
-    &:first-of-type {
-      width: 198px;
-      margin-left: 0;
-      background-image: url(../assets/bigScreen/navitem_active@2x.png);
+    position: relative;
+    cursor: pointer;
+    .child_navbars {
+      width: 124px;
+      height: auto;
+      background: rgba(4,9,16, .8);
+      position: absolute;
+      bottom: 59px;
+      left: 0;
+      &>div {
+        font-size: 15px;
+        .child_navbar_item {
+          padding: 4px 12px;
+          box-sizing: border-box;
+          overflow : hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+        .child_navbar_item:hover {
+          background-color: #0455AE;
+        }
+        .round_icon {
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          border: 1px solid #fff;
+          display: inline-block;
+          margin-right: 6px;
+          vertical-align: middle;
+          margin-top: -2px;
+        }
+      }
     }
+  }
+  .navbar_item_active {
+    width: 198px;
+    margin-left: 0;
+    background-image: url(../assets/bigScreen/navitem_active@2x.png);
   }
   a {
     color: #fff;

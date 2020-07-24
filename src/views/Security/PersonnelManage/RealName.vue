@@ -13,21 +13,25 @@
                 </el-form-item>
                 <el-form-item label="单位类型">
                     <el-select v-model="formInline.company_type" placeholder="请选择单位类型">
+                        <el-option label="全部" :value="''"></el-option>
                         <el-option :label="item.name" :value="item.id" v-for="item in companyTypeList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="公司名称">
                     <el-select v-model="formInline.company" placeholder="请选择单位">
+                        <el-option label="全部" :value="''"></el-option>
                         <el-option :label="item.name" :value="item.id" v-for="item in companyList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="班组">
                     <el-select v-model="formInline.team" placeholder="请选择班组">
+                        <el-option label="全部" :value="''"></el-option>
                         <el-option :label="item.name" :value="item.id" v-for="item in teamList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="工种">
                     <el-select v-model="formInline.workType" placeholder="请选择工种">
+                        <el-option label="全部" :value="''"></el-option>
                         <el-option :label="item.name" :value="item.id" v-for="item in workTypeList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
@@ -38,7 +42,7 @@
                         <el-option label="女" :value="1" ></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="入场时间">
+                <!-- <el-form-item label="入场时间">
                     <el-date-picker
                         v-model="formInline.inTime"
                         type="daterange"
@@ -55,7 +59,7 @@
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
                     </el-date-picker>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="是否关联实名">
                     <el-select v-model="formInline.relevance" placeholder="请选择是否关联">
                         <el-option label="全部" :value="''" ></el-option>
@@ -68,6 +72,10 @@
                     ><el-button @click="resetForm('formInline')">重置</el-button>
                 </el-form-item>
             </el-form>
+        </div>
+        <div class="set-btns-right">
+            <el-button @click="addPerson" icon="el-icon-plus" type="primary">新增</el-button>
+            <el-button icon="el-icon-top-right" type="primary">导出</el-button>
         </div>
         <el-table
         :data="tableData"
@@ -154,8 +162,8 @@
                 width="150">
                 <template slot-scope="scope">
                     <el-button @click="checkBtn(scope.row)" type="text" size="small">查看</el-button>
-                    <el-button @click="editStaffBtn(scope.row)" type="text" size="small">编辑</el-button>
-                    <el-button v-if="scope.row.is_real_name == 1" type="text" size="small">删除</el-button>
+                    <el-button @click="editStaffBtn(scope.row, scope.$index)" v-if="scope.row.is_real_name == 0" type="text" size="small">编辑</el-button>
+                    <el-button @click="delBtn(scope.row)" v-if="scope.row.is_real_name == 1" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -168,86 +176,91 @@
             layout="prev, pager, next, jumper"
             :total="count">
         </el-pagination>
-        <el-dialog title="编辑员工" :visible.sync="dialogFormVisible" width="720px">
-            <el-form class="staff-form" id="dialogForm" :model="form" label-width="150px" v-loading="formLoading">
-                <div class="form-title">员工信息</div>
-                <el-form-item class="form-head-img">
-                    <el-upload
-                    class="avatar-uploader"
-                    action="#"
-                    :show-file-list="false"
-                    :on-change="changeFile"
-                    :before-upload="beforeAvatarUpload"
-                    accept="image/png, image/gif, image/jpg, image/jpeg"
-                    >
-                    <img v-if="form.head_img" :src="form.head_img" class="avatar" />
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="姓名">
-                    <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
-                </el-form-item>
-                <el-form-item label="年龄">
-                    <el-input v-model="form.age" placeholder="请输入年龄"></el-input>
-                </el-form-item>
-                <el-form-item label="性别">
-                    <el-select v-model="form.sex" placeholder="请选择性别">
-                        <el-option v-for="(v, i) of generList" :key="i" :label="v.name" :value="v.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="身份证">
-                    <el-input v-model="form.identity_id" placeholder="请输入身份证"></el-input>
-                </el-form-item>
-                <el-form-item label="联系方式">
-                    <el-input v-model="form.phone" placeholder="请输入联系方式"></el-input>
-                </el-form-item>
-                <div class="form-title">工作信息</div>
-                <el-form-item label="单位名称">
-                    <el-select v-model="form.company" placeholder="请选择单位名称">
-                        <el-option v-for="(v, i) of companyList" :key="i" :label="v.name" :value="v.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="班组">
-                    <el-select v-model="form.team" placeholder="请选择班组">
-                        <el-option v-for="(v, i) of teamList" :key="i" :label="v.name" :value="v.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="工种">
-                    <el-select v-model="form.work_type" placeholder="请选择工种">
-                        <el-option v-for="(v, i) of workTypeList" :key="i" :label="v.name" :value="v.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="身份">
-                    <el-select v-model="form.identity" placeholder="请选择角色">
-                        <el-option v-for="(v, i) of identityList" :key="i" :label="v.name" :value="v.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="进场时间">
-                    <el-date-picker
-                        v-model="form.einlass"
-                        type="date"
-                        placeholder="选择日期">
-                    </el-date-picker>
-                    <!-- <el-input v-html="form.einlass"></el-input> -->
-                </el-form-item>
-                <el-form-item label="离场时间">
-                    <el-date-picker
-                        v-model="form.leavingTime"
-                        type="date"
-                        placeholder="选择日期">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item>
-                    <el-button @click="dialogFormVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="editStaffInfo">确 定</el-button>
-                </el-form-item>
-            </el-form>
+        <el-dialog :title="!isEdit ? '新增员工':'编辑员工'" :visible.sync="dialogFormVisible" width="720px">
+            <div style="width:100%;height: 100%" v-loading="formLoading">
+                <el-form class="staff-form" :rules="rules" ref="dialogForm" id="dialogForm" :model="form" label-width="150px">
+                    <div class="form-title">员工信息</div>
+                    <el-form-item class="form-head-img">
+                        <el-upload
+                        class="avatar-uploader"
+                        action="#"
+                        :show-file-list="false"
+                        :on-change="changeFile"
+                        :before-upload="beforeAvatarUpload"
+                        accept="image/png, image/gif, image/jpg, image/jpeg">
+                            <img v-if="form.head_img" :src="form.head_img" class="avatar" />
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
+                    </el-form-item>
+                    <el-form-item label="年龄" prop="age">
+                        <el-input v-model="form.age" placeholder="请输入年龄"></el-input>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="sex">
+                        <el-select v-model="form.sex" placeholder="请选择性别">
+                            <el-option v-for="(v, i) of generList" :key="i" :label="v.name" :value="v.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="身份证" prop="identity_id">
+                        <el-input v-model="form.identity_id" maxlength="18" placeholder="请输入身份证"></el-input>
+                    </el-form-item>
+                    <el-form-item label="联系方式" prop="phone">
+                        <el-input v-model="form.phone" maxlength="11" placeholder="请输入联系方式"></el-input>
+                    </el-form-item>
+                    <div class="form-title">工作信息</div>
+                    <el-form-item label="单位类型" prop="company_type">
+                        <el-select v-model="form.company_type" placeholder="请选择单位类型">
+                            <el-option v-for="(v, i) of companyTypeList" :key="i" :label="v.name" :value="v.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="单位名称" prop="company">
+                        <el-select v-model="form.company" placeholder="请选择单位名称">
+                            <el-option v-for="(v, i) of companyList" :key="i" :label="v.name" :value="v.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="班组" prop="team">
+                        <el-select v-model="form.team" placeholder="请选择班组">
+                            <el-option v-for="(v, i) of teamList" :key="i" :label="v.name" :value="v.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="工种" prop="work_type">
+                        <el-select v-model="form.work_type" placeholder="请选择工种">
+                            <el-option v-for="(v, i) of workTypeList" :key="i" :label="v.name" :value="v.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="身份" prop="identity">
+                        <el-select v-model="form.identity" placeholder="请选择角色">
+                            <el-option v-for="(v, i) of identityList" :key="i" :label="v.name" :value="v.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <!-- <el-form-item label="进场时间">
+                        <el-date-picker
+                            v-model="form.einlass"
+                            type="date"
+                            placeholder="选择日期">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="离场时间">
+                        <el-date-picker
+                            v-model="form.leavingTime"
+                            type="date"
+                            placeholder="选择日期">
+                        </el-date-picker>
+                    </el-form-item> -->
+                    <el-form-item>
+                        <el-button @click="dialogFormVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="editStaffInfo('dialogForm')">确 定</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
         </el-dialog>
         <el-dialog title="员工详情" :visible.sync="checkFormVisible" width="720px">
             <el-form :model="form" label-width="150px" class="staff-form" id="dialogForm">
                 <div class="form-title">员工信息</div>
                 <el-form-item class="form-head-img">
-                    <img v-if="form.head_img" :src="form.head_img" class="avatar" />
+                    <img v-if="form.sceneimage" :src="form.sceneimage" class="avatar" />
                     <img v-else src="../../../assets/head_img.png" class="avatar"/>
                 </el-form-item>
                 <el-form-item label="姓名">
@@ -266,10 +279,18 @@
                     <div>{{form.phone?form.phone:'/'}}</div>
                 </el-form-item>
                 <div class="form-title">工作信息</div>
+                <el-form-item label="单位类型">
+                    <div v-if="form.company_type!=null && form.company_type">
+                        <div v-for="(v, i) of companyTypeList" :key="i">
+                            <div v-if="v.id == form.company_type">{{v.name}}</div>
+                        </div>
+                    </div>
+                    <div v-else>/</div>
+                </el-form-item>
                 <el-form-item label="单位名称">
                     <div v-if="form.company!=null && form.company">
                         <div v-for="(v, i) of companyList" :key="i">
-                            <div v-if="v.id == form.company">{{form.company}}</div>
+                            <div v-if="v.id == form.company">{{v.name}}</div>
                         </div>
                     </div>
                     <div v-else>/</div>
@@ -277,7 +298,7 @@
                 <el-form-item label="班组">
                     <div v-if="form.team!=null && form.team">
                         <div v-for="(v, i) of teamList" :key="i">
-                            <div v-if="v.id == form.team">{{form.team}}</div>
+                            <div v-if="v.id == form.team">{{v.name}}</div>
                         </div>
                     </div>
                     <div v-else>/</div>
@@ -285,25 +306,25 @@
                 <el-form-item label="工种">
                     <div v-if="form.work_type!=null && form.work_type">
                         <div v-for="(v, i) of workTypeList" :key="i">
-                            <div v-if="v.id == form.work_type">{{form.work_type}}</div>
+                            <div v-if="v.id == form.work_type">{{v.name}}</div>
                         </div>
                     </div>
                     <div v-else>/</div>
                 </el-form-item>
                 <el-form-item label="人员身份">
-                    <div v-if="form.identity!=null && form.identity">
+                    <div v-if="form.identity!=null">
                         <div v-for="(v, i) of identityList" :key="i">
-                            <div v-if="v.id == form.identity">{{form.identity}}</div>
+                            <div v-if="v.id == form.identity">{{v.name}}</div>
                         </div>
                     </div>
                     <div v-else>/</div>
                 </el-form-item>
-                <el-form-item label="进场时间">
+                <!-- <el-form-item label="进场时间">
                     <div>{{form.einlass?form.einlass:'/'}}</div>
                 </el-form-item>
                 <el-form-item label="离场时间">
                     <div>{{form.leavingTime?form.leavingTime:'/'}}</div>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                     <el-button @click="checkFormVisible = false">取 消</el-button>
                     <el-button type="primary" @click="checkFormVisible = false">确 定</el-button>
@@ -315,6 +336,32 @@
 <script>
     export default {
         data() {
+            var checkName = (rule, value, callback) => {
+                if(!this.common.checkName(value))  callback(new Error('请输入正确的姓名'));
+                else callback();
+            };
+            var checkPhone = (rule, value, callback) => {
+                if(value) {
+                    if(!this.common.checkPhone(value)) {
+                        callback(new Error('请输入正确的手机号'));
+                    }else {
+                        callback();
+                    }
+                }else {
+                    callback();
+                }
+            };
+            var checkIDCard = (rule, value, callback) => {
+                if(value) {
+                    if(!this.common.checkIdCard(value)) {
+                        callback(new Error('请输入正确的身份证号'));
+                    }else {
+                        callback();
+                    }
+                }else {
+                    callback();
+                }
+            };
             return {
                 isLoading: false,
                 tableData: [],
@@ -339,19 +386,31 @@
                 dialogFormVisible: false,
                 checkFormVisible: false,
                 form: {
-                    name: "",
-                    age: "",
-                    sex: "",
-                    identity_id: "",
-                    phone: "",
-                    company: "",
-                    company_type: '',
-                    team: "",
-                    work_type: "",
-                    identity: "",
-                    einlass: "",
-                    leavingTime: "",
-                    head_img: require("../../../assets/head_img.png"),
+                    name: null,
+                    age: null,
+                    sex: null,
+                    identity_id: null,
+                    phone: null,
+                    company: null,
+                    company_type: null,
+                    team: null,
+                    work_type: null,
+                    identity: 1,
+                    // einlass: null,
+                    // leavingTime: null,
+                    sceneimage: null
+                },
+                rules : {
+                    name: [
+                        { required: true, message: '请输入姓名', trigger: 'blur' },
+                        { validator: checkName, trigger: 'blur' }
+                    ],
+                    phone: [
+                        { validator: checkPhone, trigger: 'blur' }
+                    ],
+                    identity_id: [
+                        { validator: checkIDCard, trigger: 'blur' }
+                    ]
                 },
                 generList: [
                     { id: 0, name: "男" },
@@ -361,29 +420,27 @@
                     { id: 0, name: "管理人员" },
                     { id: 1, name: "施工人员" }
                 ],
-                formLoading: false
+                formLoading: false,
+                isEdit: false,
+                realNameIndex: 0
             }
         },
         created() {
             // 单位类型
             let company_type = this.$http.get('api/v1/user/company_type/').then((res)=>{
                 this.companyTypeList = res.data;
-                this.companyTypeList.unshift({id: '', name: '全部'});
             }).catch(()=>{})
             // 单位名称
             let company = this.$http.get('api/v1/user/company/').then((res)=>{
                 this.companyList = res.data;
-                this.companyList.unshift({id: '', name: '全部'});
             }).catch(()=>{})
             // 班组
             let team = this.$http.get('api/v1/user/team/').then((res)=>{
                 this.teamList = res.data;
-                this.teamList.unshift({id: '', name: '全部'});
             }).catch(()=>{})
             // 工种
             let work_type = this.$http.get('api/v1/user/work_type/').then((res)=>{
                 this.workTypeList = res.data;
-                this.workTypeList.unshift({id: '', name: '全部'});
             }).catch(()=>{})
             this.isLoading = true;
             this.$http.requestAll([company_type, company, team, work_type])
@@ -401,20 +458,17 @@
                 this.currentPage = val;
                 let start_into_time='';
                 let end_into_time='';
-                if(this.formInline.inTime && this.formInline.inTime.length===2) {
-                    start_into_time = this.common.YMD(Date.parse(this.formInline.inTime[0])/1000);
-                    end_into_time = this.common.YMD(Date.parse(this.formInline.inTime[1])/1000);
-                }
+                // if(this.formInline.inTime && this.formInline.inTime.length===2) {
+                //     start_into_time = this.common.YMD(Date.parse(this.formInline.inTime[0])/1000)+ ' 00:00:00';
+                //     end_into_time = this.common.YMD(Date.parse(this.formInline.inTime[1])/1000)+ ' 23:59:59';
+                // }
                 let start_leave_time='';
                 let end_leave_time='';
-                if(this.formInline.leaveTime && this.formInline.leaveTime.length===2) {
-                    start_leave_time = this.common.YMD(Date.parse(this.formInline.leaveTime[0])/1000);
-                    end_leave_time = this.common.YMD(Date.parse(this.formInline.leaveTime[1])/1000);
-                }
-                this.$http.get(`api/v1/security/user/?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&
-                company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&
-                work_type=${this.formInline.work_type}&sex=${this.formInline.gender}&is_real_name=${this.formInline.relevance}&
-                start_into_time=${start_into_time}&end_into_time=${end_into_time}&start_leave_time=${start_leave_time}&end_leave_time=${end_leave_time}`).then((res)=>{
+                // if(this.formInline.leaveTime && this.formInline.leaveTime.length===2) {
+                //     start_leave_time = this.common.YMD(Date.parse(this.formInline.leaveTime[0])/1000)+ ' 00:00:00';
+                //     end_leave_time = this.common.YMD(Date.parse(this.formInline.leaveTime[1])/1000)+ ' 23:59:59';
+                // }
+                this.$http.get(`api/v1/security/user/?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&sex=${this.formInline.gender}&is_real_name=${this.formInline.relevance}&start_into_time=${start_into_time}&end_into_time=${end_into_time}&start_leave_time=${start_leave_time}&end_leave_time=${end_leave_time}`).then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;
                     this.count = res.count;
@@ -449,7 +503,9 @@
                 var reader = new FileReader();
                 reader.readAsDataURL(res.raw);
                 reader.onloadend = function(e) {
-                    _that.form.head_img = e.target.result;
+                    _that.$set(_that.form, 'head_img', e.target.result);
+                    _that.form.sceneimage = res.raw;
+
                 };
             },
             beforeAvatarUpload(file) {
@@ -458,6 +514,16 @@
                     this.$message.error("上传头像图片大小不能超过 10MB!");
                 }
                 return false;
+            },
+            // 添加人员
+            addPerson() {
+                this.isEdit = false;
+                this.dialogFormVisible = true;
+                this.$nextTick(() => {
+                    var container = this.$el.querySelector("#dialogForm");
+                    container.scrollTop = 0;
+                    this.$refs.dialogForm.resetFields();
+                });
             },
             // 查看
             checkBtn(item) {
@@ -468,26 +534,75 @@
                 });
                 this.form = JSON.parse(JSON.stringify(item));
             },
+            // 删除人员
+            delBtn(item) {
+                this.$confirm('确定要删除此人员吗？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$http.delete(`api/v1/security/user/${item.id}`)
+                    .then((res)=> {
+                        this.$message.success('删除成功');
+                        this.requestInfo(1);
+                    })
+                    .catch(()=>{})
+                }).catch(() => {});
+            },
             // 编辑
-            editStaffBtn(item) {
+            editStaffBtn(item, index) {
+                this.isEdit = true;
+                this.realNameIndex = index;
                 this.dialogFormVisible = true;
                 this.$nextTick(() => {
                     var container = this.$el.querySelector("#dialogForm");
                     container.scrollTop = 0;
                 });
                 this.form = JSON.parse(JSON.stringify(item));
+                this.$set(this.form, 'head_img', item.sceneimage);
             },
             // 编辑人员
-            editStaffInfo() {
-                this.formLoading = true;
-                this.$http.put(`api/v1/security/user/${this.form.id}`, this.form)
-                .then(()=>{
-                    this.formLoading = false;
-                    this.$message.success('人员修改成功');
-                })
-                .catch(()=>{
-                    this.formLoading = false;
-                })
+            editStaffInfo(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.formLoading = true;
+                        let params = new FormData();
+                        if(this.form.name!=null) params.append('name', this.form.name);
+                        if(this.form.sex!=null) params.append('sex', this.form.sex);
+                        if(this.form.age!=null) params.append('age', this.form.age);
+                        if(this.form.phone!=null) params.append('phone', this.form.phone?this.form.phone:'');
+                        if(this.form.company_type!=null) params.append('company_type', this.form.company_type);
+                        if(this.form.company!=null) params.append('company', this.form.company);
+                        if(this.form.identity!=null) params.append('identity', this.form.identity);
+                        if(this.form.identity_id!=null) params.append('identity_id', this.form.identity_id);
+                        if(this.form.team!=null) params.append('team', this.form.team);
+                        if(this.form.work_type!=null) params.append('work_type', this.form.work_type);
+                        if(this.form.sceneimage!=null && typeof  this.form.sceneimage =='object') params.append('sceneimage', this.form.sceneimage);
+                        if(this.isEdit) {
+                            this.$http.put(`api/v1/security/user/${this.form.id}`, params)
+                            .then((res)=>{
+                                this.formLoading = false;
+                                this.dialogFormVisible = false;
+                                this.$message.success('人员修改成功');
+                                this.$set(this.tableData, this.realNameIndex, res.data);
+                            })
+                            .catch(()=>{
+                                this.formLoading = false;
+                            })
+                        }else {
+                            this.$http.post(`api/v1/security/user/`, params)
+                            .then((res)=>{
+                                this.formLoading = false;
+                                this.dialogFormVisible = false;
+                                this.$message.success('人员添加成功');
+                                this.requestInfo(1);
+                            })
+                            .catch(()=>{
+                                this.formLoading = false;
+                            })
+                        }
+                    }
+                });
             }
         }
     }

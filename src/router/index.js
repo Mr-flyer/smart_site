@@ -22,6 +22,9 @@ import TDRealScene from "../views/IOT/TDRealScene.vue";
 import UAVCruise from "../views/IOT/UAVCruise.vue";
 // 三维文档
 import TDDocument from "../views/TDDocument/TDDocument.vue";
+// 生产管理
+import Production from '../views/Production/Production.vue';
+import Document3D from '../views/Production/Document3D.vue';
 // 个人中心
 import UserCenter from "../views/UserCenter/UserCenter.vue";
 
@@ -123,6 +126,18 @@ const routes = [
         path: "/TDDocument",
         name: "TDDocument",
         component: TDDocument
+      },
+      {
+        path: "/Production",
+        name: "Production",
+        component: Production,
+        children: [
+          {
+            path: "/Production/Document3D",
+            name: "Document3D",
+            component: Document3D,
+          },
+        ],
       },
       {
         path: "/UserCenter",

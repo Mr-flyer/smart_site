@@ -124,9 +124,9 @@
                 <v-empty :value="securityDetection"></v-empty>
             </div>
           </el-card>
-          <el-card shadow="never">
+          <el-card shadow="never" v-loading="lineLoading">
             <div slot="header">查看数据方式
-                <el-select v-model="checkTypeValue">
+                <el-select :value="checkTypeValue" @change="changeCheckType">
                     <el-option
                     v-for="item in checkType"
                     :key="item.value"
@@ -135,13 +135,16 @@
                     ></el-option>
                 </el-select>
             </div>
-            <div class="grid-main" v-if="dust_chart.length > 0">
-              <!-- <div class="grid-item" v-for="item in dust_chart">
-                <lineEchart :infoObj="infoSourceTrend" />
-              </div> -->
+            <div class="grid-main" v-if="lineList.length> 0">
+              <div class="grid-item">
+                <lineEchart :infoObj="TPP" />
+              </div>
+              <div class="grid-item">
+                <lineEchart :infoObj="noise" />
+              </div>
             </div>
-            <div class="grid-main" v-else>
-                <v-empty :value="dust_chart"></v-empty>
+            <div class="grid-main" v-show="lineList.length<=0">
+                <v-empty :value="lineList"></v-empty>
             </div>
           </el-card>
         </el-col>
@@ -183,6 +186,7 @@
 <script>
 import lineEchart from "@/components/lineEchart";
 import empty from "@/components/empty";
+import dayjs from "dayjs";
 // 校验input 为空
 const noEmpty = (rule, value, callback) => {
   if (value === "") callback(new Error("必填项不能为空"));
@@ -214,61 +218,38 @@ export default {
         noise: null
     },
     formValue:  '',
-    infoSourceTrend: {
+    TPP: {
       title: "扬尘监测TSP+PM2.5+PM10",
-      isLoading: true,
-      legend: ["腾讯新闻", "微信公众号"],
+      legend: ["TSP", "PM2.5", "PM10"],
       xdata: [],
-      color: ["#9357F1", "#5599FE"],
+      color: ["#9357F1", "#5599FE", "#EF8C49"],
       data: []
     },
-    infoSourceTrend: {
+    noise: {
       title: "噪声监测",
-      isLoading: true,
-      legend: ["腾讯新闻", "微信公众号"],
+      legend: ["噪声"],
       xdata: [],
-      color: ["#9357F1", "#5599FE"],
+      color: [],
       data: []
     },
     mapPic: '',
     securityDetection: '',
     sdLoading: false,
-    dust_chart: '',
     checkTypeValue: '',
     checkType: [
         {name: '实时', value: ''},
-        {name: '按小时', value: 0},
-        {name: '按天', value: 1},
-        {name: '按月', value: 2},
-        {name: '按年', value: 3},
+        {name: '按小时', value: 'hour'},
+        {name: '按天', value: 'day'},
+        {name: '按月', value: 'month'},
+        {name: '按年', value: 'year'}
     ],
     equipmentLoading: false,
     update_time: '',
-    seter: null
+    seter: null,
+    lineList: '',
+    lineLoading: false
   }),
   created() {
-    // 扬尘监测
-    this.infoSourceTrend = {
-      title: "扬尘监测TSP+PM2.5+PM10",
-      isLoading: true,
-      legend: ["TSP", "PM2.5", "PM10"],
-      xdata: ["10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "12:00"],
-      color: ["#9357F1", "#5599FE", "red"],
-      data: [
-        [120, 132, 101, 134, 90, 230, 210],
-        [220, 182, 191, 234, 290, 330, 310],
-        [150, 232, 201, 154, 190, 330, 410]
-      ]
-    };
-    // 噪声监测
-    this.infoSourceTrend02 = {
-      title: "噪声监测",
-      isLoading: true,
-      legend: ["噪声"],
-      xdata: ["10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "12:00"],
-      color: ["#9357F1"],
-      data: [[120, 132, 101, 134, 90, 230, 210]]
-    };
     // 设备列表
     this.loading = true;
     this.$http.get('api/v1/security/equipment/')
@@ -285,16 +266,10 @@ export default {
                 this.handelSecurity(res);
             })
             .catch(()=>{})
-            // 折线图
-            this.$http.get('api/v1/security/dust_chart')
-            .then((res) => {
-                this.dust_chart = res.data;
-            })
-            .catch(()=>{})
+            this.lineFun();
         }else {
             this.formEquipment = {};
             this.securityDetection = {};
-            this.dust_chart = [];
         }
     })
     // 标准值设置
@@ -306,9 +281,7 @@ export default {
           this.form.noise = res.data.noise;
           this.formValue = JSON.parse(JSON.stringify(this.form));
       })
-      .catch((err) => {
-          
-      })
+      .catch((err) => {})
   },
   mounted() {
     this.seter = setInterval(()=>{
@@ -321,14 +294,27 @@ export default {
       })
       .catch(()=>{})
       // 折线图
-      this.$http.get('api/v1/security/dust_chart')
-      .then((res) => {
-          this.dust_chart = res.data;
-      })
-      .catch(()=>{})
+      this.lineFun();
     }, 600000)
   },
   methods: {
+    lineFun() {
+      this.lineLoading = true;
+      // 折线图
+      this.$http.get(`api/v1/security/dust_chart?check_mode=${this.checkTypeValue}&mn=${this.formEquipment.id}`)
+      .then((res) => {
+        this.lineList = res.data;
+        this.TPP.xdata = res.data.map(v => dayjs(v.time).format('HH:mm'));
+        let TSP = res.data.map(v => Number(v.tsp));
+        let PM2_5 = res.data.map(v => Number(v.pm2_5));
+        let PM10 = res.data.map(v => Number(v.pm10));
+        this.TPP.data = [TSP, PM2_5, PM10];
+        this.noise.xdata = this.TPP.xdata;
+        this.noise.data = [res.data.map(v => Number(v.noise))];
+        this.lineLoading = false;
+      })
+      .catch(()=>{})
+    },
     renderheader(h, { column, $index }) {
       return h('span', {
           class: ['head-unit']
@@ -463,14 +449,11 @@ export default {
                 this.$http.get(`api/v1/security/dust?mn=${this.formEquipment.id}`)
                 .then((res)=>{
                     this.handelSecurity(res);
+                    this.checkTypeValue ='';
                 })
                 .catch(()=>{})
                 // 折线图
-                this.$http.get('api/v1/security/dust_chart')
-                .then((res) => {
-                    this.dust_chart = res.data;
-                })
-                .catch(()=>{})
+                this.lineFun();
                 break;
             }
         }
@@ -506,6 +489,11 @@ export default {
     standradSet() {
       this.showEquipmentVisible = true;
       this.form = JSON.parse(JSON.stringify(this.formValue));
+    },
+    // 更改查看方式
+    changeCheckType(e) {
+      this.checkTypeValue = e;
+      this.lineFun();
     },
     equipmentSub() {
         this.equipmentLoading = true;
@@ -653,10 +641,14 @@ $colorInfo: #909399;
   }
 }
 .grid-main {
-    min-height: 250px;
+  min-height: 250px;
   .grid-item {
     height: 330px;
     position: relative;
+    margin-top: 36px;
+  }
+  &>div:first-child {
+    margin: 0;
   }
 }
 </style>
