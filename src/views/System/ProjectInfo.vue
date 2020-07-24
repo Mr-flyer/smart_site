@@ -27,7 +27,7 @@
                 <el-input v-model="form.addr"></el-input>
             </el-form-item>
             <el-form-item label="工程造价">
-                <el-input @input="form.cost = form.cost.replace(/\D/g, '')" v-model="form.cost">
+                <el-input @input="form.cost = form.cost.replace(/\D/g, '')" :value="form.cost">
                     <template slot="append">元</template>
                 </el-input>
             </el-form-item>
@@ -106,6 +106,11 @@
                     construction_company: [],
                     supervisor_company: []
                 }
+            }
+        },
+        computed: {
+            txt() {
+                return this.form.cost + '元'
             }
         },
         created() {
