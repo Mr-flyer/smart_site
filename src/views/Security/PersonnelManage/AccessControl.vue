@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-loading="isLoading">
         <el-row :gutter="20">
             <el-col :span="16">
                 <el-card class="box-card" shadow="never">
@@ -16,11 +16,11 @@
                         </div>
                     </div>
                     <div class="text item access-controls">
-                        <div class="access-control-item" v-for="item in AccessControlList">
-                            <img @click="accessControlItem(item)" :class="item.active?'img-active':''" v-if="item.status==0" src="../../../assets/c_close_door.png"/>
-                            <img @click="accessControlItem(item)" :class="item.active?'img-active':''" v-else-if="item.status==1" src="../../../assets/close_door.png"/>
-                            <img @click="accessControlItem(item)" :class="item.active?'img-active':''" v-else-if="item.status==2" src="../../../assets/c_open_door.png"/>
-                            <img @click="accessControlItem(item)" :class="item.active?'img-active':''" v-else src="../../../assets/open_door.png"/>
+                        <div class="access-control-item" v-for="(item, $index) in AccessControlList">
+                            <img @click="accessControlItem($index)" :class="activeIndex === $index?'img-active':''" v-if="item.status==0" src="../../../assets/c_close_door.png"/>
+                            <img @click="accessControlItem($index)" :class="activeIndex === $index?'img-active':''" v-else-if="item.status==1" src="../../../assets/close_door.png"/>
+                            <img @click="accessControlItem($index)" :class="activeIndex === $index?'img-active':''" v-else-if="item.status==2" src="../../../assets/c_open_door.png"/>
+                            <img @click="accessControlItem($index)" :class="activeIndex === $index?'img-active':''" v-else src="../../../assets/open_door.png"/>
                             <div>{{item.name}}号门</div>
                         </div>
                     </div>
@@ -69,9 +69,9 @@
                                 <template slot-scope="scope">{{scope.$index+1}}</template>
                             </el-table-column>
                             <el-table-column
-                                prop="eventType"
                                 label="事件类型"
                                 width="180">
+                                <template slot-scope="scope">{{scope.row.event_type == 0 ?'遥控':'人脸识别'}}</template>
                             </el-table-column>
                             <el-table-column
                                 prop="name"
@@ -84,13 +84,17 @@
                                 width="180">
                             </el-table-column>
                             <el-table-column
-                                prop="address"
                                 label="门禁点">
+                                <template slot-scope="scope">
+                                    <div>{{scope.row.door_no}}号门</div>
+                                </template>
                             </el-table-column>
                             <el-table-column
-                                prop="type"
                                 label="出入类型"
                                 width="100">
+                                <template slot-scope="scope">
+                                    <div>{{scope.row.in_or_out===0?'出':scope.row.in_or_out===1?'入':'未知'}}</div>
+                                </template>
                             </el-table-column>
                         </el-table>
                     </div>
@@ -104,16 +108,39 @@
                     <div class="text item">
                         <el-row :gutter="20">
                             <el-col :span="16" class="current-info">
-                                <div class="info-weight"><span class="info-name">门禁点：</span><span>1号门</span></div>
-                                <div><span class="info-name">人员姓名：</span>王大力</div>
-                                <div><span class="info-name">员工ID：</span>1321321</div>
-                                <div class="info-weight"><span class="info-name">身份：</span><span>管理人员</span></div>
-                                <div><span class="info-name">单位类型：</span>施工单位</div>
-                                <div><span class="info-name">公司名称：</span>中国建筑有限公司</div>
-                                <div><span class="info-name">有效期：</span>2020-07-11-2020-09-11</div>
+                                <div class="info-weight"><span class="info-name">门禁点：</span><span>{{currentInfo.door_no}}号门</span></div>
+                                <div><span class="info-name">人员姓名：</span>{{currentInfo.name}}</div>
+                                <div class="info-weight">
+                                    <span class="info-name">身份：</span
+                                    ><span>
+                                        <span v-if="currentInfo.identity == item.id" v-for="item in identityList" :key="item.id">{{item.name}}</span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="info-name">单位类型：</span
+                                    ><span v-if="currentInfo.company_type == item.id" v-for="item in companyTypeList" :key="item.id">{{item.name}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-name">单位名称：</span
+                                    ><span v-if="currentInfo.company == item.id" v-for="item in companyList" :key="item.id">{{item.name}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-name">班组：</span
+                                    ><span v-if="currentInfo.team == item.id" v-for="item in teamList" :key="item.id">{{item.name}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-name">工种：</span
+                                    ><span v-if="currentInfo.work_type == item.id" v-for="item in workTypeList" :key="item.id">{{item.name}}</span>
+                                </div>
                             </el-col>
                             <el-col :span="8">
                                 <el-image
+                                v-if="currentInfo.image"
+                                class="current-info-pic"
+                                :src="currentInfo.image"
+                                fit="cover"></el-image>
+                                <el-image
+                                v-else
                                 class="current-info-pic"
                                 :src="accessControlPic"
                                 fit="cover"></el-image>
@@ -129,30 +156,61 @@
     export default {
         data() {
             return {
+                isLoading: false,
                 AccessControlList: [
-                    { name: '1', status: 0 , active: true },
-                    { name: '2', status: 1 , active: false},
-                    { name: '3', status: 2 , active: true},
-                    { name: '4', status: 3 , active: true}
+                    { name: '1', status: 0 },
+                    { name: '2', status: 1 },
+                    { name: '3', status: 2 },
+                    { name: '4', status: 3 }
                 ],
-                tableData: [
-                    {
-                        eventType: '人脸识别',
-                        name: '张三',
-                        time: '2020-04-04 20:00:00',
-                        address: '1号门',
-                        type: '出'
-                    }
-                ],
+                tableData: [],
+                activeIndex: 0,
+                currentInfo: '',
                 accessControlPic: require('../../../assets/head_img.png'),
-                mapPic: require('../../../assets/access_control_map.jpg')
+                mapPic: require('../../../assets/access_control_map.jpg'),
+                identityList: [
+                    {id: 0, name: '管理人员'},
+                    {id: 1, name: '施工人员'}
+                ],
+                companyTypeList: [],
+                companyList: [],
+                teamList: [],
+                workTypeList: []
             }
+        },
+        created() {
+            // 单位类型
+            let company_type = this.$http.get('api/v1/user/company_type/').then((res)=>{
+                this.companyTypeList = res.data;
+            }).catch(()=>{})
+            // 单位名称
+            let company = this.$http.get('api/v1/user/company/').then((res)=>{
+                this.companyList = res.data;
+            }).catch(()=>{})
+            // 班组
+            let team = this.$http.get('api/v1/user/team/').then((res)=>{
+                this.teamList = res.data;
+            }).catch(()=>{})
+            // 工种
+            let work_type = this.$http.get('api/v1/user/work_type/').then((res)=>{
+                this.workTypeList = res.data;
+            }).catch(()=>{})
+            let firstRequest = this.$http.get(`api/v1/security/user_door?page=1&page_size=10`).then((res)=>{
+                this.tableData = res.data;
+                if(res.data.length>0) {
+                    this.currentInfo = res.data[0];
+                }
+            }).catch(()=>{})
+            this.isLoading = true;
+            this.$http.requestAll([company_type, company, team, work_type])
+            .then(()=>{
+                this.isLoading = false;
+            }).catch(()=>{})
         },
         methods: {
             // 门禁状态
-            accessControlItem(item) {
-                if(item.active) this.$set(item, 'active', false);
-                else this.$set(item, 'active', true);
+            accessControlItem(index) {
+                this.activeIndex = index;
             },
             // 查看历史记录
             historyListBtn() {

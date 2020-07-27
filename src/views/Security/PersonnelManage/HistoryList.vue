@@ -41,7 +41,8 @@
                         type="daterange"
                         range-separator="至"
                         start-placeholder="开始日期"
-                        end-placeholder="结束日期">
+                        end-placeholder="结束日期"
+                        :default-time="['00:00:00', '23:59:59']">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="门禁点">
@@ -159,7 +160,6 @@
         </el-pagination>
   </div>
 </template>
-
 <script>
     export default {
         data() {
@@ -209,7 +209,7 @@
                 this.workTypeList = res.data;
                 this.workTypeList.unshift({id: '', name: '全部'});
             }).catch(()=>{})
-            let firstRequest = this.$http.get(`api/v1/security/user_door?page=1&page_size=20`).then((res)=>{
+            let firstRequest = this.$http.get(`api/v1/security/user_door?page=1&page_size=${this.pageSize}`).then((res)=>{
                 this.tableData = res.data;
                 this.count = res.count;
             }).catch(()=>{})
@@ -226,10 +226,10 @@
                 let start_time='';
                 let end_time='';
                 if(this.formInline.time && this.formInline.time.length===2) {
-                    start_time = this.common.YMD(Date.parse(this.formInline.time[0])/1000)+ ' 00:00:00';
-                    end_time = this.common.YMD(Date.parse(this.formInline.time[1])/1000)+ ' 23:59:59';
+                    start_time = this.common.formatTimestamp_min(Date.parse(this.formInline.time[0])/1000);
+                    end_time = this.common.formatTimestamp_min(Date.parse(this.formInline.time[1])/1000);
                 }
-                this.$http.get(`api/v1/security/user_door?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&start_time=${start_time}&end_time=${end_time}&in_or_out="${this.formInline.accessType}"`)
+                this.$http.get(`api/v1/security/user_door?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&start_time=${start_time}&end_time=${end_time}&in_or_out=${this.formInline.accessType}`)
                 .then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;
@@ -256,6 +256,7 @@
                     time: [],
                     address: ''
                 }
+                this.requestInfo(1);
             },
             // 返回上一页
             goBack() {
@@ -271,12 +272,14 @@
         }
         .real-name {
             border-bottom: 1px solid #e5e5e5;
-            padding-bottom: 16px;
+            padding-bottom: 20px;
             box-sizing: border-box;
-            margin-bottom: 16px;
             ::v-deep .el-input input {
                 width: 180px;
             }
+        }
+        .set-btns-right {
+            margin: 20px 0;
         }
         .add-admin-btn {
             margin-bottom: 24px;

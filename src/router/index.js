@@ -40,6 +40,9 @@ const routes = [
     path: "/Home",
     name: "Home",
     component: Home,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: "/Main",
@@ -55,16 +58,25 @@ const routes = [
             path: "/System/AdminList",
             name: "AdminList",
             component: AdminList,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/System/HomeSet",
             name: "HomeSet",
             component: HomeSet,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/System/RoleSet",
             name: "RoleSet",
             component: RoleSet,
+            meta: {
+              requiresAuth: true
+            }
           },
         ],
       },
@@ -77,31 +89,49 @@ const routes = [
             path: "/Security/VideoMonitoring",
             name: "VideoMonitoring",
             component: VideoMonitoring,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/Security/PersonnelManagement",
             name: "PersonnelManagement",
             component: PersonnelManagement,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/Security/HistoryList",
             name: "PersonnelManagement",
             component: HistoryList,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/Security/DustControl",
             name: "DustControl",
             component: DustControl,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/Security/DustControlHistoryList",
             name: "DustControl",
             component: DustControlHistoryList,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/Security/VehicleBarrier",
             name: "VehicleBarrier",
             component: VehicleBarrier,
+            meta: {
+              requiresAuth: true
+            }
           },
         ],
       },
@@ -114,18 +144,27 @@ const routes = [
             path: "/IOT/UAVCruise",
             name: "UAVCruise",
             component: UAVCruise,
+            meta: {
+              requiresAuth: true
+            }
           },
           {
             path: "/IOT/TDRealScene",
             name: "TDRealScene",
             component: TDRealScene,
+            meta: {
+              requiresAuth: true
+            }
           }
         ],
       },
       {
         path: "/TDDocument",
         name: "TDDocument",
-        component: TDDocument
+        component: TDDocument,
+        meta: {
+          requiresAuth: true
+        }
       },
       {
         path: "/Production",
@@ -136,13 +175,19 @@ const routes = [
             path: "/Production/Document3D",
             name: "Document3D",
             component: Document3D,
+            meta: {
+              requiresAuth: true
+            }
           },
         ],
       },
       {
         path: "/UserCenter",
         name: "UserCenter",
-        component: UserCenter
+        component: UserCenter,
+        meta: {
+          requiresAuth: true
+        }
       }
     ],
   },

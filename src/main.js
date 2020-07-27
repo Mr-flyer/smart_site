@@ -15,6 +15,7 @@ Vue.prototype.$message = Message;
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = request;
 Vue.prototype.common = common;
+Vue.prototype.pageSize = 20;
 Vue.config.productionTip = false;
 
 /********
@@ -73,6 +74,21 @@ axios.interceptors.response.use(
       return axios(config);
     });
 });
+router.beforeEach((to,from,next) => {
+  if(to.meta.requiresAuth){
+      if(!localStorage.getItem('token')){
+          next({path : '/'})
+      }else{
+          next();
+      }
+  }else{
+    if(to.path === '/' && localStorage.getItem('token')) {
+      next({path : '/home'})
+    }else {
+      next();
+    }
+  }
+})
 
 new Vue({
   router,

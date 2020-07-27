@@ -48,7 +48,8 @@
                         type="daterange"
                         range-separator="至"
                         start-placeholder="开始日期"
-                        end-placeholder="结束日期">
+                        end-placeholder="结束日期"
+                        :default-time="['00:00:00', '23:59:59']">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="离场时间">
@@ -57,14 +58,15 @@
                         type="daterange"
                         range-separator="至"
                         start-placeholder="开始日期"
-                        end-placeholder="结束日期">
+                        end-placeholder="结束日期"
+                        :default-time="['00:00:00', '23:59:59']">
                     </el-date-picker>
                 </el-form-item> -->
                 <el-form-item label="是否关联实名">
                     <el-select v-model="formInline.relevance" placeholder="请选择是否关联">
                         <el-option label="全部" :value="''" ></el-option>
-                        <el-option label="是" :value="0" ></el-option>
-                        <el-option label="否" :value="1" ></el-option>
+                        <el-option label="是" :value="1" ></el-option>
+                        <el-option label="否" :value="0" ></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item class="set-btns-right">
@@ -195,9 +197,9 @@
                     <el-form-item label="姓名" prop="name">
                         <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
                     </el-form-item>
-                    <el-form-item label="年龄" prop="age">
+                    <!-- <el-form-item label="年龄" prop="age">
                         <el-input v-model="form.age" placeholder="请输入年龄"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="性别" prop="sex">
                         <el-select v-model="form.sex" placeholder="请选择性别">
                             <el-option v-for="(v, i) of generList" :key="i" :label="v.name" :value="v.id"></el-option>
@@ -267,7 +269,7 @@
                     <div>{{form.name?form.name:'/'}}</div>
                 </el-form-item>
                 <el-form-item label="年龄">
-                    <div>{{form.age?form.age:'/'}}</div>
+                    <div>{{form.identity_id?common.countAge(form.identity_id):'/'}}</div>
                 </el-form-item>
                 <el-form-item label="性别">
                     <div>{{form.sex==0?'男':'女'}}</div>
@@ -445,7 +447,7 @@
             this.isLoading = true;
             this.$http.requestAll([company_type, company, team, work_type])
             .then(()=>{
-                this.$http.get(`api/v1/security/user/?page=1&page_size=20`).then((res)=>{
+                this.$http.get(`api/v1/security/user/?page=1&page_size=${this.pageSize}`).then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;
                     this.count = res.count;
@@ -459,16 +461,16 @@
                 let start_into_time='';
                 let end_into_time='';
                 // if(this.formInline.inTime && this.formInline.inTime.length===2) {
-                //     start_into_time = this.common.YMD(Date.parse(this.formInline.inTime[0])/1000)+ ' 00:00:00';
-                //     end_into_time = this.common.YMD(Date.parse(this.formInline.inTime[1])/1000)+ ' 23:59:59';
+                //     start_into_time = this.common.formatTimestamp_min(Date.parse(this.formInline.inTime[0])/1000);
+                //     end_into_time = this.common.formatTimestamp_min(Date.parse(this.formInline.inTime[1])/1000);
                 // }
                 let start_leave_time='';
                 let end_leave_time='';
                 // if(this.formInline.leaveTime && this.formInline.leaveTime.length===2) {
-                //     start_leave_time = this.common.YMD(Date.parse(this.formInline.leaveTime[0])/1000)+ ' 00:00:00';
-                //     end_leave_time = this.common.YMD(Date.parse(this.formInline.leaveTime[1])/1000)+ ' 23:59:59';
+                //     start_leave_time = this.common.formatTimestamp_min(Date.parse(this.formInline.leaveTime[0])/1000);
+                //     end_leave_time = this.common.formatTimestamp_min(Date.parse(this.formInline.leaveTime[1])/1000);
                 // }
-                this.$http.get(`api/v1/security/user/?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&sex=${this.formInline.gender}&is_real_name=${this.formInline.relevance}&start_into_time=${start_into_time}&end_into_time=${end_into_time}&start_leave_time=${start_leave_time}&end_leave_time=${end_leave_time}`).then((res)=>{
+                this.$http.get(`api/v1/security/user/?page=${this.currentPage}&page_size=${this.pageSize}&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&sex=${this.formInline.gender}&is_real_name=${this.formInline.relevance}&start_into_time=${start_into_time}&end_into_time=${end_into_time}&start_leave_time=${start_leave_time}&end_leave_time=${end_leave_time}`).then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;
                     this.count = res.count;
@@ -608,8 +610,11 @@
     }
 </script>
 <style lang="scss" scoped>
+    .demo-form-inline {
+        border-bottom: 1px solid #e5e5e5;
+    }
     .set-btns-right {
-        margin-bottom: 20px;
+        margin: 20px 0;
     }
     .staff-form {
         height: 500px;

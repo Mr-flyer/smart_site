@@ -1,104 +1,154 @@
 <template>
-  <div class="container">
-    <el-card class="page_header" shadow="never">
-      <el-page-header @back="goBack" content="监测历史数据" />
-    </el-card>
-    <el-row class="page_cont">
-      <el-card class="mb-20 search-wrap" shadow="never" body-style="padding-bottom: 0">
-        <el-form :inline="true" :model="formSearch" class="demo-form-inline">
-          <el-form-item label="类型">
-            <el-select v-model="formSearch.type" placeholder="活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="设备选择">
-            <el-select v-model="formSearch.region" placeholder="活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="时间">
-            <el-date-picker
-              v-model="formSearch.time"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item label="数据类型">
-            <el-select v-model="formSearch.dataType" placeholder="活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button >导出</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
-      <el-card class="mb-20" shadow="never">
-        <div slot="header" class="table-title">扬尘在线监测系统数据报表</div>
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column type="index" label="序号" width="80"></el-table-column>
-          <el-table-column prop="name" label="设备名称"></el-table-column>
-          <el-table-column prop="date" label="时间" width="180"></el-table-column>
-          <el-table-column prop="address" label="pm2.5(mg/m³)" width="180"></el-table-column>
-          <el-table-column prop="address" label="pm10(mg/m³）" width="180"></el-table-column>
-          <el-table-column prop="address" label="TSP(mg/m³）" width="180"></el-table-column>
-          <el-table-column prop="address" label="噪声（dB）" width="180"></el-table-column>
-          <el-table-column prop="address" label="温度（℃）" width="180"></el-table-column>
-          <el-table-column prop="address" label="湿度（%）" width="180"></el-table-column>
-          <el-table-column prop="address" label="气压（百帕)" width="180"></el-table-column>
-          <el-table-column prop="address" label="风速（m/s）" width="180"></el-table-column>
-          <el-table-column prop="address" label="风向" width="180"></el-table-column>
-        </el-table>
-      </el-card>
-    </el-row>
-  </div>
+    <div class="container">
+        <el-card class="page_header" shadow="never">
+            <el-page-header @back="goBack" content="监测历史数据" />
+        </el-card>
+        <el-row class="page_cont">
+            <el-card class="mb-20 search-wrap" shadow="never" body-style="padding-bottom: 0">
+                <el-form :inline="true" :model="formSearch" class="demo-form-inline">
+                    <el-form-item label="类型">
+                        <el-select v-model="formSearch.type" placeholder="请选择类型">
+                            <el-option :label="item.name" :value="item.value" :key="item.value" v-for="item in checkType"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="设备选择">
+                        <el-select v-model="formSearch.device" placeholder="请选择设备">
+                            <el-option label="全部" :value="''"></el-option>
+                            <el-option :label="item.name" :value="item.mn" :key="item.mn" v-for="item in deviceList"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="时间">
+                        <el-date-picker
+                            v-model="formSearch.time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :default-time="['00:00:00', '23:59:59']"
+                        ></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="数据类型">
+                        <el-select v-model="formSearch.dataType" placeholder="请选择数据类型">
+                            <el-option :label="item.name" :value="item.value" :key="item.value" v-for="item in dataType"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" :disabled="isLoading" @click="onSubmit">查询</el-button>
+                        <el-button >导出</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+            <el-card class="mb-20" shadow="never" v-loading="isLoading">
+                <div slot="header" class="table-title">扬尘在线监测系统数据报表</div>
+                <el-table :data="tableData" border style="width: 100%">
+                    <el-table-column type="index" label="序号" width="80"></el-table-column>
+                    <el-table-column prop="name" label="设备名称"></el-table-column>
+                    <el-table-column prop="time" label="时间" width="180"></el-table-column>
+                    <el-table-column label="pm2.5(mg/m³)" width="120">
+                        <template slot-scope="scope">
+                            <div :class="scope.row.pm2_5 >= standardValue.pm2_5?'red':''">{{scope.row.pm2_5}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="pm10(mg/m³）" width="120">
+                        <template slot-scope="scope">
+                            <div :class="scope.row.pm10 >= standardValue.pm10?'red':''">{{scope.row.pm10}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="TSP(mg/m³）" width="120">
+                        <template slot-scope="scope">
+                            <div :class="scope.row.tsp >= standardValue.tsp?'red':''">{{scope.row.tsp}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="噪声（dB）" width="120">
+                        <template slot-scope="scope">
+                            <div :class="scope.row.noise >= standardValue.noise?'red':''">{{scope.row.noise}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="centigrade" label="温度（℃）" width="120"></el-table-column>
+                    <el-table-column prop="humidity" label="湿度（%）" width="120"></el-table-column>
+                    <el-table-column prop="pressure" label="气压（百帕)" width="120"></el-table-column>
+                    <el-table-column prop="wind_speed" label="风速（m/s）" width="120"></el-table-column>
+                    <el-table-column prop="wind_direction" label="风向" width="120"></el-table-column>
+                </el-table>
+                <el-pagination
+                    class="admin-page"
+                    background
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="20"
+                    layout="prev, pager, next, jumper"
+                    :total="count">
+                </el-pagination>
+            </el-card>
+        </el-row>
+    </div>
 </template>
 
 <script>
-const tableData = [
-  {
-    date: "2016-05-02",
-    name: "设备A",
-    address: 2
-  },
-  {
-    date: "2016-05-04",
-    name: "设备B",
-    address: 2
-  },
-  {
-    date: "2016-05-01",
-    name: "设备C",
-    address: 2
-  },
-  {
-    date: "2016-05-03",
-    name: "设备D",
-    address: 2
-  }
-];
 export default {
-  data: () => ({
-    formSearch: {
-      type: "",
-      region: "",
-      time: "",
-      dataType: ""
+    data: () => ({
+        formSearch: {
+            type: "",
+            device: "",
+            time: "",
+            dataType: ""
+        },
+        checkType: [
+            {name: '实时', value: ''},
+            {name: '按小时', value: 'hour'},
+            {name: '按天', value: 'day'},
+            {name: '按月', value: 'month'},
+            {name: '按年', value: 'year'}
+        ],
+        deviceList: [],
+        dataType: [
+            {name: '全部', value: ''},
+            {name: '正常', value: 0},
+            {name: '异常', value: 1},
+        ],
+        tableData: [],
+        currentPage: 1,
+        count: 0,
+        isLoading: false,
+        standardValue: ''
+    }),
+    created() {
+        // 设备列表
+        this.$http.get('api/v1/security/equipment/')
+        .then((res)=>{
+            this.deviceList = res.data;
+        }).catch(()=>{})
+        // 标准值设置
+        this.$http.get('api/v1/security/dust_set/')
+        .then((res) => {
+            this.standardValue = res.data;
+            this.requestInfo(1);
+        })
+        .catch((err) => {})
     },
-    tableData
-  }),
-  methods: {
-    // 返回上一页
-    goBack() {
-      this.$router.go(-1);
+    methods: {
+        requestInfo(val) {
+            this.isLoading = true;
+            this.currentPage = val;
+            this.$http.get(`api/v1/security/dusts?page=${this.currentPage}&page_size=${this.pageSize}`)
+            .then((res)=>{
+                this.tableData = res.data;
+                this.count = res.count;
+                this.isLoading = false;
+            })
+            .catch(()=>{})
+        },
+        handleCurrentChange(val) {
+            this.requestInfo(val);
+        },
+        onSubmit() {
+
+        },
+        // 返回上一页
+        goBack() {
+            this.$router.go(-1);
+        }
     }
-  }
 };
 </script>
 

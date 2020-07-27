@@ -176,7 +176,7 @@
                 this.workTypeList = res.data;
                 this.workTypeList.unshift({id: '', name: '全部'});
             }).catch(()=>{})
-            let firstRequest = this.$http.get(`api/v1/user/admin/?name=${this.searchValue}&page=1&page_size=20`).then((res)=>{
+            let firstRequest = this.$http.get(`api/v1/user/admin/?name=${this.searchValue}&page=1&page_size=${this.pageSize}`).then((res)=>{
                 this.tableData = res.data;
                 this.count = res.count;
             }).catch(()=>{})
@@ -190,7 +190,7 @@
             requestInfo(val) {
                 this.isLoading = true;
                 this.currentPage = val;
-                this.$http.get(`api/v1/user/admin/?name=${this.searchValue}&page=${this.currentPage}&page_size=20`)
+                this.$http.get(`api/v1/user/admin/?name=${this.searchValue}&page=${this.currentPage}&page_size=${this.pageSize}`)
                 .then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;

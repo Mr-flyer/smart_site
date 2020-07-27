@@ -50,11 +50,11 @@
                 </div> -->
                 <div class="sum-type-item">
                   <span>建筑面积</span>
-                  {{survey.field_area || 0}}平方米
+                  {{survey.area || 0}}㎡
                 </div>
                 <div class="sum-type-item">
                   <span>场地面积</span>
-                  {{survey.area || 0}}平方米
+                  {{survey.field_area || 0}}㎡
                 </div>
               </div>
               <div class="sum-desc">
@@ -658,7 +658,9 @@ export default {
     });
     // 项目概况
     this.$http.get(`api/v1/system/project`).then(({ data }) => {
-      data.costTxt = this.format_price(data.cost);
+      data.costTxt = this.common.format_unit(data.cost);
+      data.field_area = this.common.format_unit(data.field_area);
+      data.area = this.common.format_unit(data.area);
       this.survey = data;
       this.workDay = dayjs().diff(dayjs(data.start_date), 'day')
     });
@@ -683,53 +685,7 @@ export default {
     mouseRouter(index) {
       this.routerIndex = index;
     },
-    format_price(val) {
-      if (val) {
-        if (parseInt(val) >= 0 && parseInt(val) < 10000) {
-          let result = (parseInt(val * 100) / 100).toFixed(2);
-          return this.cutZero(result) + "元";
-        } else if (parseInt(val) >= 10000 && parseInt(val) < 100000000) {
-          let result = (val / 10000).toFixed(4);
-          result = result.substring(0, result.toString().length - 2);
-          return this.cutZero(result) + "万";
-        } else {
-          let result = (val / 100000000).toFixed(8);
-          result = result.substring(0, result.toString().length - 6);
-          return this.cutZero(result) + "亿";
-        }
-      } else {
-        return "0元";
-      }
-    },
-    //去除价格小数点后多余的0
-    cutZero(val) {
-      //拷贝一份 返回去掉零的新串
-      val = val.toString();
-      let newstr = val.toString(); //判断是否有效数
-      if (val.indexOf(".") > -1) {
-        //循环变量 小数部分长度
-        var leng = val.length - val.indexOf(".") - 1; // //循环小数部分
-        for (let i = leng; i > 0; i--) {
-          //如果newstr末尾有0
-          if (
-            newstr.lastIndexOf("0") > -1 &&
-            newstr.substr(newstr.length - 1, 1) == 0
-          ) {
-            var k = newstr.lastIndexOf("0"); //如果小数点后只有一个0 去掉小数点
-            if (newstr.charAt(k - 1) == ".") {
-              return newstr.substring(0, k - 1);
-            } else {
-              //否则 去掉一个0
-              newstr = newstr.substring(0, k);
-            }
-          } else {
-            //如果末尾没有0
-            return newstr;
-          }
-        }
-      }
-      return val;
-    },
+    
     videoend() {
       // let video02Arr = data.filter(v => v.area)
       if (this.video01Index < this.video01Arr.length -1) {

@@ -1,12 +1,10 @@
 <template>
   <div class="container" v-loading="loading">
     <el-card class="page_header" shadow="never" :body-style="{ paddingBottom: 0 }">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>
-          <a href="/">扬尘管控</a>
-        </el-breadcrumb-item>
-      </el-breadcrumb>
+      <!-- <el-breadcrumb separator="/">
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>扬尘管控</el-breadcrumb-item>
+      </el-breadcrumb> -->
       <el-tabs class="pdge_tabs" v-model="active" @tab-click="handleClick">
         <el-tab-pane label="扬尘噪声监测" name="0"></el-tab-pane>
         <el-tab-pane label="厂界降尘自动喷淋系统" name="1" disabled></el-tab-pane>
@@ -271,17 +269,17 @@ export default {
             this.formEquipment = {};
             this.securityDetection = {};
         }
-    })
+    }).catch(()=>{})
     // 标准值设置
     this.$http.get('api/v1/security/dust_set/')
-      .then((res) => {
-          this.form.pm2_5 = res.data.pm2_5;
-          this.form.pm10 = res.data.pm10;
-          this.form.tsp = res.data.tsp;
-          this.form.noise = res.data.noise;
-          this.formValue = JSON.parse(JSON.stringify(this.form));
-      })
-      .catch((err) => {})
+    .then((res) => {
+        this.form.pm2_5 = res.data.pm2_5;
+        this.form.pm10 = res.data.pm10;
+        this.form.tsp = res.data.tsp;
+        this.form.noise = res.data.noise;
+        this.formValue = JSON.parse(JSON.stringify(this.form));
+    })
+    .catch((err) => {})
   },
   mounted() {
     this.seter = setInterval(()=>{
@@ -332,7 +330,7 @@ export default {
         this.imgLoading = false;
         if(JSON.stringify(res.data) !== '{}') {
             this.mapPic = res.data.img;
-            this.update_time = res.data.update_time;
+            this.update_time = res.data.time;
             this.securityDetection = {
                 'pm2_5': {
                     name: 'pm2.5',
