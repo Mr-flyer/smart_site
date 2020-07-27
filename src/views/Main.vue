@@ -3,6 +3,8 @@
     <el-aside :class="showMenu ? 'main-aside':'hide-main-aside'">
       <div class="main-logo">
         <!-- <img src="../assets/logo.png" /> -->
+        <img src="../assets/logo02.png" />
+        江苏省电力设计院
       </div>
       <el-menu
         background-color="#05101b"
@@ -380,9 +382,15 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 38px 0;
+      // padding: 38px 0;
+      padding-top: 10px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
       & > img {
-        width: 224px;
+        width: 60px;
+        margin-right: 10px;
+        // width: 224px;
       }
     }
   }

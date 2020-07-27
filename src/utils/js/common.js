@@ -73,5 +73,47 @@ export default {
         if (hours < 10) hours = '0' + hours;
         if (minutes < 10) minutes = '0' + minutes;
         return (d.getFullYear()) + "-" + (d.getMonth() + 1) + "-" + (d.getDate()) + " " + (hours) + ":" + (minutes) + ":" + (seconds);
+    },
+    // bytes自适应转换到KB,MB,GB
+    formatFileSize(fileSize) {
+        if (fileSize < 1024) {
+            return fileSize + 'B';
+        } else if (fileSize < (1024*1024)) {
+            var temp = fileSize / 1024;
+            temp = temp.toFixed(2);
+            return temp + 'KB';
+        } else if (fileSize < (1024*1024*1024)) {
+            var temp = fileSize / (1024*1024);
+            temp = temp.toFixed(2);
+            return temp + 'MB';
+        } else {
+            var temp = fileSize / (1024*1024*1024);
+            temp = temp.toFixed(2);
+            return temp + 'GB';
+        }
+    },
+    // 设定输入的文件长度的参数的原始单位
+    fileLengthFormat(total, n) {
+        var format;
+        var len = total / (1024.0);
+        if (len > 1000) {
+            return arguments.callee(len, ++n);
+        } else {
+            switch (n) {
+                case 1:
+                    format = len.toFixed(2) + "KB";
+                    break;
+                case 2:
+                    format = len.toFixed(2) + "MB";
+                    break;
+                case 3:
+                    format = len.toFixed(2) + "GB";
+                    break;
+                case 4:
+                    format = len.toFixed(2) + "TB";
+                    break;
+            }
+            return format;
+        }
     }
 }

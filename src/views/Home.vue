@@ -2,27 +2,25 @@
   <el-container class="container">
     <el-header class="header_wrap">
       <div class="header_right">
-        <div class="date-wrap">
-          <span>{{weekTxt}}</span>
-          <span>{{dateTime}} {{timeInfo}}</span>
-        </div>
         <div class="time-wrap"></div>
       </div>
       <div class="header_title">虹洋热电联产扩建项目智慧工地管理系统</div>
       <div class="sub_title">
         <img src="../assets/logo02.png" />
-        江苏省电力设计院</div>
+        江苏省电力设计院
+      </div>
       <div class="header_left">
         <div class="header_item">
           <img src="../assets/bigScreen/icon_location@2x.png" alt />连云港
         </div>
         <div class="header_item">
-          <img src="../assets/bigScreen/icon_security@2x.png" alt />{{workDay}} 天
+          <img src="../assets/bigScreen/icon_security@2x.png" alt />
+          {{workDay}} 天
         </div>
       </div>
     </el-header>
     <el-main class="main">
-      <el-row class :gutter="0">
+      <el-row class="main_wrap" :gutter="0">
         <!-- 左 -->
         <el-col :span="6">
           <el-card class="panel-wrap summary_wrap" shadow="never">
@@ -50,11 +48,11 @@
                 </div> -->
                 <div class="sum-type-item">
                   <span>建筑面积</span>
-                  {{survey.field_area || 0}}平方米
+                  {{survey.area || 0}}平方米
                 </div>
                 <div class="sum-type-item">
                   <span>场地面积</span>
-                  {{survey.area || 0}}平方米
+                  {{survey.field_area || 0}}平方米
                 </div>
               </div>
               <div class="sum-desc">
@@ -63,20 +61,24 @@
                     <td>
                       <span class="sum-table-title">建设单位</span>
                       <div v-for="(v ,i) of survey.build_company" :key="i" v-html="v"></div>
+                      <!-- <TextScroll v-for="(v ,i) of survey.build_company" :key="i" :lists="[v]"></TextScroll> -->
                     </td>
                     <td class="lastCol">
                       <span class="sum-table-title">设计单位</span>
                       <div v-for="(v ,i) of survey.design_company" :key="i" v-html="v"></div>
+                      <!-- <TextScroll v-for="(v ,i) of survey.design_company" :key="i" :lists="[v]"></TextScroll> -->
                     </td>
                   </tr>
                   <tr class="lastrow">
                     <td>
                       <span class="sum-table-title">监理单位</span>
                       <div v-for="(v ,i) of survey.supervisor_company" :key="i" v-html="v"></div>
+                      <!-- <TextScroll v-for="(v ,i) of survey.supervisor_company" :key="i" :lists="[v]"></TextScroll> -->
                     </td>
                     <td class="lastCol">
                       <span class="sum-table-title">施工单位</span>
                       <div v-for="(v ,i) of survey.construction_company" :key="i" v-html="v"></div>
+                      <!-- <TextScroll :lists="survey.construction_company"></TextScroll> -->
                     </td>
                   </tr>
                 </table>
@@ -116,7 +118,7 @@
           </el-card>
         </el-col>
         <!-- 中 -->
-        <el-col :span="12" class="center_wrap">
+        <el-col :span="12" class="center_wrap flexfill">
           <el-card class="panel-wrap model-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
@@ -129,8 +131,8 @@
                 muted
                 ref="video01"
                 :src="video01"
-                @ended="videoend"
-                @error="videoerr"
+                @ended="videoend(videoBig)"
+                @error="videoerr(videoBig)"
               />
             </div>
           </el-card>
@@ -153,11 +155,17 @@
           </el-card>
         </el-col>
         <!-- 右 -->
-        <el-col :span="6">
+        <el-col :span="6" class="flexfill">
           <el-card class="panel-wrap city_environment-wrap" shadow="never">
             <template slot="header">
-              <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              城市环境
+              <div>
+                <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
+                城市环境
+              </div>
+              <div class="date-wrap">
+                <span>{{weekTxt}}</span>
+                <span>{{dateTime}} {{timeInfo}}</span>
+              </div>
             </template>
             <div class="weather_wrap">
               <!-- <img class="current_dot" src="../assets/bigScreen/current_dot@2x.png" alt=""> -->
@@ -246,10 +254,15 @@
                 >
                   <div class="security_current-hd">
                     {{item.name}}
-                    <img v-show="!index" src="../assets/bigScreen/icon_warning@2x.png" alt />
+                    <img
+                      v-show="!index"
+                      src="../assets/bigScreen/icon_warning@2x.png"
+                      alt
+                    />
                   </div>
                   <div class="security_current-bd txtcolor01">
-                    <span>{{item.value}}</span> {{item.company}}
+                    <span>{{item.value}}</span>
+                    {{item.company}}
                   </div>
                 </div>
               </div>
@@ -314,21 +327,50 @@
       <div class="navbar_inner">
         <div v-for="(item, $index) in routerList">
           <div v-if="item.outLink">
-            <a :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" :href="item.routerPath" target="_blank">{{item.name}}</a>
+            <a
+              :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'"
+              :href="item.routerPath"
+              target="_blank"
+            >{{item.name}}</a>
           </div>
           <div v-else>
-            <router-link :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" v-if="item.routerPath" :to="{name: item.routerName, redirect: item.routerPath}">{{item.name}}</router-link>
-            <div v-else :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'" @mouseover="mouseRouter($index)" @mouseout="routerIndex = -1">
+            <router-link
+              :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'"
+              v-if="item.routerPath"
+              :to="{name: item.routerName, redirect: item.routerPath}"
+            >{{item.name}}</router-link>
+            <div
+              v-else
+              :class="routerActiveIndex === $index ? 'navbar_item_active':'navbar_item'"
+              @mouseover="mouseRouter($index)"
+              @mouseout="routerIndex = -1"
+            >
               <div>{{item.name}}</div>
               <div class="child_navbars" v-show="routerIndex === $index">
                 <div v-for="site in item.list">
-                  <a :title="site.name" v-if="site.outLink" :href="site.routerPath" target="_blank" class="child_navbar_item"><span class="round_icon"></span>{{site.name}}</a>
-                  <router-link v-else :title="site.name" class="child_navbar_item" :to="{name: site.routerName, redirect: site.routerPath}"><span class="round_icon"></span>{{site.name}}</router-link>
+                  <a
+                    :title="site.name"
+                    v-if="site.outLink"
+                    :href="site.routerPath"
+                    target="_blank"
+                    class="child_navbar_item"
+                  >
+                    <span class="round_icon"></span>
+                    {{site.name}}
+                  </a>
+                  <router-link
+                    v-else
+                    :title="site.name"
+                    class="child_navbar_item"
+                    :to="{name: site.routerName, redirect: site.routerPath}"
+                  >
+                    <span class="round_icon"></span>
+                    {{site.name}}
+                  </router-link>
                 </div>
               </div>
             </div>
           </div>
-          
         </div>
       </div>
     </div>
@@ -337,6 +379,7 @@
 
 <script>
 // @ is an alias to /src
+import TextScroll from '@/components/textScroll';
 import lineWeaterEchart from "@/components/lineWeaterEchart";
 import barBigEchart from "@/components/barBigEchart";
 import pieBigEchart from "@/components/pieBigEchart";
@@ -489,7 +532,7 @@ const options = {
     {
       date: "2",
       name: "卸料台"
-    },
+    }
   ],
   Ycolors: [
     "#276fff",
@@ -506,35 +549,77 @@ const options = {
   ],
   weatherData: {},
   securityList: [
-    {value: '', name: 'TPS', company: "mg/m³"},
-    {value: '', name: 'PM2.5', company: "mg/m³"},
-    {value: '', name: 'PM10', company: "mg/m³"},
-    {value: '', name: '噪声', company: "dB"},
+    { value: "", name: "TPS", company: "mg/m³" },
+    { value: "", name: "PM2.5", company: "mg/m³" },
+    { value: "", name: "PM10", company: "mg/m³" },
+    { value: "", name: "噪声", company: "dB" }
   ],
   routerList: [
-    {name: '项目总览'},
-    {name: '系统管理', routerName:'HomeSet', routerPath: "/System/HomeSet"},
-    {name: '安全管理', list: [
-      {name: '视频监控', routerName: 'VideoMonitoring', routerPath: '/Security/VideoMonitoring'},
-      {name: '人员管理', routerName: 'PersonnelManagement', routerPath: '/Security/PersonnelManagement'},
-      {name: '扬尘管控', routerName: 'DustControl', routerPath: '/Security/DustControl'},
-      {name: '车辆道闸', routerName: 'VehicleBarrier', routerPath: '/Security/VehicleBarrier'},
-      {name: '安全教育', routerPath: ''},
-      {name: '危大工程监测预警', routerPath: ''},
-      {name: '现场安全隐患排查', routerPath: ''},
-      {name: '高处作业防护预警', routerPath: ''}
-    ]},
-    {name: '三维物联', list: [
-      {name: '三维实景物联', routerPath: 'http://58.33.87.122:6640/njdd/api/security/login.html', outLink: true,},
-      {name: '无人机巡航', routerName: 'UAVCruise', routerPath: '/IOT/UAVCruise'}
-    ]},
-    {name: '生产管理', list: [
-      {name: '三维进度', routerName: 'Document3D', routerPath: '/Production/Document3D'},
-      {name: '施工验收', routerPath: ''},
-      {name: '协同会审', routerPath: ''},
-      {name: '云会议', routerPath: ''}
-    ]},
-    {name: '三维文档', routerName: "", outLink: true, routerPath: 'http://218.94.40.2:8080/TPlant/login'}
+    { name: "项目总览" },
+    { name: "系统管理", routerName: "HomeSet", routerPath: "/System/HomeSet" },
+    {
+      name: "安全管理",
+      list: [
+        {
+          name: "视频监控",
+          routerName: "VideoMonitoring",
+          routerPath: "/Security/VideoMonitoring"
+        },
+        {
+          name: "人员管理",
+          routerName: "PersonnelManagement",
+          routerPath: "/Security/PersonnelManagement"
+        },
+        {
+          name: "扬尘管控",
+          routerName: "DustControl",
+          routerPath: "/Security/DustControl"
+        },
+        {
+          name: "车辆道闸",
+          routerName: "VehicleBarrier",
+          routerPath: "/Security/VehicleBarrier"
+        },
+        { name: "安全教育", routerPath: "" },
+        { name: "危大工程监测预警", routerPath: "" },
+        { name: "现场安全隐患排查", routerPath: "" },
+        { name: "高处作业防护预警", routerPath: "" }
+      ]
+    },
+    {
+      name: "三维物联",
+      list: [
+        {
+          name: "三维实景物联",
+          routerPath: "http://58.33.87.122:6640/njdd/api/security/login.html",
+          outLink: true
+        },
+        {
+          name: "无人机巡航",
+          routerName: "UAVCruise",
+          routerPath: "/IOT/UAVCruise"
+        }
+      ]
+    },
+    {
+      name: "生产管理",
+      list: [
+        {
+          name: "三维进度",
+          routerName: "Document3D",
+          routerPath: "/Production/Document3D"
+        },
+        { name: "施工验收", routerPath: "" },
+        { name: "协同会审", routerPath: "" },
+        { name: "云会议", routerPath: "" }
+      ]
+    },
+    {
+      name: "三维文档",
+      routerName: "",
+      outLink: true,
+      routerPath: "http://218.94.40.2:8080/TPlant/login"
+    }
   ],
   routerActiveIndex: 0,
   routerIndex: -1
@@ -550,20 +635,28 @@ export default {
       }
       return "";
     },
-    week: ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六',],
+    week: [
+      "星期天",
+      "星期一",
+      "星期二",
+      "星期三",
+      "星期四",
+      "星期五",
+      "星期六"
+    ],
     video01Arr: [],
     video02Arr: [],
     video01: "",
     video02: "",
-    video01Name: '',
-    video02Name: '',
+    video01Name: "",
+    video02Name: "",
     // time: this.week[dayjs().day()] ,
-    weekTxt: '',
-    dateTime: '',
-    timeInfo: '',
-    timer: '',
-    video01Name: '',
-    video02Name: '',
+    weekTxt: "",
+    dateTime: "",
+    timeInfo: "",
+    timer: "",
+    video01Name: "",
+    video02Name: "",
     video01Index: 0,
     video02Index: 0,
     video01Arr: [],
@@ -571,47 +664,70 @@ export default {
     todayWeatherData: [],
     tomorrowWeatherData: [],
     threeWeatherData: [],
-    weather: ["xue", "lei", "shachen", "wu", "bingbao", "yun", "yu", "yin", "qing"],
-    todayNoise: '',
+    weather: [
+      "xue",
+      "lei",
+      "shachen",
+      "wu",
+      "bingbao",
+      "yun",
+      "yu",
+      "yin",
+      "qing"
+    ],
+    todayNoise: "",
     workDay: "", // 安全开工日期
+    lists: [
+       '连雨不知春去',
+       '连雨不知春去',
+       '连雨不知春去',
+       '连雨不知春去',
+       '一晴方觉夏深'
+    ],
+    videoBig: {
+      name: '',
+      src: '',
+    }
   }),
   created() {
-    this.weekTxt = this.week[dayjs().day()]
-    this.dateTime = dayjs().format('YYYY年MM月DD日')
-      this.timeInfo = dayjs().format('HH:mm:ss')
+    this.weekTxt = this.week[dayjs().day()];
+    this.dateTime = dayjs().format("YYYY年MM月DD日");
+    this.timeInfo = dayjs().format("HH:mm:ss");
     this.timer = setInterval(() => {
-      this.timeInfo = dayjs().format('HH:mm:ss')
-    }, 1000)
+      this.timeInfo = dayjs().format("HH:mm:ss");
+    }, 1000);
     // 现场管理（扬尘、噪声）
-    this.$http.get(`api/v1/security/dust_chart`)
-    .then(({data: dustData}) => {
-      let TSP = dustData.map(v => Number(v.tsp))
-      let PM2_5 = dustData.map(v => Number(v.pm2_5))
-      let PM10 = dustData.map(v => Number(v.pm10))
-      let noise = dustData.map(v => Number(v.noise))
-      this.infoDustTrend.xdata = dustData.map(v => dayjs(v.time).format('HH:mm'))
-      this.infoDustTrend.data = [TSP, PM2_5, PM10]
-      this.infoNoiseTrend.xdata = dustData.map(v => dayjs(v.time).format('HH:mm'))
-      this.infoNoiseTrend.data = [noise]
+    this.$http.get(`api/v1/security/dust_chart`).then(({ data: dustData }) => {
+      let TSP = dustData.map(v => Number(v.tsp));
+      let PM2_5 = dustData.map(v => Number(v.pm2_5));
+      let PM10 = dustData.map(v => Number(v.pm10));
+      let noise = dustData.map(v => Number(v.noise));
+      this.infoDustTrend.xdata = dustData.map(v =>
+        dayjs(v.time).format("HH:mm")
+      );
+      this.infoDustTrend.data = [TSP, PM2_5, PM10];
+      this.infoNoiseTrend.xdata = dustData.map(v =>
+        dayjs(v.time).format("HH:mm")
+      );
+      this.infoNoiseTrend.data = [noise];
       this.securityList = [
-        {name: 'TSP', company: "mg/m³", value: dustData[0].tsp},
-        {name: 'PM2.5', company: "mg/m³", value: dustData[0].pm2_5},
-        {name: 'PM10', company: "mg/m³", value: dustData[0].pm10},
-        {name: '噪声', company: "dB", value: dustData[0].noise},
-      ]
-    })
+        { name: "TSP", company: "mg/m³", value: dustData[0].tsp },
+        { name: "PM2.5", company: "mg/m³", value: dustData[0].pm2_5 },
+        { name: "PM10", company: "mg/m³", value: dustData[0].pm10 },
+        { name: "噪声", company: "dB", value: dustData[0].noise }
+      ];
+    });
     // 扬尘基准值
-    this.$http.get(`api/v1/security/dust_set`)
-    .then(({data}) => {
-      console.log(data);
-    })
+    this.$http.get(`api/v1/security/dust_set`).then(({ data }) => {
+      // console.log(data);
+    });
     // 城市环境
-    this.$http.get(`api/v1/index/tianqi`).then(({data: weatherAllData}) => {
-      this.weatherCity = weatherAllData.city
-      let { data, noise } = weatherAllData
+    this.$http.get(`api/v1/index/tianqi`).then(({ data: weatherAllData }) => {
+      this.weatherCity = weatherAllData.city;
+      let { data, noise } = weatherAllData;
       this.todayWeatherData = data[0];
       this.todayWeatherData.win = data[0].win[0];
-      this.todayNoise = noise
+      this.todayNoise = noise;
       if (this.weather.includes(this.todayWeatherData.wea_day_img)) {
         this.todayWeatherData.wea_day_img = require(`../assets/weather/${data[0].wea_day_img}.png`);
       } else {
@@ -619,16 +735,18 @@ export default {
       }
       let obj = new Date();
       let hour = obj.getHours();
-      if(hour<10) hour= '0'+hour;
-      for(let i=0;i<data[0].hours.length;i++) {
-        if(data[0].hours[i].hours.slice(0, 2) == hour) {
+      if (hour < 10) hour = "0" + hour;
+      for (let i = 0; i < data[0].hours.length; i++) {
+        if (data[0].hours[i].hours.slice(0, 2) == hour) {
           let sliceEnd = 8;
-          if(data[0].hours.length - i < 8) {
+          if (data[0].hours.length - i < 8) {
             sliceEnd = data[0].hours.length;
           }
-          this.infoSourceTrend.xdata = data[0].hours.slice(i, i+sliceEnd).map(v => v.hours);
+          this.infoSourceTrend.xdata = data[0].hours
+            .slice(i, i + sliceEnd)
+            .map(v => v.hours);
           this.infoSourceTrend.data = [
-            data[0].hours.slice(i, i+sliceEnd).map(v => ({
+            data[0].hours.slice(i, i + sliceEnd).map(v => ({
               value: v.tem,
               label: {
                 show: true,
@@ -658,9 +776,10 @@ export default {
     });
     // 项目概况
     this.$http.get(`api/v1/system/project`).then(({ data }) => {
-      data.costTxt = this.format_price(data.cost);
+      data.costTxt = this._formatPrice(data.cost);
       this.survey = data;
-      this.workDay = dayjs().diff(dayjs(data.start_date), 'day')
+      // 已开工天数
+      this.workDay = dayjs().diff(dayjs(data.start_date), "day");
     });
     // 视频列表
     this.$http.get(`api/v1/system/video`).then(({ data }) => {
@@ -672,37 +791,69 @@ export default {
       this.video01Name = this.video01Arr[this.video01Index].video_name;
       this.video02 = this.video02Arr[this.video02Index].video;
       this.video02Name = this.video02Arr[this.video02Index].video_name;
-      // console.log(data.filter(v => !v.area)[1]);
     });
   },
   beforeDestroy() {
     // 清除计时器
-    if(this.timer) clearInterval(this.timer)
+    if (this.timer) clearInterval(this.timer);
   },
   methods: {
+    // 菜单栏鼠标悬停
     mouseRouter(index) {
       this.routerIndex = index;
     },
-    format_price(val) {
+    videoend(e) {
+      // let video02Arr = data.filter(v => v.area)
+      if (this.video01Index < this.video01Arr.length - 1) {
+        this.video01Index++;
+      } else this.video01Index = 0;
+      console.log(this.video01Index, this.video01Arr);
+      this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
+    },
+    videoerr() {
+      console.log("视频1播放失败");
+      if (!this.video01Arr.length) return;
+      this.video01Index = 0;
+      this.video01 = this.video01Arr[this.video01Index].video;
+      this.video01Name = this.video01Arr[this.video01Index].video_name;
+    },
+    videoend02() {
+      console.log("video2结束");
+      if (this.video02Index < this.video02Arr.length - 1) {
+        this.video02Index++;
+      } else this.video02Index = 0;
+      this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
+    },
+    videoerr02() {
+      console.log("视频2播放失败");
+      if (!this.video01Arr.length) return;
+      this.video02Index = 0;
+      this.video02 = this.video02Arr[this.video02Index].video;
+      this.video02Name = this.video02Arr[this.video02Index].video_name;
+    },
+    // 格式化价格
+    _formatPrice(val) {
       if (val) {
         if (parseInt(val) >= 0 && parseInt(val) < 10000) {
           let result = (parseInt(val * 100) / 100).toFixed(2);
-          return this.cutZero(result) + "元";
+          return this._cutZero(result) + "元";
         } else if (parseInt(val) >= 10000 && parseInt(val) < 100000000) {
           let result = (val / 10000).toFixed(4);
           result = result.substring(0, result.toString().length - 2);
-          return this.cutZero(result) + "万";
+          return this._cutZero(result) + "万";
         } else {
           let result = (val / 100000000).toFixed(8);
           result = result.substring(0, result.toString().length - 6);
-          return this.cutZero(result) + "亿";
+          return this._cutZero(result) + "亿";
         }
       } else {
         return "0元";
       }
     },
-    //去除价格小数点后多余的0
-    cutZero(val) {
+    // 去除价格小数点后多余的0
+    _cutZero(val) {
       //拷贝一份 返回去掉零的新串
       val = val.toString();
       let newstr = val.toString(); //判断是否有效数
@@ -730,42 +881,12 @@ export default {
       }
       return val;
     },
-    videoend() {
-      // let video02Arr = data.filter(v => v.area)
-      if (this.video01Index < this.video01Arr.length -1) {
-        this.video01Index++;
-      } else this.video01Index = 0;
-      console.log(this.video01Index, this.video01Arr);
-      this.video01 = this.video01Arr[this.video01Index].video;
-      this.video01Name = this.video01Arr[this.video01Index].video_name;
-    },
-    videoerr() {
-      console.log("视频1播放失败");
-      if(!this.video01Arr.length) return
-      this.video01Index = 0;
-      this.video01 = this.video01Arr[this.video01Index].video;
-      this.video01Name = this.video01Arr[this.video01Index].video_name;
-    },
-    videoend02() {
-      console.log("video2结束");
-      if (this.video02Index < this.video02Arr.length -1) {
-        this.video02Index++;
-      } else this.video02Index = 0;
-      this.video02 = this.video02Arr[this.video02Index].video;
-      this.video02Name = this.video02Arr[this.video02Index].video_name;
-    },
-    videoerr02() {
-      console.log("视频2播放失败");
-      if(!this.video01Arr.length) return
-      this.video02Index = 0;
-      this.video02 = this.video02Arr[this.video02Index].video;
-      this.video02Name = this.video02Arr[this.video02Index].video_name;
-    }
   },
   components: {
     lineWeaterEchart,
     barBigEchart,
-    pieBigEchart
+    pieBigEchart,
+    TextScroll
   }
 };
 </script>
@@ -835,6 +956,13 @@ $txtColor2: #ffde7b;
   background-size: 100% 100%;
   height: 100%;
   color: #fff;
+  .main_wrap {
+    display: flex;
+  }
+  .flexfill {
+    display: flex;
+    flex-direction: column;
+  }
   .txtcolor01 {
     color: $colorHighlight03;
   }
@@ -889,14 +1017,15 @@ $txtColor2: #ffde7b;
   position: relative;
   .sub_title {
     position: absolute;
-    left: 15px; bottom: 0;
+    left: 15px;
+    bottom: 0;
     font-size: 28px;
     font-weight: 700;
     display: flex;
     align-items: center;
     // transform: translate(100%, -20%);
     img {
-      width: 40px;
+      width: 60px;
       margin-right: 10px;
     }
   }
@@ -1059,9 +1188,17 @@ $txtColor2: #ffde7b;
 // 城市环境
 .city_environment-wrap {
   ::v-deep {
+    .el-card__header {
+      display: flex;
+      justify-content: space-between;
+    }
     .el-card__body {
       padding: 0;
     }
+  }
+  .date-wrap {
+    font-size: 16px;
+    font-weight: 400;
   }
   .weather_wrap {
     display: flex;
@@ -1251,6 +1388,7 @@ $txtColor2: #ffde7b;
 }
 // 实时监控
 .monitoring_wrap {
+  flex: 1;
   .monitoring_group {
     display: flex;
     justify-content: space-between;
@@ -1374,7 +1512,9 @@ $txtColor2: #ffde7b;
     }
   }
   .real_scene-wrap {
+    flex: 1;
     .video_wrap {
+      // height: 400px;
       height: 356px;
       // background-color: #e4e7ea;
     }
@@ -1394,7 +1534,8 @@ $txtColor2: #ffde7b;
   .navbar_inner {
     display: flex;
   }
-  .navbar_item , .navbar_item_active {
+  .navbar_item,
+  .navbar_item_active {
     width: 162px;
     height: 59px;
     font-size: 20px;
@@ -1410,23 +1551,23 @@ $txtColor2: #ffde7b;
     .child_navbars {
       width: 124px;
       height: auto;
-      background: rgba(4,9,16, .8);
+      background: rgba(4, 9, 16, 0.8);
       position: absolute;
       bottom: 59px;
       left: 0;
-      &>div {
+      & > div {
         font-size: 15px;
         .child_navbar_item {
           padding: 4px 12px;
           box-sizing: border-box;
-          overflow : hidden;
+          overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
           -webkit-line-clamp: 1;
           -webkit-box-orient: vertical;
         }
         .child_navbar_item:hover {
-          background-color: #0455AE;
+          background-color: #0455ae;
         }
         .round_icon {
           width: 4px;
