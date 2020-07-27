@@ -4,18 +4,20 @@
       <div class="header_right">
         <div class="date-wrap">
           <span>{{weekTxt}}</span>
-          <span>{{dateTime}}</span>
+          <span>{{dateTime}} {{timeInfo}}</span>
         </div>
-        <div class="time-wrap">{{timeInfo}}</div>
+        <div class="time-wrap"></div>
       </div>
-      <div class="sub_title">江苏省电力设计院</div>
       <div class="header_title">虹洋热电联产扩建项目智慧工地管理系统</div>
+      <div class="sub_title">
+        <img src="../assets/logo02.png" />
+        江苏省电力设计院</div>
       <div class="header_left">
         <div class="header_item">
           <img src="../assets/bigScreen/icon_location@2x.png" alt />连云港
         </div>
         <div class="header_item">
-          <img src="../assets/bigScreen/icon_security@2x.png" alt />400天
+          <img src="../assets/bigScreen/icon_security@2x.png" alt />{{workDay}} 天
         </div>
       </div>
     </el-header>
@@ -125,6 +127,7 @@
                 id="video01"
                 autoplay
                 muted
+                ref="video01"
                 :src="video01"
                 @ended="videoend"
                 @error="videoerr"
@@ -140,8 +143,8 @@
               <video
                 id="video02"
                 autoplay
-                controls
                 muted
+                ref="video02"
                 :src="video02"
                 @ended="videoend02"
                 @error="videoerr02"
@@ -172,7 +175,7 @@
                       <img :src="todayWeatherData.wea_day_img" alt />
                       <div>
                         <span>{{todayWeatherData.tem2}}-{{todayWeatherData.tem1}}℃</span>
-                        <p>{{todayWeatherData.win[0]}}{{todayWeatherData.win_speed}}</p>
+                        <p>{{todayWeatherData.win}}{{todayWeatherData.win_speed}}</p>
                       </div>
                     </div>
                     <div class="weather_index-wrap">
@@ -246,7 +249,7 @@
                     <img v-show="!index" src="../assets/bigScreen/icon_warning@2x.png" alt />
                   </div>
                   <div class="security_current-bd txtcolor01">
-                    <span>54.1</span> {{item.company}}
+                    <span>{{item.value}}</span> {{item.company}}
                   </div>
                 </div>
               </div>
@@ -503,10 +506,10 @@ const options = {
   ],
   weatherData: {},
   securityList: [
-    {name: 'TSP', company: "mg/m³"},
-    {name: 'PM2.5', company: "mg/m³"},
-    {name: 'PM10', company: "mg/m³"},
-    {name: '噪声', company: "dB"},
+    {value: '', name: 'TPS', company: "mg/m³"},
+    {value: '', name: 'PM2.5', company: "mg/m³"},
+    {value: '', name: 'PM10', company: "mg/m³"},
+    {value: '', name: '噪声', company: "dB"},
   ],
   routerList: [
     {name: '项目总览'},
@@ -559,15 +562,19 @@ export default {
     dateTime: '',
     timeInfo: '',
     timer: '',
+    video01Name: '',
+    video02Name: '',
     video01Index: 0,
     video02Index: 0,
+    video01Arr: [],
+    video02Arr: [],
     todayWeatherData: [],
     tomorrowWeatherData: [],
     threeWeatherData: [],
     weather: ["xue", "lei", "shachen", "wu", "bingbao", "yun", "yu", "yin", "qing"],
     todayNoise: '',
+    workDay: "", // 安全开工日期
   }),
-  computed: {},
   created() {
     this.weekTxt = this.week[dayjs().day()]
     this.dateTime = dayjs().format('YYYY年MM月DD日')
@@ -575,22 +582,35 @@ export default {
     this.timer = setInterval(() => {
       this.timeInfo = dayjs().format('HH:mm:ss')
     }, 1000)
-    this.$http.get(`api/v1/security/dust_chart`, {
-        check_mode: "hour"
-    })
+    // 现场管理（扬尘、噪声）
+    this.$http.get(`api/v1/security/dust_chart`)
     .then(({data: dustData}) => {
-      // console.log(dustData);
       let TSP = dustData.map(v => Number(v.tsp))
       let PM2_5 = dustData.map(v => Number(v.pm2_5))
       let PM10 = dustData.map(v => Number(v.pm10))
-      // console.log([TSP, PM2_5, PM10]);
+      let noise = dustData.map(v => Number(v.noise))
       this.infoDustTrend.xdata = dustData.map(v => dayjs(v.time).format('HH:mm'))
       this.infoDustTrend.data = [TSP, PM2_5, PM10]
+      this.infoNoiseTrend.xdata = dustData.map(v => dayjs(v.time).format('HH:mm'))
+      this.infoNoiseTrend.data = [noise]
+      this.securityList = [
+        {name: 'TSP', company: "mg/m³", value: dustData[0].tsp},
+        {name: 'PM2.5', company: "mg/m³", value: dustData[0].pm2_5},
+        {name: 'PM10', company: "mg/m³", value: dustData[0].pm10},
+        {name: '噪声', company: "dB", value: dustData[0].noise},
+      ]
     })
+    // 扬尘基准值
+    this.$http.get(`api/v1/security/dust_set`)
+    .then(({data}) => {
+      console.log(data);
+    })
+    // 城市环境
     this.$http.get(`api/v1/index/tianqi`).then(({data: weatherAllData}) => {
       this.weatherCity = weatherAllData.city
       let { data, noise } = weatherAllData
       this.todayWeatherData = data[0];
+      this.todayWeatherData.win = data[0].win[0];
       this.todayNoise = noise
       if (this.weather.includes(this.todayWeatherData.wea_day_img)) {
         this.todayWeatherData.wea_day_img = require(`../assets/weather/${data[0].wea_day_img}.png`);
@@ -636,14 +656,18 @@ export default {
         this.threeWeatherData.wea_day_img = require(`../assets/weather/empty.png`);
       }
     });
+    // 项目概况
     this.$http.get(`api/v1/system/project`).then(({ data }) => {
       data.costTxt = this.format_price(data.cost);
       this.survey = data;
+      this.workDay = dayjs().diff(dayjs(data.start_date), 'day')
     });
+    // 视频列表
     this.$http.get(`api/v1/system/video`).then(({ data }) => {
       this.video01Arr = data.filter(v => !v.area);
       this.video02Arr = data.filter(v => v.area);
-      console.log(this.video02Arr);
+      this.$refs.video01.loop = this.video01Arr.length <= 1;
+      this.$refs.video02.loop = this.video02Arr.length <= 1;
       this.video01 = this.video01Arr[this.video01Index].video;
       this.video01Name = this.video01Arr[this.video01Index].video_name;
       this.video02 = this.video02Arr[this.video02Index].video;
@@ -716,14 +740,14 @@ export default {
       this.video01Name = this.video01Arr[this.video01Index].video_name;
     },
     videoerr() {
-      console.log("失败");
+      console.log("视频1播放失败");
+      if(!this.video01Arr.length) return
       this.video01Index = 0;
       this.video01 = this.video01Arr[this.video01Index].video;
       this.video01Name = this.video01Arr[this.video01Index].video_name;
     },
     videoend02() {
-      console.log("结束");
-      // let video02Arr = data.filter(v => v.area)
+      console.log("video2结束");
       if (this.video02Index < this.video02Arr.length -1) {
         this.video02Index++;
       } else this.video02Index = 0;
@@ -731,7 +755,8 @@ export default {
       this.video02Name = this.video02Arr[this.video02Index].video_name;
     },
     videoerr02() {
-      console.log("失败");
+      console.log("视频2播放失败");
+      if(!this.video01Arr.length) return
       this.video02Index = 0;
       this.video02 = this.video02Arr[this.video02Index].video;
       this.video02Name = this.video02Arr[this.video02Index].video_name;
@@ -865,8 +890,15 @@ $txtColor2: #ffde7b;
   .sub_title {
     position: absolute;
     left: 15px; bottom: 0;
-    font-size: 18px;
-    transform: translate(100%, -20%);
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    // transform: translate(100%, -20%);
+    img {
+      width: 40px;
+      margin-right: 10px;
+    }
   }
   .header_right {
     display: flex;
@@ -1332,7 +1364,7 @@ $txtColor2: #ffde7b;
     video {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: fill;
     }
   }
   .model-wrap {

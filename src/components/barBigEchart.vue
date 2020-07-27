@@ -122,6 +122,7 @@ export default {
             axisTick: {
               show: false
             },
+            inverse: true,
             data: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
             axisLabel: {
               formatter: function(value) {
