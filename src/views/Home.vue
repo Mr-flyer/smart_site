@@ -955,8 +955,8 @@ $txtColor2: #ffde7b;
       color: #00ffff;
       position: absolute;
       top: 0;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      /* left: 50%; */
+      transform: translate(0%, -50%);
     }
   }
   table {
