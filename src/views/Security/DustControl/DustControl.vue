@@ -20,7 +20,7 @@
         <el-col :span="8">
             <el-card class="mb-20" shadow="never">
                 <div slot="header">参数排序</div>
-                <el-table :data="options" style="width: 100%" border>
+                <el-table :data="options" max-height="250" style="width: 100%" border>
                   <el-table-column label="设备名称">
                     <template slot-scope="scope">
                       <div>{{scope.row.name ? scope.row.name : scope.row.mn}}</div>

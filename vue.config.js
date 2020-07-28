@@ -9,6 +9,24 @@ module.exports = {
   pages: undefined, // // 以多页模式构建应用程序。
   lintOnSave: false, // eslint-loader 是否在保存的时候检查
   productionSourceMap: false, // 生产环境是否生成 sourceMap 文件(打包后的代码是经过混淆的，该文件 **.map 中存储着转换后代码的位置，和对应的转换前的位置  便于调试)，一般最终生产时不建议开启。
+  chainWebpack: config => {
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].title= '智慧工地'
+        return args
+      });
+    config.module
+      .rule('avi')
+      .test(/\.(avi|wmv)(\?.*)?$/)
+      .use('url-loader')
+        .loader('url-loader')
+        .tap(options=>{
+          return {
+            limit: 10000
+          }
+        })
+  },
   css: {
     // 配置css 相关load
     loaderOptions: {

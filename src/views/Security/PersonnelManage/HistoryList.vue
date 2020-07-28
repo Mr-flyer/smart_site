@@ -32,7 +32,6 @@
                         <el-option label="全部" :value="''"></el-option>
                         <el-option label="出" :value="0"></el-option>
                         <el-option label="入" :value="1"></el-option>
-                        <el-option label="未知" :value="2"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="发生时间">
@@ -145,7 +144,7 @@
                 label="出入类型"
                 width="80px">
                 <template slot-scope="scope">
-                    <div>{{scope.row.in_or_out===0?'出':scope.row.in_or_out===1?'入':'未知'}}</div>
+                    <div>{{scope.row.in_or_out===0?'出':'入'}}</div>
                 </template>
             </el-table-column>
         </el-table>

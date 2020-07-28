@@ -1393,6 +1393,14 @@ $txtColor2: #ffde7b;
 // 实时监控
 .monitoring_wrap {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  ::v-deep {
+    .el-card__body {
+      display: flex;
+      flex: 1;
+    }
+  }
   .monitoring_group {
     display: flex;
     justify-content: space-between;
@@ -1401,7 +1409,7 @@ $txtColor2: #ffde7b;
     width: 48%;
   }
   .monitoring_video {
-    height: 188px;
+    height: calc(100% - 16px);
     background-color: #e4e7ea;
     video {
       width: 100%;
@@ -1516,11 +1524,22 @@ $txtColor2: #ffde7b;
     }
   }
   .real_scene-wrap {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    ::v-deep {
+      .el-card__body {
+        display: flex;
+        flex: 1;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+    }
     .video_wrap {
-      // height: 400px;
-      height: 356px;
-      // background-color: #e4e7ea;
+      position: absolute;
+      width: calc(100% - 30px);
+      height: calc(100% - 30px);
     }
   }
 }
