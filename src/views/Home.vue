@@ -122,7 +122,8 @@
           <el-card class="panel-wrap model-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              模拟进度--{{video01Name}}
+              <!-- 模拟进度--{{video01Name}} -->
+              {{videoBig.name}}
             </template>
             <div class="video_wrap">
               <video
@@ -685,7 +686,7 @@ export default {
        '一晴方觉夏深'
     ],
     videoBig: {
-      name: '',
+      name: '原始标题',
       src: '',
     }
   }),
@@ -795,7 +796,7 @@ export default {
       this.video02Name = this.video02Arr[this.video02Index].video_name;
     });
   },
-  beforeDestroy() {
+  beforeDestroy() {                                                                                                                                                                                                                                                                                             
     // 清除计时器
     if (this.timer) clearInterval(this.timer);
   },
@@ -804,8 +805,8 @@ export default {
     mouseRouter(index) {
       this.routerIndex = index;
     },
-    
-    videoend() {
+    videoend(videoData) {
+      console.log(videoData);
       // let video02Arr = data.filter(v => v.area)
       if (this.video01Index < this.video01Arr.length -1) {
         this.video01Index++;
