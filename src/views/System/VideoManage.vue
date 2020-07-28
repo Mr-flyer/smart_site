@@ -214,7 +214,7 @@
             requestInfo(val) {
                 this.isLoading = true;
                 this.currentPage = val;
-                this.$http.get(`api/v1/system/video/?page=${this.currentPage}&page_size=20`)
+                this.$http.get(`api/v1/system/video/?page=${this.currentPage}&page_size=${this.pageSize}`)
                 .then((res)=>{
                     this.isLoading = false;
                     this.count = res.count;
@@ -284,7 +284,7 @@
             },
             // 下线视频
             offlineBtn(item) {
-                if(item.is_show) {
+                if(item.is_show) {   //上线
                     this.$confirm('确定要下线此视频吗？', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -311,7 +311,7 @@
                     }).then(() => {
                         this.isLoading = true;
                         this.$http.patch(`api/v1/system/video/${item.id}`, {
-                            is_show: false
+                            is_show: true
                         })
                         .then((res)=>{
                             this.isLoading = false;

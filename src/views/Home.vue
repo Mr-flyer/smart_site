@@ -48,11 +48,11 @@
                 </div> -->
                 <div class="sum-type-item">
                   <span>建筑面积</span>
-                  {{survey.area || 0}}平方米
+                  {{survey.area || 0}}㎡
                 </div>
                 <div class="sum-type-item">
                   <span>场地面积</span>
-                  {{survey.field_area || 0}}平方米
+                  {{survey.field_area || 0}}㎡
                 </div>
               </div>
               <div class="sum-desc">
@@ -776,7 +776,9 @@ export default {
     });
     // 项目概况
     this.$http.get(`api/v1/system/project`).then(({ data }) => {
-      data.costTxt = this._formatPrice(data.cost);
+      data.costTxt = this.common.format_unit(data.cost);
+      data.field_area = this.common.format_unit(data.field_area);
+      data.area = this.common.format_unit(data.area);
       this.survey = data;
       // 已开工天数
       this.workDay = dayjs().diff(dayjs(data.start_date), "day");
@@ -802,9 +804,10 @@ export default {
     mouseRouter(index) {
       this.routerIndex = index;
     },
-    videoend(e) {
+    
+    videoend() {
       // let video02Arr = data.filter(v => v.area)
-      if (this.video01Index < this.video01Arr.length - 1) {
+      if (this.video01Index < this.video01Arr.length -1) {
         this.video01Index++;
       } else this.video01Index = 0;
       console.log(this.video01Index, this.video01Arr);
@@ -813,7 +816,7 @@ export default {
     },
     videoerr() {
       console.log("视频1播放失败");
-      if (!this.video01Arr.length) return;
+      if(!this.video01Arr.length) return
       this.video01Index = 0;
       this.video01 = this.video01Arr[this.video01Index].video;
       this.video01Name = this.video01Arr[this.video01Index].video_name;
@@ -1116,8 +1119,9 @@ $txtColor2: #ffde7b;
       color: #00ffff;
       position: absolute;
       top: 0;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      /* left: 50%; */
+      transform: translate(0%, -50%);
     }
   }
   table {

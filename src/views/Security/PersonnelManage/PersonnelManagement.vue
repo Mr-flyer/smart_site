@@ -1,6 +1,6 @@
 <template>
     <div class="home-set main-content">
-        <el-tabs v-model="activeName">
+        <el-tabs :value="$store.state.TabName" @tab-click="changeTabs">
             <el-tab-pane label="实名管理" name="first" lazy>
                 <v-realName></v-realName>
             </el-tab-pane>
@@ -26,12 +26,13 @@
         },
         data() {
             return {
-                activeName: 'first'
+                
             }
         },
-        created() {
-        },
         methods: {
+            changeTabs(val) {
+                this.$store.commit('TabName', val.name);
+            }
         }
     }
 </script>

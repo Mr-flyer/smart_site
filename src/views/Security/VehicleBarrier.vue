@@ -2,10 +2,6 @@
   <!-- 车辆道闸 -->
   <div class="container">
     <el-card class="page_header" shadow="never" :body-style="{ paddingBottom: 0 }">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item><a href="/">车辆道闸</a></el-breadcrumb-item>
-      </el-breadcrumb>
       <el-tabs class="pdge_tabs" v-model="active" @tab-click="handleClick">
         <el-tab-pane label="实时监测" name="0"></el-tab-pane>
         <el-tab-pane label="历史数据" name="1"></el-tab-pane>

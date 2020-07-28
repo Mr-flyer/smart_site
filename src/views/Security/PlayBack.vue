@@ -141,6 +141,7 @@
                 display: flex;
                 justify-content: flex-start;
                 margin-bottom: 20px;
+                flex-wrap: wrap;
                 ::v-deep .el-input {
                     width: 230px;
                 }

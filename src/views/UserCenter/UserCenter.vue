@@ -54,9 +54,8 @@ export default {
     userInfo: {}
   }),
   created() {
-    let userInfo = JSON.parse(localStorage.getItem('user_info'))
-    console.log(userInfo);
-    this.userInfo = userInfo
+      let userInfo = JSON.parse(localStorage.getItem('user_info'));
+      this.userInfo = userInfo
   },
   methods: {
     onSubmit() {
