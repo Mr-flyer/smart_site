@@ -296,8 +296,8 @@
 			personalCenter(command) {
 			// 退出登录
 			if (command == 2) {
+        localStorage.clear();
 				this.$router.push("/");
-				sessionStorage.clear();
 				window.document.cookie = `userName=;path=/;expires=-1`;
 				window.document.cookie = `userPwd=;path=/;expires=-1`;
 			} else {

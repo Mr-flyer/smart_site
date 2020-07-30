@@ -108,11 +108,6 @@
                 }
             }
         },
-        computed: {
-            txt() {
-                return this.form.cost + '元'
-            }
-        },
         created() {
             this.isLoading = true;
             this.$http.get('api/v1/system/project/')

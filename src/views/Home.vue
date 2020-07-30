@@ -784,7 +784,7 @@ export default {
       this.workDay = dayjs().diff(dayjs(data.start_date), "day");
     });
     // 视频列表
-    this.$http.get(`api/v1/system/video`).then(({ data }) => {
+    this.$http.get(`api/v1/system/video?is_show=1`).then(({ data }) => {
       this.video01Arr = data.filter(v => !v.area);
       this.video02Arr = data.filter(v => v.area);
       this.$refs.video01.loop = this.video01Arr.length <= 1;

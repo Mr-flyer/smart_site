@@ -123,14 +123,14 @@
                 <el-form-item 
                     prop="startTime"
                     label="开始时间"
-                    :rules="{ required: true, message: '请选择开始时间', trigger: 'blur' }">
+                    :rules="{ required: form.area === 0 || form.area === 1, message: '请选择开始时间', trigger: 'blur' }">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.startTime"></el-date-picker>
                     <div class="form-tips">若视频当前的状态为下线，等到开始时间则自动变为上线</div>
                 </el-form-item>
                 <el-form-item 
                     prop="endTime"
                     label="结束时间"
-                    :rules="{ required: true, message: '请选择结束时间', trigger: 'blur' }">
+                    :rules="{ required: form.area === 0 || form.area === 1, message: '请选择结束时间', trigger: 'blur' }">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.endTime"></el-date-picker>
                 </el-form-item>
                 <el-form-item>
@@ -358,8 +358,8 @@
                         if(typeof this.form.video === "object") {
                             param.append('video', this.form.video);
                         }
-                        param.append('start_time', this.common.YMD(Date.parse(this.form.startTime)/1000));
-                        param.append('end_time', this.common.YMD(Date.parse(this.form.endTime)/1000));
+                        param.append('start_time', this.form.startTime ? this.common.YMD(Date.parse(this.form.startTime)/1000) : '');
+                        param.append('end_time', this.form.endTime ? this.common.YMD(Date.parse(this.form.endTime)/1000) : '');
                         param.append('seq', this.form.sort);
                         param.append('is_show', this.form.status);
                         if(this.form.monitor_id && this.form.monitor_id.length > 0) {
