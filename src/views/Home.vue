@@ -131,7 +131,7 @@
                 autoplay
                 muted
                 ref="video01"
-                :src="'http://218.92.33.126:23080' + video01"
+                :src="video01"
                 @ended="videoend(videoBig)"
                 @error="videoerr(videoBig)"
               />
@@ -148,7 +148,7 @@
                 autoplay
                 muted
                 ref="video02"
-                :src="'http://218.92.33.126:23080' + video02"
+                :src="video02"
                 @ended="videoend02"
                 @error="videoerr02"
               ></video>
@@ -785,9 +785,9 @@ export default {
       this.workDay = dayjs().diff(dayjs(data.start_date), "day");
     });
     // 视频列表
-    this.$http.get(`api/v1/system/video`).then(({ data }) => {
-      this.video01Arr = data.filter(v => !v.area && v.is_show);
-      this.video02Arr = data.filter(v => v.area && v.is_show);
+    this.$http.get(`api/v1/system/video?is_show=1`).then(({ data }) => {
+      this.video01Arr = data.filter(v => !v.area);
+      this.video02Arr = data.filter(v => v.area);
       this.$refs.video01.loop = this.video01Arr.length <= 1;
       this.$refs.video02.loop = this.video02Arr.length <= 1;
       this.video01 = this.video01Arr[this.video01Index].video;
@@ -1029,7 +1029,7 @@ $txtColor2: #ffde7b;
     align-items: center;
     // transform: translate(100%, -20%);
     img {
-      width: 60px;
+      width: 74px;
       margin-right: 10px;
     }
   }
@@ -1573,7 +1573,8 @@ $txtColor2: #ffde7b;
     position: relative;
     cursor: pointer;
     .child_navbars {
-      width: 124px;
+      // width: 124px;
+      width: 168px;
       height: auto;
       background: rgba(4, 9, 16, 0.8);
       position: absolute;

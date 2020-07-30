@@ -9,6 +9,13 @@ import 'element-ui/lib/theme-chalk/index.css';
 import {Message} from 'element-ui';
 import request from './utils/js/request';
 import common from './utils/js/common';
+import VueVideoPlayer from 'vue-video-player'
+
+// require videojs style
+import 'video.js/dist/video-js.css'
+// import 'vue-video-player/src/custom-theme.css'
+
+Vue.use(VueVideoPlayer)
 
 Vue.use(ElementUI)
 Vue.prototype.$message = Message;
