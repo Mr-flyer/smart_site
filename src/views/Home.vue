@@ -131,7 +131,7 @@
                 autoplay
                 muted
                 ref="video01"
-                :src="video01"
+                :src="'http://218.92.33.126:23080' + video01"
                 @ended="videoend(videoBig)"
                 @error="videoerr(videoBig)"
               />
@@ -148,7 +148,7 @@
                 autoplay
                 muted
                 ref="video02"
-                :src="video02"
+                :src="'http://218.92.33.126:23080' + video02"
                 @ended="videoend02"
                 @error="videoerr02"
               ></video>
@@ -786,8 +786,8 @@ export default {
     });
     // 视频列表
     this.$http.get(`api/v1/system/video`).then(({ data }) => {
-      this.video01Arr = data.filter(v => !v.area);
-      this.video02Arr = data.filter(v => v.area);
+      this.video01Arr = data.filter(v => !v.area && v.is_show);
+      this.video02Arr = data.filter(v => v.area && v.is_show);
       this.$refs.video01.loop = this.video01Arr.length <= 1;
       this.$refs.video02.loop = this.video02Arr.length <= 1;
       this.video01 = this.video01Arr[this.video01Index].video;

@@ -32,7 +32,7 @@
             <el-col class="todayItem" :span="6">
               <i class="el-icon-share"></i>
               <div class="todayItem_cont">
-                <div>使出（车次）</div>
+                <div>驶出（车次）</div>
                 <span>50</span>
               </div>
             </el-col>
