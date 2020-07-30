@@ -54,7 +54,7 @@
                 </template>
             </el-table-column>
             <el-table-column
-                label="身份"
+                label="角色"
                 width="140">
                 <template slot-scope="scope">
                     <div v-if="scope.row.identity">
@@ -103,8 +103,8 @@
                 <el-form-item label="姓名">
                     <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
                 </el-form-item>
-                <el-form-item label="员工ID">
-                    <el-input v-model="form.staffId" placeholder="请输入员工ID"></el-input>
+                <el-form-item label="身份证号">
+                    <el-input v-model="form.staffId" placeholder="请输入身份证号"></el-input>
                 </el-form-item>
                 <el-form-item label="初始密码">
                     <el-input v-model="form.password" placeholder="请输入8-16位的数字、英文"></el-input>
