@@ -47,6 +47,17 @@ export default {
         }
         return true;
     },
+    /**
+     * @function {function} checkPwd --8到16位数字或英文密码
+     * @param {string} pwd --密码
+     */
+    checkPwd(pwd) {
+        var regPwd = /^[0-9A-Za-z]{8,16}$/;
+        if(!regPwd.test(pwd)) {
+            return false;
+        }
+        return true;
+    },
     // Y-M-D
     YMD(str) {
         let time= new Date(str * 1000);

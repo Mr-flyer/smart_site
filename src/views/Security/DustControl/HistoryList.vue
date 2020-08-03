@@ -20,7 +20,7 @@
                     <el-form-item label="时间">
                         <el-date-picker
                             v-model="formSearch.time"
-                            type="datetimerange"
+                            type="daterange"
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
@@ -32,14 +32,16 @@
                             <el-option :label="item.name" :value="item.value" :key="item.value" v-for="item in dataType"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" :disabled="isLoading" @click="onSubmit">查询</el-button>
-                        <el-button >导出</el-button>
+                    <el-form-item class="select-btns">
+                        <el-button type="primary" :disabled="isLoading" @click="search">查询</el-button
+                        ><el-button @click="reset">重置</el-button>
                     </el-form-item>
                 </el-form>
             </el-card>
             <el-card class="mb-20" shadow="never" v-loading="isLoading">
-                <div slot="header" class="table-title">扬尘在线监测系统数据报表</div>
+                <div slot="header" class="table-title">
+                    <span>扬尘在线监测系统数据报表</span> 
+                    <el-button class="export-icon"  icon="el-icon-top-right" type="primary">导出</el-button></div>
                 <el-table :data="tableData" border style="width: 100%">
                     <el-table-column type="index" label="序号" width="80"></el-table-column>
                     <el-table-column prop="name" label="设备名称"></el-table-column>
@@ -73,10 +75,12 @@
                 <el-pagination
                     class="admin-page"
                     background
+                    @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page="currentPage"
+                    :page-sizes="[10, 20, 30, 40, 50]"
                     :page-size="20"
-                    layout="prev, pager, next, jumper"
+                    layout="sizes, prev, pager, next, jumper"
                     :total="count">
                 </el-pagination>
             </el-card>
@@ -107,30 +111,36 @@ export default {
             {name: '异常', value: 1},
         ],
         tableData: [],
+        pagesize: 20,
         currentPage: 1,
         count: 0,
         isLoading: false,
         standardValue: ''
     }),
     created() {
+        this.pagesize = this.pageSize;
         // 设备列表
-        this.$http.get('api/v1/security/equipment/')
+        let device_list = this.$http.get('api/v1/security/equipment/')
         .then((res)=>{
             this.deviceList = res.data;
         }).catch(()=>{})
         // 标准值设置
-        this.$http.get('api/v1/security/dust_set/')
+        let standard_value = this.$http.get('api/v1/security/dust_set/')
         .then((res) => {
             this.standardValue = res.data;
-            this.requestInfo(1);
         })
         .catch((err) => {})
+        this.isLoading = true;
+        this.$http.requestAll([device_list, standard_value])
+        .then(()=>{
+            this.requestInfo(1);
+        }).catch(()=>{})
     },
     methods: {
         requestInfo(val) {
             this.isLoading = true;
             this.currentPage = val;
-            this.$http.get(`api/v1/security/dusts?page=${this.currentPage}&page_size=${this.pageSize}`)
+            this.$http.get(`api/v1/security/dusts?page=${this.currentPage}&page_size=${this.pagesize}`)
             .then((res)=>{
                 this.tableData = res.data;
                 this.count = res.count;
@@ -139,11 +149,20 @@ export default {
             .catch(()=>{})
         },
         handleCurrentChange(val) {
+            this.$store.commit('timeStamp', Date.parse(new Date()));
             this.requestInfo(val);
         },
-        onSubmit() {
+        handleSizeChange(val) {
+            this.pagesize = val;
+            this.$store.commit('timeStamp', Date.parse(new Date()));
+            this.requestInfo(1);
+        },
+        // 查询
+        search() {
 
         },
+        // 重置
+        reset() {},
         // 返回上一页
         goBack() {
             this.$router.go(-1);
@@ -156,5 +175,11 @@ export default {
 .table-title {
   display: flex;
   justify-content: center;
+  position: relative;
+  .export-icon {
+      position: absolute;
+      right: 0;
+      top: -10px;
+  }
 }
 </style>

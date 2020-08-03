@@ -53,10 +53,12 @@
         <el-pagination
             class="video-page"
             background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 40, 50]"
             :page-size="20"
-            layout="prev, pager, next, jumper"
+            layout="sizes, prev, pager, next, jumper"
             :total="count">
         </el-pagination>
         <el-dialog :title="isEdit?'编辑视频':'新增视频'" :visible.sync="dialogFormVisible">
@@ -155,6 +157,7 @@
                 tableData: [],
                 count: 0,
                 currentPage: 1,
+                pagesize: 20,
                 dialogFormVisible: false,
                 form: {
                     area: '',
@@ -208,13 +211,14 @@
             }
         },
         created() {
+            this.pagesize = this.pageSize;
             this.requestInfo(1);
         },
         methods: {
             requestInfo(val) {
-                this.isLoading = true;
                 this.currentPage = val;
-                this.$http.get(`api/v1/system/video/?page=${this.currentPage}&page_size=${this.pageSize}`)
+                this.isLoading = true;
+                this.$http.get(`api/v1/system/video/?page=${this.currentPage}&page_size=${this.pagesize}`)
                 .then((res)=>{
                     this.isLoading = false;
                     this.count = res.count;
@@ -223,7 +227,13 @@
                 .catch(()=>{})
             },
             handleCurrentChange(val) {
+                this.$store.commit('timeStamp', Date.parse(new Date()));
                 this.requestInfo(val);
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.$store.commit('timeStamp', Date.parse(new Date()));
+                this.requestInfo(1);
             },
             getMonitor(val) {
                 let res = this.$refs.monitor.getCheckedKeys();

@@ -172,10 +172,12 @@
         <el-pagination
             class="admin-page"
             background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 40, 50]"
             :page-size="20"
-            layout="prev, pager, next, jumper"
+            layout="sizes, prev, pager, next, jumper"
             :total="count">
         </el-pagination>
         <el-dialog :title="!isEdit ? '新增员工':'编辑员工'" :visible.sync="dialogFormVisible" width="720px">
@@ -371,6 +373,7 @@
                 companyList: [],
                 teamList: [],
                 workTypeList: [],
+                pagesize: 20,
                 currentPage: 1,
                 count: 0,
                 rules: {},
@@ -428,6 +431,7 @@
             }
         },
         created() {
+            this.pagesize = this.pageSize;
             // 单位类型
             let company_type = this.$http.get('api/v1/user/company_type/').then((res)=>{
                 this.companyTypeList = res.data;
@@ -470,14 +474,20 @@
                 //     start_leave_time = this.common.formatTimestamp_min(Date.parse(this.formInline.leaveTime[0])/1000);
                 //     end_leave_time = this.common.formatTimestamp_min(Date.parse(this.formInline.leaveTime[1])/1000);
                 // }
-                this.$http.get(`api/v1/security/user/?page=${this.currentPage}&page_size=${this.pageSize}&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&sex=${this.formInline.gender}&is_real_name=${this.formInline.relevance}&start_into_time=${start_into_time}&end_into_time=${end_into_time}&start_leave_time=${start_leave_time}&end_leave_time=${end_leave_time}`).then((res)=>{
+                this.$http.get(`api/v1/security/user/?page=${this.currentPage}&page_size=${this.pagesize}&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&sex=${this.formInline.gender}&is_real_name=${this.formInline.relevance}&start_into_time=${start_into_time}&end_into_time=${end_into_time}&start_leave_time=${start_leave_time}&end_leave_time=${end_leave_time}`).then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;
                     this.count = res.count;
                 }).catch(()=>{})
             },
             handleCurrentChange(val) {
+                this.$store.commit('timeStamp', Date.parse(new Date()));
                 this.requestInfo(val);
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.$store.commit('timeStamp', Date.parse(new Date()));
+                this.requestInfo(1);
             },
             // 查询
             search() {
