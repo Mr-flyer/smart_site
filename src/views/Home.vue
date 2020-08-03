@@ -45,7 +45,7 @@
                 <!-- <div class="sum-type-item">
                   <span>合同工期</span>
                   {{survey.period || 0}}天
-                </div> -->
+                </div>-->
                 <div class="sum-type-item">
                   <span>建筑面积</span>
                   {{survey.area || 0}}㎡
@@ -95,12 +95,12 @@
                 <pieBigEchart />
               </div>-->
               <div class="personnel_echart-item">
-                <barBigEchart />
+                <barBigEchart :infoPieObj="infoPieTrend" :infoBarObj="infoBarTrend" />
               </div>
             </div>
             <div class="legend_wrap">
-              <div class="legend_item" v-for="v of 11" :key="v">
-                <i></i>第一建筑有限公司
+              <div class="legend_item" v-for="v of company_name" :key="v">
+                <i></i>{{v}}
               </div>
             </div>
           </el-card>
@@ -123,34 +123,34 @@
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
               <!-- 模拟进度--{{video01Name}} -->
-              {{videoBig.name}}
+              模拟进度--{{videoSimulation.video_name}}
             </template>
             <div class="video_wrap">
               <video
-                id="video01"
                 autoplay
                 muted
                 ref="video01"
-                :src="video01"
-                @ended="videoend(videoBig)"
-                @error="videoerr(videoBig)"
+                :loop="videoSimulation.videoList.length === 1"
+                :src="videoSimulation.video"
+                @ended="videoend(videoSimulation)"
+                @error="videoerr(videoSimulation)"
               />
             </div>
           </el-card>
           <el-card class="panel-wrap real_scene-wrap" shadow="never">
             <template slot="header">
               <img class="icon_title" src="../assets/bigScreen/icon_data@2x.png" alt />
-              项目实景--{{video02Name}}
+              项目实景--{{videoReality.video_name}}
             </template>
             <div class="video_wrap">
               <video
-                id="video02"
                 autoplay
                 muted
                 ref="video02"
-                :src="video02"
-                @ended="videoend02"
-                @error="videoerr02"
+                :loop="videoReality.videoList.length === 1"
+                :src="videoReality.video"
+                @ended="videoend(videoReality)"
+                @error="videoerr(videoReality)"
               ></video>
             </div>
           </el-card>
@@ -380,13 +380,14 @@
 
 <script>
 // @ is an alias to /src
-import TextScroll from '@/components/textScroll';
+import TextScroll from "@/components/textScroll";
 import lineWeaterEchart from "@/components/lineWeaterEchart";
 import barBigEchart from "@/components/barBigEchart";
 import pieBigEchart from "@/components/pieBigEchart";
 import echarts from "echarts";
 import dayjs from "dayjs";
 const options = {
+  // 温度变化表数据
   infoSourceTrend: {
     title: "",
     isLoading: true,
@@ -470,6 +471,7 @@ const options = {
       ]
     ]
   },
+  // 扬尘折线图数据
   infoDustTrend: {
     title: "",
     isLoading: true,
@@ -483,6 +485,7 @@ const options = {
       [12, 10, 24, 30, 40, 31]
     ]
   },
+  // 噪声折线图数据
   infoNoiseTrend: {
     title: "",
     isLoading: true,
@@ -490,6 +493,25 @@ const options = {
     xdata: ["10:00", "10:20", "10:40", "11:00", "11:20", "11:40"],
     color: ["#fff", "#ffc528", "#276fff"],
     data: [[12, 10, 24, 30, 40, 31]]
+  },
+  // 现场人员表数据
+  infoPieTrend: {
+    title: "现场人员表",
+    isLoading: true,
+    color: ["#ff9566", "#276fff"],
+    data: [
+      { value: 235, name: "视频广告" },
+      { value: 400, name: "搜索引擎" }
+    ]
+  },
+  // 人员分布柱形图数据
+  infoBarTrend: {
+    title: "人员分布柱形图",
+    isLoading: true,
+    data: [
+      // [320, 302, 341, 374, 390, 450, 420, 390, 450, 420, 420],
+      // [ -120, -132, -101, -134, -190, -230, -210, -190, -230, -210, -210 ]
+    ]
   },
   echartOptionDust: {
     legend: {
@@ -523,15 +545,15 @@ const options = {
   },
   tableData: [
     {
-      date: "2",
+      date: 0,
       name: "吊塔"
     },
     {
-      date: "2",
+      date: 0,
       name: "升降机"
     },
     {
-      date: "2",
+      date: 0,
       name: "卸料台"
     }
   ],
@@ -645,26 +667,14 @@ export default {
       "星期五",
       "星期六"
     ],
-    video01Arr: [],
-    video02Arr: [],
-    video01: "",
-    video02: "",
-    video01Name: "",
-    video02Name: "",
-    // time: this.week[dayjs().day()] ,
-    weekTxt: "",
-    dateTime: "",
-    timeInfo: "",
-    timer: "",
-    video01Name: "",
-    video02Name: "",
-    video01Index: 0,
-    video02Index: 0,
-    video01Arr: [],
-    video02Arr: [],
-    todayWeatherData: [],
-    tomorrowWeatherData: [],
-    threeWeatherData: [],
+    workDay: "", // 安全开工日期
+    weekTxt: "", // 星期
+    dateTime: "", // 日期
+    timeInfo: "", // 时间
+    timer: "", // 计时器
+    todayWeatherData: [], // 明日天气概要
+    tomorrowWeatherData: [], // 后天天气概要
+    threeWeatherData: [], // 大后天天气概要
     weather: [
       "xue",
       "lei",
@@ -675,20 +685,38 @@ export default {
       "yu",
       "yin",
       "qing"
-    ],
-    todayNoise: "",
-    workDay: "", // 安全开工日期
-    lists: [
-       '连雨不知春去',
-       '连雨不知春去',
-       '连雨不知春去',
-       '连雨不知春去',
-       '一晴方觉夏深'
-    ],
-    videoBig: {
-      name: '原始标题',
-      src: '',
-    }
+    ], // 天气类型
+    todayNoise: "", // 今日噪声指数 -- 天气版块
+    videoSimulation: {
+      video_name: "",
+      video: "",
+      index: 0,
+      videoList: [
+        {
+          video:
+            "https://vdept.bdstatic.com/424276416a337a5568544439586b5349/38354a4238444150/e656758a269e62b2bc75c85dd26d0b2f22626eff5cfd6159c2bf569356739580f3982f85c63dcdec282c53c3425779fcdd520c7e817110b2a882c32f63488092.mp4?auth_key=1596104939-0-0-90b6d22663b95fa8cee8161efc3a02b5",
+          video_name: "工地一"
+        },
+        {
+          video:
+            "https://vdept.bdstatic.com/73714e6e7246735851467a47504c7a4d/5033724e6c677556/e46e3a9fd633c72ad4f5269e5b935f94924863ef2b5aa88422dc24ee765a1f4829ab27301747212e244c36313e56a5133d4fd414893892ff52136559a74b37036917f492a43c8c966170863f5a310cdb.mp4?auth_key=1596104944-0-0-80d48b81066b97ecefe7326e2e38c0da",
+          video_name: "工地二"
+        }
+      ]
+    },
+    videoReality: {
+      video_name: "",
+      video: "",
+      index: 0,
+      videoList: [
+        {
+          video:
+            "https://vdeptold.bdstatic.com/3934485634567436687039314374444e/727a66426b634d41/7bb0950e51d2c393aa67b61150393f162227042debb722e2be671714caa3be023be4133715e3aa0571e1ab1cace0157d.mp4?auth_key=1596106384-0-0-a429bff581fba24459de58569aa44239",
+          video_name: "场地一"
+        }
+      ]
+    },
+    company_name: []
   }),
   created() {
     this.weekTxt = this.week[dayjs().day()];
@@ -697,6 +725,7 @@ export default {
     this.timer = setInterval(() => {
       this.timeInfo = dayjs().format("HH:mm:ss");
     }, 1000);
+    // return false;
     // 现场管理（扬尘、噪声）
     this.$http.get(`api/v1/security/dust_chart`).then(({ data: dustData }) => {
       let TSP = dustData.map(v => Number(v.tsp));
@@ -784,20 +813,26 @@ export default {
       // 已开工天数
       this.workDay = dayjs().diff(dayjs(data.start_date), "day");
     });
-    // 视频列表
+    // 视频列表（仅拉取上线）
     this.$http.get(`api/v1/system/video?is_show=1`).then(({ data }) => {
-      this.video01Arr = data.filter(v => !v.area);
-      this.video02Arr = data.filter(v => v.area);
-      this.$refs.video01.loop = this.video01Arr.length <= 1;
-      this.$refs.video02.loop = this.video02Arr.length <= 1;
-      this.video01 = this.video01Arr[this.video01Index].video;
-      this.video01Name = this.video01Arr[this.video01Index].video_name;
-      this.video02 = this.video02Arr[this.video02Index].video;
-      this.video02Name = this.video02Arr[this.video02Index].video_name;
+      this.videoSimulation.videoList = data.filter(v => !v.area);
+      this.videoReality.videoList = data.filter(v => v.area);
+      // Object.assign(this.videoSimulation, this.videoSimulation.videoList[0])
+      // Object.assign(this.videoReality, this.videoReality.videoList[0])
     });
+    this.$http.get(`api/v1/index/person`)
+    .then(({data}) => {
+      let difference = data.map(v => -v.difference)
+      let scene_count = data.map(v => v.scene_count)
+      this.company_name = data.map(v => v.company_name)
+      this.infoBarTrend.data = [scene_count, difference]
+      this.infoPieTrend.data = [
+          { value: difference.reduce((acc, cur) => acc + -cur, 0), name: "差额" },
+          { value: scene_count.reduce((acc, cur) => acc + cur, 0), name: "现场人数" }
+        ]
+    })
   },
-  beforeDestroy() {                                                                                                                                                                                                                                                                                             
-    // 清除计时器
+  beforeDestroy() {
     if (this.timer) clearInterval(this.timer);
   },
   methods: {
@@ -805,37 +840,22 @@ export default {
     mouseRouter(index) {
       this.routerIndex = index;
     },
+    // 视频播放结束时
     videoend(videoData) {
-      console.log(videoData);
-      // let video02Arr = data.filter(v => v.area)
-      if (this.video01Index < this.video01Arr.length -1) {
-        this.video01Index++;
-      } else this.video01Index = 0;
-      console.log(this.video01Index, this.video01Arr);
-      this.video01 = this.video01Arr[this.video01Index].video;
-      this.video01Name = this.video01Arr[this.video01Index].video_name;
+      let { index, videoList } = videoData;
+      let currentIdx = index < videoList.length - 1 ? ++index : 0;
+      Object.assign(videoData, {
+        index: currentIdx,
+        ...videoData.videoList[currentIdx]
+      });
     },
-    videoerr() {
-      console.log("视频1播放失败");
-      if(!this.video01Arr.length) return
-      this.video01Index = 0;
-      this.video01 = this.video01Arr[this.video01Index].video;
-      this.video01Name = this.video01Arr[this.video01Index].video_name;
-    },
-    videoend02() {
-      console.log("video2结束");
-      if (this.video02Index < this.video02Arr.length - 1) {
-        this.video02Index++;
-      } else this.video02Index = 0;
-      this.video02 = this.video02Arr[this.video02Index].video;
-      this.video02Name = this.video02Arr[this.video02Index].video_name;
-    },
-    videoerr02() {
-      console.log("视频2播放失败");
-      if (!this.video01Arr.length) return;
-      this.video02Index = 0;
-      this.video02 = this.video02Arr[this.video02Index].video;
-      this.video02Name = this.video02Arr[this.video02Index].video_name;
+    // 视频播放失败时
+    videoerr(videoData) {
+      if (!videoData.videoList.length) return;
+      Object.assign(videoData, {
+        index: 0,
+        ...videoData.videoList[videoData.index]
+      });
     },
     // 格式化价格
     _formatPrice(val) {
@@ -884,7 +904,7 @@ export default {
         }
       }
       return val;
-    },
+    }
   },
   components: {
     lineWeaterEchart,
@@ -1469,6 +1489,7 @@ $txtColor2: #ffde7b;
     align-items: center;
     color: #fff;
     i {
+      flex: none;
       display: inline-block;
       width: 8px;
       height: 10px;

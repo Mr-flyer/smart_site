@@ -3,9 +3,17 @@
 </template>
 <script>
     export default {
+        props: {
+            infoData: Object
+        },
         data() {
             return {
                 PieChart: null
+            }
+        },
+        watch: {
+            infoData() {
+                this.init()
             }
         },
         mounted() {
@@ -38,12 +46,13 @@
                             type: 'pie',
                             radius: '55%',
                             center: ['50%', '60%'],
-                            data: [
-                                {value: 335, name: '公司1'},
-                                {value: 310, name: '公司2'},
-                                {value: 234, name: '公司3'},
-                                {value: 135, name: '公司4'}
-                            ],
+                            data: this.infoData,
+                            // data: [
+                            //     {value: 335, name: '公司1'},
+                            //     {value: 310, name: '公司2'},
+                            //     {value: 234, name: '公司3'},
+                            //     {value: 135, name: '公司4'}
+                            // ],
                             emphasis: {
                                 itemStyle: {
                                     shadowBlur: 10,

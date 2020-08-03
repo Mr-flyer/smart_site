@@ -16,28 +16,32 @@
           <div slot="header">今日统计</div>
           <el-row>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_total.png" alt="">
               <div class="todayItem_cont">
                 <div>道闸事件总数（车次）</div>
                 <span>50</span>
               </div>
             </el-col>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_enter.png" alt="">
               <div class="todayItem_cont">
                 <div>进入（车次）</div>
                 <span>50</span>
               </div>
             </el-col>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_out.png" alt="">
               <div class="todayItem_cont">
                 <div>驶出（车次）</div>
                 <span>50</span>
               </div>
             </el-col>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_unknown.png" alt="">
               <div class="todayItem_cont">
                 <div>陌生访客 （车次）</div>
                 <span>50</span>
@@ -105,7 +109,7 @@
                   </div>
                 </el-col>
                 <el-col :span="8">
-                  <img class="car_pic" />
+                  <img src="@/assets/vehicle/vehicleInfo_no.png" class="car_pic" />
                 </el-col>
               </el-row>
             </el-card>
@@ -301,7 +305,7 @@ export default {
   .car_pic {
     width: 100px;
     height: 100px;
-    background-color: aqua;
+    // background-color: aqua;
   }
   .today-wrap {
     margin-bottom: 20px;
