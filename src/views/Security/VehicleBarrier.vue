@@ -16,28 +16,32 @@
           <div slot="header">今日统计</div>
           <el-row>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_total.png" alt="">
               <div class="todayItem_cont">
                 <div>道闸事件总数（车次）</div>
                 <span>50</span>
               </div>
             </el-col>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_enter.png" alt="">
               <div class="todayItem_cont">
                 <div>进入（车次）</div>
                 <span>50</span>
               </div>
             </el-col>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_out.png" alt="">
               <div class="todayItem_cont">
-                <div>使出（车次）</div>
+                <div>驶出（车次）</div>
                 <span>50</span>
               </div>
             </el-col>
             <el-col class="todayItem" :span="6">
-              <i class="el-icon-share"></i>
+              <!-- <i class="el-icon-share"></i> -->
+              <img src="@/assets/vehicle/navVehicle_unknown.png" alt="">
               <div class="todayItem_cont">
                 <div>陌生访客 （车次）</div>
                 <span>50</span>
@@ -66,10 +70,10 @@
               <el-table :data="tableData" style="width: 100%">
                 <el-table-column type="index" label="序号" width="80"></el-table-column>
                 <el-table-column prop="name" label="车辆类型" width="180"></el-table-column>
-                <el-table-column prop="name" label="车牌" width="180"></el-table-column>
+                <el-table-column prop="carcode" label="车牌" width="180"></el-table-column>
                 <el-table-column prop="date" label="发生时间" width="180"></el-table-column>
                 <el-table-column prop="address" label="门禁点"></el-table-column>
-                <el-table-column prop="address" label="出入"></el-table-column>
+                <el-table-column prop="status" label="出入"></el-table-column>
               </el-table>
             </el-card>
           </el-col>
@@ -105,7 +109,7 @@
                   </div>
                 </el-col>
                 <el-col :span="8">
-                  <img class="car_pic" />
+                  <img src="@/assets/vehicle/vehicleInfo_no.png" class="car_pic" />
                 </el-col>
               </el-row>
             </el-card>
@@ -240,24 +244,32 @@ const pickerOptions = {
 };
 const tableData = [
   {
-    date: "2016-05-02",
-    name: "品牌",
-    address: "上海市普陀区金沙江路 1518 弄"
+    date: "2016-05-02 06:00",
+    name: "备案车辆",
+    carcode: "苏A10000",
+    address: "门禁点1",
+    status: "出"
   },
   {
-    date: "2016-05-04",
-    name: "品牌",
-    address: "上海市普陀区金沙江路 1517 弄"
+    date: "2016-05-04 06:00",
+    name: "备案车辆",
+    carcode: "苏A10000",
+    address: "门禁点1",
+    status: "出"
   },
   {
-    date: "2016-05-01",
-    name: "品牌",
-    address: "上海市普陀区金沙江路 1519 弄"
+    date: "2016-05-01 06:00",
+    name: "备案车辆",
+    carcode: "苏A10000",
+    address: "门禁点1",
+    status: "出"
   },
   {
-    date: "2016-05-03",
-    name: "品牌",
-    address: "上海市普陀区金沙江路 1516 弄"
+    date: "2016-05-03 06:00",
+    name: "备案车辆",
+    carcode: "苏A10000",
+    address: "门禁点1",
+    status: "出"
   }
 ];
 export default {
@@ -293,7 +305,7 @@ export default {
   .car_pic {
     width: 100px;
     height: 100px;
-    background-color: aqua;
+    // background-color: aqua;
   }
   .today-wrap {
     margin-bottom: 20px;

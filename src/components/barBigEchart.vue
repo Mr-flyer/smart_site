@@ -6,7 +6,8 @@
 export default {
   name: "Echart",
   props: {
-    infoObj: Object
+    infoPieObj: Object,
+    infoBarObj: Object
   },
   data() {
     return {
@@ -28,28 +29,28 @@ export default {
     };
   },
   watch: {
-    // "infoObj.xdata": function() {
-    //   let _that = this;
-    //   if (this.infoObj.xdata.length > 0) {
-    //     this.lineFun();
-    //     window.addEventListener("resize", function() {
-    //       _that.lineChart.resize();
-    //     });
-    //   }
-    // }
+    "infoBarObj.data": function() {
+      let _that = this;
+      if (this.infoBarObj.data.length > 0) {
+        this.lineFun();
+        window.addEventListener("resize", function() {
+          _that.lineChart.resize();
+        });
+      }
+    }
   },
   mounted() {
     let _that = this;
-    this.lineFun();
-    // if (this.infoObj.xdata.length > 0) {
-    //   this.lineFun();
-    //   window.addEventListener("resize", function() {
-    //     _that.lineChart.resize();
-    //   });
-    // }
+    if (this.infoBarObj.data.length > 0) {
+      this.lineFun();
+      window.addEventListener("resize", function() {
+        _that.lineChart.resize();
+      });
+    }
   },
   methods: {
     lineFun() {
+      this.Yitems = this.Yitems.slice(0, this.infoBarObj.data[0].length)
       this.barBigChart = this.$echarts.init(this.$refs.barBigChart);
       // let series = this.infoObj.data.map((v, i) => ({
       //   name: this.infoObj.legend[i],
@@ -90,11 +91,11 @@ export default {
         // legend: {
         //   bottom: 20
         // },
-        color: ["#ff9566", "#276fff"],
+        color: this.infoPieObj.color,
         grid: {
           x: 0,
           y: 20,
-          x2: 10,
+          x2: 20,
           y2: 0, //距离下边的距离
           left: "50%",
           containLabel: true
@@ -122,8 +123,8 @@ export default {
             axisTick: {
               show: false
             },
-            inverse: true,
-            data: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
+            inverse: true, // 倒叙
+            data: this.Yitems,
             axisLabel: {
               formatter: function(value) {
                 return "{" + value + "| }{value|}";
@@ -137,13 +138,13 @@ export default {
           {
             name: "现场人数",
             type: "bar",
-            stack: "总量",
+            stack: "人员分布及差额表",
             label: {
               show: true,
               position: "right",
-              color: "#fff"
+              color: "#fff",
+              formatter: "{c}"
             },
-
             barCategoryGap: "20%",
             itemStyle: {
               color: new this.$echarts.graphic.LinearGradient(0, 0, 1, 0, [
@@ -155,16 +156,17 @@ export default {
             backgroundStyle: {
               color: "rgba(14, 94, 124, 0.2)"
             },
-            data: [320, 302, 341, 374, 390, 450, 420, 390, 450, 420, 420]
+            data: this.infoBarObj.data[0]
           },
           {
             name: "差额",
             type: "bar",
-            stack: "总量",
+            stack: "人员分布及差额表",
             label: {
               show: true,
               position: "left",
-              color: "#fff"
+              color: "#fff",
+              formatter: ({value}) => Math.abs(value)
             },
 
             barCategoryGap: "40%",
@@ -178,30 +180,13 @@ export default {
                 { offset: 1, color: "#ff9566" }
               ])
             },
-            data: [
-              -120,
-              -132,
-              -101,
-              -134,
-              -190,
-              -230,
-              -210,
-              -190,
-              -230,
-              -210,
-              -210
-            ]
+            data: this.infoBarObj.data[1]
           },
           {
             // name: "访问来源",
             type: "pie",
             center: ["50%", "50%"],
-            data: [
-              { value: 235, name: "差额" },
-              { value: 400, name: "现场人数" }
-            ].sort(function(a, b) {
-              return a.value - b.value;
-            }),
+            data: this.infoPieObj.data,
             left: 10,
             right: 10,
             // roseType: "radius",
@@ -220,15 +205,15 @@ export default {
                   x: 50,
                   y: 50,
                   itemStyle: {
-                    color: "aqua"
+                    color: this.infoPieObj.color[1]
                   },
-                  value: "现场人数\n2172人"
+                  value: `现场人数\n${this.infoPieObj.data[1].value}人`
                 },
                 {
                   name: "某个屏幕坐标",
                   x: 200,
                   y: 60,
-                  value: "差额\n10人"
+                  value: `差额\n${this.infoPieObj.data[0].value}人`
                 },
                 {
                   name: "某个屏幕坐标",
@@ -237,7 +222,7 @@ export default {
                   itemStyle: {
                     color: "transparent"
                   },
-                  value: "应到人数2182人"
+                  value: `应到人数 ${this.infoPieObj.data.reduce((acc, cur) => acc + cur.value, 0)} 人`
                 },
               ]
             },

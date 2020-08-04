@@ -45,8 +45,8 @@ axios.interceptors.request.use(config => {
 /********
 *** axios配置：请求后响应的拦截
 *********/
-// axios.defaults.baseURL = 'http://192.168.101.47:8000/';
-axios.defaults.baseURL = 'http://218.92.33.126:23080/';
+// console.log('当前开发模式', process.env);
+axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
 
 axios.interceptors.response.use(
   response => {
