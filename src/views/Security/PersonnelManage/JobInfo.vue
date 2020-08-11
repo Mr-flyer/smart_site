@@ -82,10 +82,10 @@
           <div class="text item">
             <v-barChart v-if="countSelect === 0 && countPicSelect === 0" class="echart" :infoData="personnelData"></v-barChart>
             <v-pieChart v-if="countSelect === 1 && countPicSelect === 0" class="echart" :infoData="companyData"></v-pieChart>
-            <v-barChart v-if="countSelect === 1 && countPicSelect === 1" class="echart"></v-barChart>
-            <v-barChart v-if="countSelect === 1 && countPicSelect === 2" class="echart"></v-barChart>
-            <v-pieChart v-if="countSelect === 2 && countPicSelect === 0" class="echart"></v-pieChart>
-            <v-barChart v-if="countSelect === 2 && countPicSelect === 1" class="echart"></v-barChart>
+            <v-barChart v-if="countSelect === 1 && countPicSelect === 1" class="echart" :infoData="[]"></v-barChart>
+            <v-barChart v-if="countSelect === 1 && countPicSelect === 2" class="echart" :infoData="[]"></v-barChart>
+            <v-pieChart v-if="countSelect === 2 && countPicSelect === 0" class="echart" :infoData="[]"></v-pieChart>
+            <v-barChart v-if="countSelect === 2 && countPicSelect === 1" class="echart" :infoData="[]"></v-barChart>
           </div>
         </el-card>
       </el-col>
@@ -137,7 +137,7 @@
         <template slot-scope="scope">{{scope.$index+1}}</template>
       </el-table-column>
       <el-table-column prop="name" label="姓名" width="100"></el-table-column>
-      <el-table-column prop="id" label="员工ID" width="150"></el-table-column>
+      <!-- <el-table-column prop="id" label="员工ID" width="150"></el-table-column> -->
       <el-table-column prop="sex" label="性别" width="60"></el-table-column>
       <el-table-column prop="company_type_name" label="单位类型" width="180"></el-table-column>
       <el-table-column prop="company_name" label="单位名称"></el-table-column>
@@ -164,7 +164,7 @@
 <script>
 import barChart from "@/components/BarChart";
 import pieChart from "@/components/PieChart";
-// import moduleName from 'module';
+import dayjs from 'dayjs';
 export default {
   components: {
     "v-barChart": barChart,
@@ -172,7 +172,7 @@ export default {
   },
   data() {
     return {
-      countSelect: 1,
+      countSelect: 0,
       countSelectItems: ["total", "shigong", "manage"],
       countPicSelect: 0,
       countList: {
@@ -314,7 +314,11 @@ export default {
     // 在岗信息历史数据
     initHistory() {
         this.$http.get(`api/v1/security/history`)
-        .then(({data}) => {
+        .then(({data, count}) => {
+          data.forEach(el => {
+            el.into_time = dayjs(el.into_time).isValid() ? dayjs(el.into_time).format('YY-MM-DD hh:mm:ss') : '--'
+            el.leave_time = dayjs(el.leave_time).isValid() ? dayjs(el.leave_time).format('YY-MM-DD hh:mm:ss') : '--'
+          });
             this.historyList = data
         })
     }

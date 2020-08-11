@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    TabName: 'three'
+    TabName: 'first'
   },
   mutations: {
     TabName(state, msg) {

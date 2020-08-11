@@ -25,6 +25,7 @@
         },
         methods: {
             init() {
+                if(!this.infoData || !this.infoData.length) return false
                 this.PieChart = this.$echarts.init(this.$refs.PieChart);
                 let option = {
                     title: {

@@ -25,6 +25,7 @@
         },
         methods: {
             init() {
+                if(!this.infoData || !this.infoData.length) return false
                 this.barChart = this.$echarts.init(this.$refs.barChart);
                 let option = {
                     legend: {},

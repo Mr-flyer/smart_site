@@ -9,7 +9,7 @@
             }
         },
         created() {
-            window.open('http://218.94.40.2:8080/TPlant/login');
+            window.open('http://gongdi.wohewomen.com:23080/api/v1/iot_3d/login');
         }
     }
 </script>

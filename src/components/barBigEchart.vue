@@ -7,7 +7,8 @@ export default {
   name: "Echart",
   props: {
     infoPieObj: Object,
-    infoBarObj: Object
+    infoBarObj: Object,
+    infoCompanyName: Object
   },
   data() {
     return {
@@ -67,6 +68,7 @@ export default {
       //     color: this.infoObj.color[i]
       //   }
       // }));
+      let { infoCompanyName } = this
       let option = {
         title: [
           {
@@ -105,6 +107,14 @@ export default {
           axisPointer: {
             // 坐标轴指示器，坐标轴触发有效
             type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
+          },
+          // formatter: '{a0}: {c0}<br />{a1}: {c1}',
+          formatter(params) { 
+            return `
+              ${infoCompanyName[params[0].dataIndex]}<br />
+              <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${params[0].color.colorStops[0].color};"></span>  ${params[0].seriesName}：${params[0].data}人<br />
+              <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${params[1].color.colorStops[0].color};"></span>  ${params[1].seriesName}：${Math.abs(params[1].data)}人
+            `
           }
         },
         xAxis: [

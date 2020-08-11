@@ -95,7 +95,7 @@
                 <pieBigEchart />
               </div>-->
               <div class="personnel_echart-item">
-                <barBigEchart :infoPieObj="infoPieTrend" :infoBarObj="infoBarTrend" />
+                <barBigEchart :infoPieObj="infoPieTrend" :infoBarObj="infoBarTrend" :infoCompanyName="company_name" />
               </div>
             </div>
             <div class="legend_wrap">
@@ -251,12 +251,11 @@
                   class="security_current-item"
                   v-for="(item, index) of securityList"
                   :key="index"
-                  :class="index || 'warning'"
+                  :class="item.isOverflow && 'warning'"
                 >
                   <div class="security_current-hd">
                     {{item.name}}
                     <img
-                      v-show="!index"
                       src="../assets/bigScreen/icon_warning@2x.png"
                       alt
                     />
@@ -641,7 +640,7 @@ const options = {
       name: "三维文档",
       routerName: "",
       outLink: true,
-      routerPath: "http://218.94.40.2:8080/TPlant/login"
+      routerPath: "http://gongdi.wohewomen.com:23080/api/v1/iot_3d/login"
     }
   ],
   routerActiveIndex: 0,
@@ -725,7 +724,6 @@ export default {
     this.timer = setInterval(() => {
       this.timeInfo = dayjs().format("HH:mm:ss");
     }, 1000);
-    // return false;
     // 现场管理（扬尘、噪声）
     this.$http.get(`api/v1/security/dust_chart`).then(({ data: dustData }) => {
       let TSP = dustData.map(v => Number(v.tsp));
@@ -735,17 +733,23 @@ export default {
       this.infoDustTrend.xdata = dustData.map(v =>
         dayjs(v.time).format("HH:mm")
       );
+      // 扬尘数据
       this.infoDustTrend.data = [TSP, PM2_5, PM10];
       this.infoNoiseTrend.xdata = dustData.map(v =>
         dayjs(v.time).format("HH:mm")
       );
+      // 噪声数据
       this.infoNoiseTrend.data = [noise];
-      this.securityList = [
-        { name: "TSP", company: "mg/m³", value: dustData[0].tsp },
-        { name: "PM2.5", company: "mg/m³", value: dustData[0].pm2_5 },
-        { name: "PM10", company: "mg/m³", value: dustData[0].pm10 },
-        { name: "噪声", company: "dB", value: dustData[0].noise }
-      ];
+      this.$http.get(`api/v1/security/dust_set/`).then(({data}) => {
+        // 当前数据
+        this.securityList = [
+          { name: "TSP", company: "mg/m³", value: dustData[0].tsp, isOverflow: dustData[0].tsp > data.tsp },
+          { name: "PM2.5", company: "mg/m³", value: dustData[0].pm2_5, isOverflow: dustData[0].pm2_5 > data.pm2_5 },
+          { name: "PM10", company: "mg/m³", value: dustData[0].pm10, isOverflow: dustData[0].pm10 > data.pm10 },
+          { name: "噪声", company: "dB", value: dustData[0].noise, isOverflow: dustData[0].noise > data.noisep }
+        ];
+        console.log(this.securityList);
+      })
     });
     // 扬尘基准值
     this.$http.get(`api/v1/security/dust_set`).then(({ data }) => {
@@ -815,6 +819,9 @@ export default {
     });
     // 视频列表（仅拉取上线）
     this.$http.get(`api/v1/system/video?is_show=1`).then(({ data }) => {
+      data.forEach(el => {
+        el.video_name = el.video_name.slice(0, el.video_name.lastIndexOf('.'))
+      });
       this.videoSimulation.videoList = data.filter(v => !v.area);
       this.videoReality.videoList = data.filter(v => v.area);
       // Object.assign(this.videoSimulation, this.videoSimulation.videoList[0])
@@ -1372,6 +1379,7 @@ $txtColor2: #ffde7b;
     justify-content: space-between;
     img {
       width: 19px;
+      display: none;
     }
   }
   .security_current-bd {
@@ -1391,6 +1399,9 @@ $txtColor2: #ffde7b;
     }
     .security_current-hd {
       background-color: rgba(#ff1414, 0.2);
+      img {
+        display: inline-block;
+      }
     }
   }
   .security_echart-item {
