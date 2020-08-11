@@ -186,6 +186,8 @@
                             padding: 8px;
                             cursor: pointer;
                             font-size: 22px;
+                            left: 0;
+                            top: 0;
                         }
                         .li-video {
                             width: 100%;

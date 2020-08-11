@@ -27,6 +27,13 @@ import Production from '../views/Production/Production.vue';
 import Document3D from '../views/Production/Document3D.vue';
 // 个人中心
 import UserCenter from "../views/UserCenter/UserCenter.vue";
+// 404
+import NotFoundComponent from "../views/NotFoundComponent.vue";
+
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 Vue.use(VueRouter);
 
@@ -191,6 +198,7 @@ const routes = [
       }
     ],
   },
+  { path: "*", component: NotFoundComponent }
 ];
 
 const router = new VueRouter({

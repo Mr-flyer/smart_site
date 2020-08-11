@@ -76,13 +76,14 @@
         status-icon
         :rules="rules"
         ref="ruleForm"
-        label-width="100px"
+        label-width="110px"
         class="demo-ruleForm"
         v-loading="loading"
       >
         <el-form-item label="原密码：" prop="oldPwd">
           <el-input
             type="password"
+            maxlength="16"
             v-model="ruleForm.oldPwd"
             autocomplete="off"
             placeholder="请输入您的原密码"
@@ -91,14 +92,16 @@
         <el-form-item label="新密码：" prop="password">
           <el-input
             type="password"
+            maxlength="16"
             v-model="ruleForm.password"
             autocomplete="off"
-            placeholder="请输入您的新密码"
+            placeholder="请输入8-16位数字、英文新密码"
           ></el-input>
         </el-form-item>
         <el-form-item label="确认新密码：" prop="checkPass">
           <el-input
             type="password"
+            maxlength="16"
             v-model="ruleForm.checkPass"
             autocomplete="off"
             placeholder="再次输入您的新密码"
@@ -115,14 +118,8 @@
 	export default {
 		data() {
 			var validatePass = (rule, value, callback) => {
-				if (value === "") {
-					callback(new Error("请输入密码"));
-				} else {
-					if (this.ruleForm.checkPass !== "") {
-					this.$refs.ruleForm.validateField("checkPass");
-					}
-					callback();
-				}
+        if(!this.common.checkPwd(value))  callback(new Error('请输入8-16位数字、英文密码'));
+        else callback();
 			};
 			var validatePass2 = (rule, value, callback) => {
 				if (value === "") {
@@ -262,9 +259,18 @@
 					checkPass: ""
 				},
 				rules: {
-					oldPwd: [{ validator: validatePass, trigger: "blur" }],
-					password: [{ validator: validatePass, trigger: "blur" }],
-					checkPass: [{ validator: validatePass2, trigger: "blur" }]
+					oldPwd: [
+            {required: true, message: '请填写原密码', trigger: "blur"},
+            { validator: validatePass, trigger: "blur" }
+          ],
+					password: [
+            {required: true, message: '请填写新密码', trigger: "blur"},
+            { validator: validatePass, trigger: "blur" }
+          ],
+					checkPass: [
+            {required: true, message: '请确认密码', trigger: "blur"},
+            { validator: validatePass2, trigger: "blur" }
+          ]
 				},
 				showMenu: true,
 				notificationCount: 0
@@ -273,7 +279,7 @@
 		watch: {
 			'$route': function(to, from) {
                 if(to.path === '/Security/PersonnelManagement' && from.path !== '/Security/HistoryList') {
-                this.$store.commit('TabName', 'first');
+                    this.$store.commit('TabName', 'first');
                 }
                 this.$nextTick(() => {
                     var container = this.$el.querySelector("#main");
@@ -284,9 +290,16 @@
                 this.$nextTick(() => {
                     this.userInfo = this.$store.state.userInfo;
                 })
+            },
+            '$store.state.timeStamp': function() {
+                this.$nextTick(() => {
+                    var container = this.$el.querySelector("#main");
+                    container.scrollTop = 0;
+                });
             }
         },
         created() {
+            this.$store.commit('TabName', 'first');
             if(localStorage.getItem('user_info')) {
                 this.$store.state.userInfo = JSON.parse(localStorage.getItem('user_info'));
                 this.userInfo = this.$store.state.userInfo;
@@ -398,6 +411,9 @@
         .hide-main-aside {
             width: 0px !important;
             transition: width .1s;
+        }
+        ::v-deep .el-container.is-vertical {
+          width: 100%;
         }
         ::v-deep .el-menu {
             border: none !important;

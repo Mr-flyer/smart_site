@@ -65,7 +65,7 @@
           <div slot="header" class="clearfix">
             <span>
               统计图选择：
-              <el-select v-model="countPicSelect" v-show="countSelect===0" @change="changePic">
+              <el-select v-model="countPicSelect" v-show="countSelect===0">
                 <el-option label="人员总况分析图" :value="0"></el-option>
               </el-select>
               <el-select v-model="countPicSelect" v-show="countSelect===1">
@@ -251,7 +251,6 @@ export default {
     // 统计选择
     initCountSelect(type) {
       this.$http.get(`api/v1/security/scene?type=${type}`).then(({ data }) => {
-        // console.log(data.data);
         switch (type) {
           case "total":
             let manageObj = data.data.find(v => v.name === "施工单位");
@@ -281,7 +280,6 @@ export default {
             this.setEchartPersonnel(this.countList)
             break;
           case "shigong":
-            console.log("表格", this.tableData);
             this.tableData = data.data;
             this.companyData = data.data.map(v => ({
                 name: v.name,
@@ -289,7 +287,6 @@ export default {
             }))
             break;
           case "manage":
-            console.log("表格", this.tableData);
             this.tableData = data.data;
             break;
         }

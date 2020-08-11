@@ -52,7 +52,8 @@
                 </el-form-item>
             </el-form>
             <div class="select-btns">
-                <el-button @click="search" :disabled="isLoading" type="primary">查询</el-button><el-button @click="reset">重置</el-button>
+                <el-button @click="search" :disabled="isLoading" type="primary">查询</el-button
+                ><el-button @click="reset">重置</el-button>
             </div>
         </div>
         <div class="set-btns-right">
@@ -151,10 +152,12 @@
         <el-pagination
             class="admin-page"
             background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 40, 50]"
             :page-size="20"
-            layout="prev, pager, next, jumper"
+            layout="sizes, prev, pager, next, jumper"
             :total="count">
         </el-pagination>
   </div>
@@ -165,6 +168,7 @@
             return {
                 isLoading: false,
                 tableData: [],
+                pagesize: 20,
                 currentPage: 1,
                 count: 0,
                 formInline: {
@@ -188,6 +192,7 @@
             }
         },
         created() {
+            this.pagesize = this.pageSize;
             // 单位类型
             let company_type = this.$http.get('api/v1/user/company_type/').then((res)=>{
                 this.companyTypeList = res.data;
@@ -228,7 +233,7 @@
                     start_time = this.common.formatTimestamp_min(Date.parse(this.formInline.time[0])/1000);
                     end_time = this.common.formatTimestamp_min(Date.parse(this.formInline.time[1])/1000);
                 }
-                this.$http.get(`api/v1/security/user_door?page=${this.currentPage}&page_size=20&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&start_time=${start_time}&end_time=${end_time}&in_or_out=${this.formInline.accessType}`)
+                this.$http.get(`api/v1/security/user_door?page=${this.currentPage}&page_size=${this.pagesize}&name=${this.formInline.user}&company_type=${this.formInline.company_type}&company=${this.formInline.company}&team=${this.formInline.team}&work_type=${this.formInline.workType}&start_time=${start_time}&end_time=${end_time}&in_or_out=${this.formInline.accessType}`)
                 .then((res)=>{
                     this.isLoading = false;
                     this.tableData = res.data;
@@ -237,7 +242,13 @@
                 .catch(()=>{})
             },
             handleCurrentChange(val) {
+                this.$store.commit('timeStamp', Date.parse(new Date()));
                 this.requestInfo(val);
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.$store.commit('timeStamp', Date.parse(new Date()));
+                this.requestInfo(1);
             },
             // 查询
             search() {

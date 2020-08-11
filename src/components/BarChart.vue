@@ -32,12 +32,6 @@
                     tooltip: {},
                     dataset: {
                         source: this.infoData
-                        // source: [
-                        //     ['product', '应到人数', '现场人数', '差额', '出勤率'],
-                        //     ['总', 41.1, 30.4, 65.1, 53.3],
-                        //     ['管理单位', 86.5, 92.1, 85.7, 83.1],
-                        //     ['施工单位', 24.1, 67.2, 79.5, 86.4]
-                        // ]
                     },
                     xAxis: [
                         {type: 'category', gridIndex: 0}
@@ -49,7 +43,7 @@
                     series: [
                         {type: 'bar', seriesLayoutBy: 'row'},
                         {type: 'bar', seriesLayoutBy: 'row'},
-                        {type: 'bar', seriesLayoutBy: 'row'},
+                        {type: 'bar', seriesLayoutBy: 'row'}
                     ]
                 }
                 this.barChart.setOption(option);

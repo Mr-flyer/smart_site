@@ -18,8 +18,9 @@
                     <el-form-item prop="userPwd">
                         <el-input 
                             type="password" 
+                            maxlength="16"
                             v-model="ruleForm.userPwd" 
-                            placeholder="请输入密码" 
+                            placeholder="请输入8-16位数字、英文密码" 
                             autocomplete="off">
                             <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                         </el-input>
@@ -57,11 +58,14 @@
 export default {
     name: 'Login',
     data () {
+        var validatePass = (rule, value, callback) => {
+            if(!this.common.checkPwd(value))  callback(new Error('请输入8-16位数字、英文密码'));
+            else callback();
+		};
         return {
             ruleForm: {
                 userName:'',
-                userPwd:'',
-                // code: ''
+                userPwd:''
             },
             codeImg: '',
             rememberPwd: false,
@@ -71,11 +75,8 @@ export default {
                 ],
                 userPwd: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
-                ],
-                // code: [
-                //     { required: true, message: '请输入验证码', trigger: 'blur' },
-                //     { min: 4, max: 4, message: '请输入验证码', trigger: 'blur' }
-                // ]
+                    { validator: validatePass, trigger: "blur" }
+                ]
             },
             dialogVisible: false,
             loading: false,
