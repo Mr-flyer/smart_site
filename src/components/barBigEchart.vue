@@ -81,7 +81,11 @@ export default {
             }
           },
           {
+<<<<<<< HEAD
             text: "人员分布统计",
+=======
+            text: "人员分布及差额表",
+>>>>>>> 96f28485c4ae55f5cda7661bd24ef5577e3688b0
             left: "75%",
             textAlign: "right",
             textStyle: {
@@ -148,7 +152,11 @@ export default {
           {
             name: "现场人数",
             type: "bar",
+<<<<<<< HEAD
             stack: "人员分布统计",
+=======
+            stack: "人员分布及差额表",
+>>>>>>> 96f28485c4ae55f5cda7661bd24ef5577e3688b0
             label: {
               show: true,
               position: "right",
@@ -171,7 +179,11 @@ export default {
           {
             name: "差额",
             type: "bar",
+<<<<<<< HEAD
             stack: "人员分布统计",
+=======
+            stack: "人员分布及差额表",
+>>>>>>> 96f28485c4ae55f5cda7661bd24ef5577e3688b0
             label: {
               show: true,
               position: "left",
@@ -232,7 +244,11 @@ export default {
                   itemStyle: {
                     color: "transparent"
                   },
+<<<<<<< HEAD
                   value: `总人数 ${this.infoPieObj.data.reduce((acc, cur) => acc + cur.value, 0)} 人`
+=======
+                  value: `应到人数 ${this.infoPieObj.data.reduce((acc, cur) => acc + cur.value, 0)} 人`
+>>>>>>> 96f28485c4ae55f5cda7661bd24ef5577e3688b0
                 },
               ]
             },
