@@ -81,7 +81,7 @@ export default {
             }
           },
           {
-            text: "人员分布及差额表",
+            text: "人员分布统计",
             left: "75%",
             textAlign: "right",
             textStyle: {
@@ -148,7 +148,7 @@ export default {
           {
             name: "现场人数",
             type: "bar",
-            stack: "人员分布及差额表",
+            stack: "人员分布统计",
             label: {
               show: true,
               position: "right",
@@ -171,7 +171,7 @@ export default {
           {
             name: "差额",
             type: "bar",
-            stack: "人员分布及差额表",
+            stack: "人员分布统计",
             label: {
               show: true,
               position: "left",
@@ -232,7 +232,7 @@ export default {
                   itemStyle: {
                     color: "transparent"
                   },
-                  value: `应到人数 ${this.infoPieObj.data.reduce((acc, cur) => acc + cur.value, 0)} 人`
+                  value: `总人数 ${this.infoPieObj.data.reduce((acc, cur) => acc + cur.value, 0)} 人`
                 },
               ]
             },
